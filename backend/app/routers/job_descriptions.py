@@ -7,7 +7,7 @@ from app.models.user import User
 from app.models.job_description import JobDescription
 from app.schemas.job_description import JobDescriptionCreate, JobDescriptionResponse
 from app.core.auth import get_current_user
-from app.services.file_processor import FileProcessor
+from app.services.file_processor import FileProcessor, JobDescriptionNormalizer
 
 router = APIRouter()
 
@@ -24,9 +24,11 @@ async def create_job_description(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Job description content cannot be empty"
         )
-    
+    # Normalize content
+    normalized_content = JobDescriptionNormalizer.normalize_with_validation(job_data.content)
+
     # Parse job description content
-    parsed_data = FileProcessor.parse_job_description(job_data.content)
+    parsed_data = FileProcessor.parse_job_description_with_llm(normalized_content)
     
     # Create job description record
     db_job = JobDescription(
@@ -92,7 +94,7 @@ async def update_job_description(
         )
     
     # Parse updated content
-    parsed_data = FileProcessor.parse_job_description(job_data.content)
+    parsed_data = FileProcessor.parse_job_description_with_llm(job_data.content)
     
     # Update job description
     job.title = job_data.title

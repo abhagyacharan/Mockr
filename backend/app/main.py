@@ -8,7 +8,7 @@ from app.core.config import settings
 import uvicorn
 
 # Import routers (we'll create these next)
-from app.routers import auth, users, resumes, job_descriptions, mock_sessions
+from app.routers import auth, users, resumes, job_descriptions, mock_sessions, file_parser
 
 app = FastAPI(
     title="Mockr API",
@@ -35,6 +35,7 @@ app.include_router(auth.router, prefix="/api/auth", tags=["Authentication"])
 app.include_router(users.router, prefix="/api/users", tags=["Users"])
 app.include_router(resumes.router, prefix="/api/resumes", tags=["Resumes"])
 app.include_router(job_descriptions.router, prefix="/api/job-descriptions", tags=["Job Descriptions"])
+app.include_router(file_parser.router, prefix="/api/parse", tags=["File Parsing"])
 app.include_router(mock_sessions.router, prefix="/api/mock-sessions", tags=["Mock Sessions"])
 
 @app.get("/")

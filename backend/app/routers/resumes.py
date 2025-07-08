@@ -71,7 +71,7 @@ async def upload_resume(
         )
     
     # Parse resume content
-    parsed_data = FileProcessor.parse_resume_content(text_content)
+    parsed_data = FileProcessor.parse_resume_with_llm(text_content)
     
     # Create resume record
     db_resume = Resume(

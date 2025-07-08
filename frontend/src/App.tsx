@@ -7,7 +7,6 @@ import CTASection from './components/CTASection';
 import Footer from './components/Footer';
 
 const App = () => {
-  const [authOpen, setAuthOpen] = useState(false);
 
   return (
     <div className="relative min-h-screen bg-white">

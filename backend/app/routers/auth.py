@@ -6,7 +6,7 @@ from datetime import timedelta
 from app.database import get_db
 from app.models.user import User
 from app.schemas.user import UserCreate, UserLogin, UserResponse, Token
-from app.core.security import verify_password, get_password_hash, create_access_token
+from app.core.security import verify_password, get_password_hash, create_access_token, verify_token
 from app.core.config import settings
 
 router = APIRouter()
@@ -81,3 +81,8 @@ async def login_for_access_token(
     )
     
     return {"access_token": access_token, "token_type": "bearer"}
+
+@router.get("/verify-token/{token}")
+async def verify_user_token(token: str):
+    verify_token(token=token)
+    return {"message": "Token is valid"}

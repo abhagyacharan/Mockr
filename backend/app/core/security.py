@@ -1,5 +1,6 @@
 # app/core/security.py
 from datetime import datetime, timedelta, timezone
+from fastapi import HTTPException, status
 from typing import Optional
 from jose import JWTError, jwt
 from passlib.context import CryptContext
@@ -28,7 +29,7 @@ def verify_token(token: str):
         payload = jwt.decode(token, settings.secret_key, algorithms=[settings.algorithm])
         email: str = payload.get("sub")
         if email is None:
-            return None
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail='Token is invalid or expired.')
         return email
     except JWTError:
-        return None
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail='Token is invalid or expired.')

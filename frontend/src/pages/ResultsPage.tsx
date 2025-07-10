@@ -1,0 +1,234 @@
+"use client"
+
+import { Button } from "../components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card"
+import { Progress } from "../components/ui/progress"
+import { Badge } from "../components/ui/badge"
+import { Trophy, Target, Clock, CheckCircle, XCircle, RotateCcw, Home } from "lucide-react"
+import { useNavigate } from "react-router-dom"
+import type { MockSession } from "../App"
+
+interface ResultsPageProps {
+  mockSession: MockSession | null
+}
+
+export default function ResultsPage({ mockSession }: ResultsPageProps) {
+  const navigate = useNavigate()
+
+  if (!mockSession) {
+    navigate("/")
+    return null
+  }
+
+  const totalPossiblePoints = mockSession.questions.reduce((sum, q) => sum + (q.points || 0), 0)
+  const scorePercentage = (mockSession.score / totalPossiblePoints) * 100
+  const correctAnswers = mockSession.questions.filter((q) => {
+    if (q.type === "mcq") {
+      return q.userAnswer === q.correctAnswer
+    } else {
+      return q.userAnswer && q.userAnswer.trim().length > 20
+    }
+  }).length
+
+  const getScoreColor = (percentage: number) => {
+    if (percentage >= 80) return "text-green-600"
+    if (percentage >= 60) return "text-yellow-600"
+    return "text-red-600"
+  }
+
+  const getScoreGrade = (percentage: number) => {
+    if (percentage >= 90) return "Excellent"
+    if (percentage >= 80) return "Good"
+    if (percentage >= 70) return "Average"
+    if (percentage >= 60) return "Below Average"
+    return "Needs Improvement"
+  }
+
+  const getRecommendations = (percentage: number) => {
+    if (percentage >= 80) {
+      return [
+        "Great job! You're well-prepared for interviews.",
+        "Continue practicing with different question types.",
+        "Focus on articulating your thoughts clearly and concisely.",
+      ]
+    } else if (percentage >= 60) {
+      return [
+        "Good foundation, but there's room for improvement.",
+        "Review fundamental concepts in your field.",
+        "Practice explaining complex topics in simple terms.",
+        "Work on time management during responses.",
+      ]
+    } else {
+      return [
+        "Consider additional preparation before interviews.",
+        "Review basic concepts and common interview questions.",
+        "Practice with mock interviews regularly.",
+        "Focus on understanding rather than memorizing answers.",
+        "Consider taking relevant courses or tutorials.",
+      ]
+    }
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50 py-8">
+      <div className="container mx-auto px-4 max-w-4xl">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <div className="flex justify-center mb-4">
+            <div className={`p-4 rounded-full ${scorePercentage >= 70 ? "bg-green-100" : "bg-yellow-100"}`}>
+              <Trophy className={`h-12 w-12 ${scorePercentage >= 70 ? "text-green-600" : "text-yellow-600"}`} />
+            </div>
+          </div>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Interview Complete!</h1>
+          <p className="text-gray-600">Here's how you performed in your mock interview</p>
+        </div>
+
+        {/* Score Overview */}
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle>Overall Score</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-center mb-6">
+              <div className={`text-6xl font-bold mb-2 ${getScoreColor(scorePercentage)}`}>
+                {Math.round(scorePercentage)}%
+              </div>
+              <div className="text-xl text-gray-600 mb-4">
+                {mockSession.score} out of {totalPossiblePoints} points
+              </div>
+              <Badge variant={scorePercentage >= 70 ? "default" : "secondary"} className="text-lg px-4 py-1">
+                {getScoreGrade(scorePercentage)}
+              </Badge>
+            </div>
+            <Progress value={scorePercentage} className="h-3 mb-4" />
+            <div className="grid grid-cols-3 gap-4 text-center">
+              <div>
+                <div className="flex items-center justify-center mb-2">
+                  <Target className="h-5 w-5 text-blue-600 mr-1" />
+                </div>
+                <div className="text-2xl font-bold text-gray-900">{correctAnswers}</div>
+                <div className="text-sm text-gray-600">Correct Answers</div>
+              </div>
+              <div>
+                <div className="flex items-center justify-center mb-2">
+                  <Clock className="h-5 w-5 text-purple-600 mr-1" />
+                </div>
+                <div className="text-2xl font-bold text-gray-900">{mockSession.totalQuestions}</div>
+                <div className="text-sm text-gray-600">Total Questions</div>
+              </div>
+              <div>
+                <div className="flex items-center justify-center mb-2">
+                  <Trophy className="h-5 w-5 text-orange-600 mr-1" />
+                </div>
+                <div className="text-2xl font-bold text-gray-900">
+                  {Math.round((correctAnswers / mockSession.totalQuestions) * 100)}%
+                </div>
+                <div className="text-sm text-gray-600">Accuracy</div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Question Breakdown */}
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle>Question Breakdown</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {mockSession.questions.map((question, index) => {
+                const isCorrect =
+                  question.type === "mcq"
+                    ? question.userAnswer === question.correctAnswer
+                    : question.userAnswer && question.userAnswer.trim().length > 20
+
+                return (
+                  <div key={question.id} className="border rounded-lg p-4">
+                    <div className="flex items-start justify-between mb-2">
+                      <div className="flex-1">
+                        <div className="flex items-center space-x-2 mb-1">
+                          <span className="font-medium">Question {index + 1}</span>
+                          <Badge variant={question.type === "mcq" ? "default" : "secondary"}>
+                            {question.type === "mcq" ? "Multiple Choice" : "Open Ended"}
+                          </Badge>
+                          <span className="text-sm text-gray-600">{question.points} pts</span>
+                        </div>
+                        <p className="text-gray-700 mb-2">{question.question}</p>
+                      </div>
+                      <div className="ml-4">
+                        {isCorrect ? (
+                          <CheckCircle className="h-6 w-6 text-green-600" />
+                        ) : (
+                          <XCircle className="h-6 w-6 text-red-600" />
+                        )}
+                      </div>
+                    </div>
+
+                    {question.type === "mcq" && (
+                      <div className="space-y-1 text-sm">
+                        <div className="flex items-center space-x-2">
+                          <span className="text-gray-600">Your answer:</span>
+                          <span
+                            className={
+                              question.userAnswer === question.correctAnswer ? "text-green-600" : "text-red-600"
+                            }
+                          >
+                            {question.userAnswer || "No answer"}
+                          </span>
+                        </div>
+                        {question.userAnswer !== question.correctAnswer && (
+                          <div className="flex items-center space-x-2">
+                            <span className="text-gray-600">Correct answer:</span>
+                            <span className="text-green-600">{question.correctAnswer}</span>
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {question.type === "qa" && (
+                      <div className="text-sm">
+                        <div className="text-gray-600 mb-1">Your answer:</div>
+                        <div className="bg-gray-50 p-2 rounded text-gray-700 max-h-20 overflow-y-auto">
+                          {question.userAnswer || "No answer provided"}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )
+              })}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Recommendations */}
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle>Recommendations</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ul className="space-y-2">
+              {getRecommendations(scorePercentage).map((recommendation, index) => (
+                <li key={index} className="flex items-start space-x-2">
+                  <div className="w-2 h-2 bg-blue-600 rounded-full mt-2 flex-shrink-0"></div>
+                  <span className="text-gray-700">{recommendation}</span>
+                </li>
+              ))}
+            </ul>
+          </CardContent>
+        </Card>
+
+        {/* Actions */}
+        <div className="flex justify-center space-x-4">
+          <Button variant="outline" onClick={() => navigate("/")}>
+            <Home className="mr-2 h-4 w-4" />
+            Back to Home
+          </Button>
+          <Button onClick={() => navigate("/upload")}>
+            <RotateCcw className="mr-2 h-4 w-4" />
+            Take Another Mock Interview
+          </Button>
+        </div>
+      </div>
+    </div>
+  )
+}

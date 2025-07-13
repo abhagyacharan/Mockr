@@ -1,48 +1,59 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Progress } from "@/components/ui/progress"
-import { Badge } from "@/components/ui/badge"
-import { Trophy, Target, Clock, CheckCircle, XCircle, RotateCcw, Home } from "lucide-react"
-import { useNavigate } from "react-router-dom"
-import type { MockSession } from "../App"
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import { Badge } from "@/components/ui/badge";
+import {
+  Trophy,
+  Target,
+  Clock,
+  CheckCircle,
+  XCircle,
+  RotateCcw,
+  Home,
+} from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import type { MockSession } from "../App";
 
 interface ResultsPageProps {
-  mockSession: MockSession | null
+  mockSession: MockSession | null;
 }
 
 export default function ResultsPage({ mockSession }: ResultsPageProps) {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   if (!mockSession) {
-    navigate("/")
-    return null
+    navigate("/");
+    return null;
   }
 
-  const totalPossiblePoints = mockSession.questions.reduce((sum, q) => sum + (q.points || 0), 0)
-  const scorePercentage = (mockSession.score / totalPossiblePoints) * 100
+  const totalPossiblePoints = mockSession.questions.reduce(
+    (sum, q) => sum + (q.points || 0),
+    0
+  );
+  const scorePercentage = (mockSession.score / totalPossiblePoints) * 100;
   const correctAnswers = mockSession.questions.filter((q) => {
     if (q.type === "mcq") {
-      return q.userAnswer === q.correctAnswer
+      return q.userAnswer === q.correctAnswer;
     } else {
-      return q.userAnswer && q.userAnswer.trim().length > 20
+      return q.userAnswer && q.userAnswer.trim().length > 20;
     }
-  }).length
+  }).length;
 
   const getScoreColor = (percentage: number) => {
-    if (percentage >= 80) return "text-green-600"
-    if (percentage >= 60) return "text-yellow-600"
-    return "text-red-600"
-  }
+    if (percentage >= 80) return "text-green-600";
+    if (percentage >= 60) return "text-yellow-600";
+    return "text-red-600";
+  };
 
   const getScoreGrade = (percentage: number) => {
-    if (percentage >= 90) return "Excellent"
-    if (percentage >= 80) return "Good"
-    if (percentage >= 70) return "Average"
-    if (percentage >= 60) return "Below Average"
-    return "Needs Improvement"
-  }
+    if (percentage >= 90) return "Excellent";
+    if (percentage >= 80) return "Good";
+    if (percentage >= 70) return "Average";
+    if (percentage >= 60) return "Below Average";
+    return "Needs Improvement";
+  };
 
   const getRecommendations = (percentage: number) => {
     if (percentage >= 80) {
@@ -50,14 +61,14 @@ export default function ResultsPage({ mockSession }: ResultsPageProps) {
         "Great job! You're well-prepared for interviews.",
         "Continue practicing with different question types.",
         "Focus on articulating your thoughts clearly and concisely.",
-      ]
+      ];
     } else if (percentage >= 60) {
       return [
         "Good foundation, but there's room for improvement.",
         "Review fundamental concepts in your field.",
         "Practice explaining complex topics in simple terms.",
         "Work on time management during responses.",
-      ]
+      ];
     } else {
       return [
         "Consider additional preparation before interviews.",
@@ -65,8 +76,12 @@ export default function ResultsPage({ mockSession }: ResultsPageProps) {
         "Practice with mock interviews regularly.",
         "Focus on understanding rather than memorizing answers.",
         "Consider taking relevant courses or tutorials.",
-      ]
+      ];
     }
+  };
+
+  function getScoreBadgeVariant(scorePercentage: number) {
+    throw new Error("Function not implemented.");
   }
 
   return (
@@ -75,45 +90,77 @@ export default function ResultsPage({ mockSession }: ResultsPageProps) {
         {/* Header */}
         <div className="text-center mb-8">
           <div className="flex justify-center mb-4">
-            <div className={`p-4 rounded-full ${scorePercentage >= 70 ? "bg-green-100" : "bg-yellow-100"}`}>
-              <Trophy className={`h-12 w-12 ${scorePercentage >= 70 ? "text-green-600" : "text-yellow-600"}`} />
+            <div
+              className={`p-4 rounded-full ${
+                scorePercentage >= 70 ? "bg-green-100" : "bg-yellow-100"
+              }`}
+            >
+              <Trophy
+                className={`h-12 w-12 ${
+                  scorePercentage >= 70 ? "text-green-600" : "text-yellow-600"
+                }`}
+              />
             </div>
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Interview Complete!</h1>
-          <p className="text-gray-600">Here's how you performed in your mock interview</p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            Interview Complete!
+          </h1>
+          <p className="text-gray-600">
+            Here's how you performed in your mock interview
+          </p>
         </div>
 
         {/* Score Overview */}
-        <Card className="mb-8">
-          <CardHeader>
-            <CardTitle>Overall Score</CardTitle>
-          </CardHeader>
-          <CardContent>
+        <div className="rounded-lg border bg-card text-card-foreground shadow-sm mb-8 bg-white border-gray-200">
+          <div className="flex flex-col space-y-1.5 p-6">
+            <h3 className="text-2xl font-semibold leading-none tracking-tight">
+              Overall Score
+            </h3>
+          </div>
+          <div className="p-6 pt-0">
             <div className="text-center mb-6">
-              <div className={`text-6xl font-bold mb-2 ${getScoreColor(scorePercentage)}`}>
+              <div
+                className={`text-6xl font-bold mb-2 ${getScoreColor(
+                  scorePercentage
+                )}`}
+              >
                 {Math.round(scorePercentage)}%
               </div>
               <div className="text-xl text-gray-600 mb-4">
                 {mockSession.score} out of {totalPossiblePoints} points
               </div>
-              <Badge variant={scorePercentage >= 70 ? "default" : "secondary"} className="text-lg px-4 py-1">
+              <span
+                className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 text-lg px-4 py-1 ${getScoreBadgeVariant(
+                  scorePercentage
+                )}`}
+              >
                 {getScoreGrade(scorePercentage)}
-              </Badge>
+              </span>
             </div>
-            <Progress value={scorePercentage} className="h-3 mb-4" />
+            {/* Progress Bar */}
+            <div className="relative h-4 w-full overflow-hidden rounded-full bg-secondary bg-gray-200 mb-4">
+              <div
+                className="h-full w-full flex-1 bg-primary transition-all bg-blue-600"
+                style={{ transform: `translateX(-${100 - scorePercentage}%)` }}
+              />
+            </div>
             <div className="grid grid-cols-3 gap-4 text-center">
               <div>
                 <div className="flex items-center justify-center mb-2">
                   <Target className="h-5 w-5 text-blue-600 mr-1" />
                 </div>
-                <div className="text-2xl font-bold text-gray-900">{correctAnswers}</div>
+                <div className="text-2xl font-bold text-gray-900">
+                  {correctAnswers}
+                </div>
                 <div className="text-sm text-gray-600">Correct Answers</div>
               </div>
               <div>
                 <div className="flex items-center justify-center mb-2">
                   <Clock className="h-5 w-5 text-purple-600 mr-1" />
                 </div>
-                <div className="text-2xl font-bold text-gray-900">{mockSession.totalQuestions}</div>
+                <div className="text-2xl font-bold text-gray-900">
+                  {mockSession.totalQuestions}
+                </div>
                 <div className="text-sm text-gray-600">Total Questions</div>
               </div>
               <div>
@@ -121,39 +168,62 @@ export default function ResultsPage({ mockSession }: ResultsPageProps) {
                   <Trophy className="h-5 w-5 text-orange-600 mr-1" />
                 </div>
                 <div className="text-2xl font-bold text-gray-900">
-                  {Math.round((correctAnswers / mockSession.totalQuestions) * 100)}%
+                  {Math.round(
+                    (correctAnswers / mockSession.totalQuestions) * 100
+                  )}
+                  %
                 </div>
                 <div className="text-sm text-gray-600">Accuracy</div>
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
         {/* Question Breakdown */}
-        <Card className="mb-8">
-          <CardHeader>
-            <CardTitle>Question Breakdown</CardTitle>
-          </CardHeader>
-          <CardContent>
+        <div className="rounded-lg border bg-card text-card-foreground shadow-sm mb-8 bg-white border-gray-200">
+          <div className="flex flex-col space-y-1.5 p-6">
+            <h3 className="text-2xl font-semibold leading-none tracking-tight">
+              Question Breakdown
+            </h3>
+          </div>
+          <div className="p-6 pt-0">
             <div className="space-y-4">
               {mockSession.questions.map((question, index) => {
                 const isCorrect =
                   question.type === "mcq"
                     ? question.userAnswer === question.correctAnswer
-                    : question.userAnswer && question.userAnswer.trim().length > 20
+                    : question.userAnswer &&
+                      question.userAnswer.trim().length > 20;
 
                 return (
-                  <div key={question.id} className="border rounded-lg p-4">
+                  <div
+                    key={question.id}
+                    className="border rounded-lg p-4 border-gray-200"
+                  >
                     <div className="flex items-start justify-between mb-2">
                       <div className="flex-1">
                         <div className="flex items-center space-x-2 mb-1">
-                          <span className="font-medium">Question {index + 1}</span>
-                          <Badge variant={question.type === "mcq" ? "default" : "secondary"}>
-                            {question.type === "mcq" ? "Multiple Choice" : "Open Ended"}
-                          </Badge>
-                          <span className="text-sm text-gray-600">{question.points} pts</span>
+                          <span className="font-medium">
+                            Question {index + 1}
+                          </span>
+                          <span
+                            className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 ${
+                              question.type === "mcq"
+                                ? "bg-blue-600 text-white"
+                                : "bg-gray-200 text-gray-900"
+                            }`}
+                          >
+                            {question.type === "mcq"
+                              ? "Multiple Choice"
+                              : "Open Ended"}
+                          </span>
+                          <span className="text-sm text-gray-600">
+                            {question.points} pts
+                          </span>
                         </div>
-                        <p className="text-gray-700 mb-2">{question.question}</p>
+                        <p className="text-gray-700 mb-2">
+                          {question.question}
+                        </p>
                       </div>
                       <div className="ml-4">
                         {isCorrect ? (
@@ -170,7 +240,9 @@ export default function ResultsPage({ mockSession }: ResultsPageProps) {
                           <span className="text-gray-600">Your answer:</span>
                           <span
                             className={
-                              question.userAnswer === question.correctAnswer ? "text-green-600" : "text-red-600"
+                              question.userAnswer === question.correctAnswer
+                                ? "text-green-600"
+                                : "text-red-600"
                             }
                           >
                             {question.userAnswer || "No answer"}
@@ -178,8 +250,12 @@ export default function ResultsPage({ mockSession }: ResultsPageProps) {
                         </div>
                         {question.userAnswer !== question.correctAnswer && (
                           <div className="flex items-center space-x-2">
-                            <span className="text-gray-600">Correct answer:</span>
-                            <span className="text-green-600">{question.correctAnswer}</span>
+                            <span className="text-gray-600">
+                              Correct answer:
+                            </span>
+                            <span className="text-green-600">
+                              {question.correctAnswer}
+                            </span>
                           </div>
                         )}
                       </div>
@@ -194,41 +270,51 @@ export default function ResultsPage({ mockSession }: ResultsPageProps) {
                       </div>
                     )}
                   </div>
-                )
+                );
               })}
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
         {/* Recommendations */}
-        <Card className="mb-8">
-          <CardHeader>
-            <CardTitle>Recommendations</CardTitle>
-          </CardHeader>
-          <CardContent>
+        <div className="rounded-lg border bg-card text-card-foreground shadow-sm mb-8 bg-white border-gray-200">
+          <div className="flex flex-col space-y-1.5 p-6">
+            <h3 className="text-2xl font-semibold leading-none tracking-tight">
+              Recommendations
+            </h3>
+          </div>
+          <div className="p-6 pt-0">
             <ul className="space-y-2">
-              {getRecommendations(scorePercentage).map((recommendation, index) => (
-                <li key={index} className="flex items-start space-x-2">
-                  <div className="w-2 h-2 bg-blue-600 rounded-full mt-2 flex-shrink-0"></div>
-                  <span className="text-gray-700">{recommendation}</span>
-                </li>
-              ))}
+              {getRecommendations(scorePercentage).map(
+                (recommendation, index) => (
+                  <li key={index} className="flex items-start space-x-2">
+                    <div className="w-2 h-2 bg-blue-600 rounded-full mt-2 flex-shrink-0"></div>
+                    <span className="text-gray-700">{recommendation}</span>
+                  </li>
+                )
+              )}
             </ul>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
         {/* Actions */}
         <div className="flex justify-center space-x-4">
-          <Button variant="outline" onClick={() => navigate("/")}>
+          <button
+            onClick={() => navigate("/")}
+            className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 border-gray-300 bg-white hover:bg-gray-50 text-gray-900"
+          >
             <Home className="mr-2 h-4 w-4" />
             Back to Home
-          </Button>
-          <Button onClick={() => navigate("/upload")}>
+          </button>
+          <button
+            onClick={() => navigate("/upload")}
+            className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 bg-blue-600 text-white hover:bg-blue-700"
+          >
             <RotateCcw className="mr-2 h-4 w-4" />
             Take Another Mock Interview
-          </Button>
+          </button>
         </div>
       </div>
     </div>
-  )
+  );
 }

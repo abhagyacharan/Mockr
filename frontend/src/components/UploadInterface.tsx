@@ -139,11 +139,13 @@ export default function UploadInterface({
       <div className="container mx-auto px-4 max-w-4xl">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Upload Your Information</h1>
-          <p className="text-gray-600">Upload your resume or provide a job description to generate personalized mock interview questions</p>
+          <p className="text-gray-600">
+            Upload your resume or provide a job description to generate personalized mock interview questions
+          </p>
         </div>
 
-        <Card className="mb-6">
-          <CardHeader>
+        <div className="rounded-lg border bg-card text-card-foreground shadow-sm mb-6 bg-white border-gray-200">
+          <div className="p-6">
             <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg">
               <button
                 className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
@@ -162,8 +164,8 @@ export default function UploadInterface({
                 Job Description
               </button>
             </div>
-          </CardHeader>
-          <CardContent>
+          </div>
+          <div className="p-6 pt-0">
             {activeTab === "resume" ? (
               <div className="space-y-4">
                 <div
@@ -208,19 +210,24 @@ export default function UploadInterface({
               </div>
             ) : (
               <div className="space-y-4">
-                <Label htmlFor="job-description">Job Description</Label>
-                <Textarea
+                <label
+                  htmlFor="job-description"
+                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                >
+                  Job Description
+                </label>
+                <textarea
                   id="job-description"
-                  placeholder="Paste the job description here..."
+                  placeholder="Paste the job description here... Include requirements, responsibilities, and any specific skills mentioned."
                   value={jobDescription}
                   onChange={(e) => setJobDescription(e.target.value)}
-                  className="min-h-[200px]"
+                  className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 min-h-[200px] border-gray-300 bg-white focus-visible:ring-blue-500"
                 />
                 <p className="text-sm text-gray-500">{jobDescription.length}/50 characters minimum</p>
               </div>
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
         {error && (
           <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-center space-x-2">
@@ -230,10 +237,18 @@ export default function UploadInterface({
         )}
 
         <div className="flex justify-center space-x-4">
-          <Button variant="outline" onClick={() => navigate("/")} disabled={isLoading}>
+          <button
+            onClick={() => navigate("/")}
+            disabled={isLoading}
+            className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 border-gray-300 bg-white hover:bg-gray-50 text-gray-900"
+          >
             Back
-          </Button>
-          <Button onClick={generateMockQuestions} disabled={!canSubmit() || isLoading} className="min-w-[200px]">
+          </button>
+          <button
+            onClick={generateMockQuestions}
+            disabled={!canSubmit() || isLoading}
+            className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 min-w-[200px] bg-blue-600 text-white hover:bg-blue-700"
+          >
             {isLoading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -242,7 +257,7 @@ export default function UploadInterface({
             ) : (
               "Generate Mock Questions"
             )}
-          </Button>
+          </button>
         </div>
       </div>
     </div>

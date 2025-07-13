@@ -3,10 +3,6 @@
 import type React from "react"
 
 import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { X, Eye, EyeOff, Loader2 } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 
@@ -132,8 +128,8 @@ export default function AuthModal({ isOpen, onClose, mode, setMode, setUser }: A
       <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
 
       {/* Modal */}
-      <Card className="relative w-full max-w-md mx-4 backdrop-blur-md bg-white/95 border-white/20 shadow-2xl">
-        <CardHeader className="relative">
+      <div className="relative w-full max-w-md mx-4 backdrop-blur-md bg-white/95 border-white/20 shadow-2xl rounded-lg border">
+        <div className="relative p-6">
           <button
             onClick={onClose}
             className="absolute right-4 top-4 p-1 rounded-full hover:bg-gray-100 transition-colors"
@@ -141,12 +137,12 @@ export default function AuthModal({ isOpen, onClose, mode, setMode, setUser }: A
             <X className="h-5 w-5" />
           </button>
 
-          <CardTitle className="text-2xl text-center mb-4">
+          <h2 className="text-2xl font-semibold text-center mb-4">
             {mode === "login" ? "Welcome Back" : "Create Account"}
-          </CardTitle>
+          </h2>
 
           {/* Toggle */}
-          <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg">
+          <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg mb-6">
             <button
               className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
                 mode === "login" ? "bg-white text-blue-600 shadow-sm" : "text-gray-600 hover:text-gray-900"
@@ -164,48 +160,69 @@ export default function AuthModal({ isOpen, onClose, mode, setMode, setUser }: A
               Sign Up
             </button>
           </div>
-        </CardHeader>
+        </div>
 
-        <CardContent>
+        <div className="px-6 pb-6">
           <form onSubmit={handleSubmit} className="space-y-4">
             {mode === "signup" && (
               <div className="space-y-2">
-                <Label htmlFor="name">Full Name</Label>
-                <Input
+                <label
+                  htmlFor="name"
+                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                >
+                  Full Name
+                </label>
+                <input
                   id="name"
                   type="text"
                   placeholder="Enter your full name"
                   value={formData.name}
                   onChange={(e) => handleInputChange("name", e.target.value)}
-                  className={errors.name ? "border-red-500" : ""}
+                  className={`flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ${
+                    errors.name ? "border-red-500" : "border-gray-300"
+                  } bg-white focus-visible:ring-blue-500`}
                 />
                 {errors.name && <p className="text-sm text-red-500">{errors.name}</p>}
               </div>
             )}
 
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
+              <label
+                htmlFor="email"
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              >
+                Email
+              </label>
+              <input
                 id="email"
                 type="email"
                 placeholder="Enter your email"
                 value={formData.email}
                 onChange={(e) => handleInputChange("email", e.target.value)}
-                className={errors.email ? "border-red-500" : ""}
+                className={`flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ${
+                  errors.email ? "border-red-500" : "border-gray-300"
+                } bg-white focus-visible:ring-blue-500`}
               />
               {errors.email && <p className="text-sm text-red-500">{errors.email}</p>}
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <label
+                htmlFor="password"
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              >
+                Password
+              </label>
               <div className="relative">
-                <Input
+                <input
                   id="password"
                   type={showPassword ? "text" : "password"}
                   placeholder="Enter your password"
                   value={formData.password}
                   onChange={(e) => handleInputChange("password", e.target.value)}
-                  className={errors.password ? "border-red-500 pr-10" : "pr-10"}
+                  className={`flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ${
+                    errors.password ? "border-red-500 pr-10" : "border-gray-300 pr-10"
+                  } bg-white focus-visible:ring-blue-500`}
                 />
                 <button
                   type="button"
@@ -220,15 +237,22 @@ export default function AuthModal({ isOpen, onClose, mode, setMode, setUser }: A
 
             {mode === "signup" && (
               <div className="space-y-2">
-                <Label htmlFor="confirmPassword">Confirm Password</Label>
+                <label
+                  htmlFor="confirmPassword"
+                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                >
+                  Confirm Password
+                </label>
                 <div className="relative">
-                  <Input
+                  <input
                     id="confirmPassword"
                     type={showConfirmPassword ? "text" : "password"}
                     placeholder="Confirm your password"
                     value={formData.confirmPassword}
                     onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
-                    className={errors.confirmPassword ? "border-red-500 pr-10" : "pr-10"}
+                    className={`flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ${
+                      errors.confirmPassword ? "border-red-500 pr-10" : "border-gray-300 pr-10"
+                    } bg-white focus-visible:ring-blue-500`}
                   />
                   <button
                     type="button"
@@ -248,7 +272,11 @@ export default function AuthModal({ isOpen, onClose, mode, setMode, setUser }: A
               </div>
             )}
 
-            <Button type="submit" className="w-full" disabled={isLoading}>
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 w-full"
+            >
               {isLoading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -259,7 +287,7 @@ export default function AuthModal({ isOpen, onClose, mode, setMode, setUser }: A
               ) : (
                 "Create Account"
               )}
-            </Button>
+            </button>
           </form>
 
           <div className="mt-4 text-center text-sm text-gray-600">
@@ -279,8 +307,8 @@ export default function AuthModal({ isOpen, onClose, mode, setMode, setUser }: A
               </p>
             )}
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   )
 }

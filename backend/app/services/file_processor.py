@@ -193,8 +193,15 @@ class FileProcessor:
 
         try:
             return json.loads(response.choices[0].message.content)
-        except json.JSONDecodeError as e:
-            raise Exception("Failed to parse JSON from LLM output")
+        except json.JSONDecodeError:
+            # Fallback: Extract JSON substring using regex
+            match = re.search(r"\{.*\}", response.choices[0].message.content, re.DOTALL)
+            if match:
+                try:
+                    return json.loads(match.group(0))
+                except json.JSONDecodeError:
+                    pass
+            raise Exception(f"Failed to parse JSON from LLM output:\nPrompt:\n{prompt}\n\nLLM Output:\n{response.choices[0].message.content}")
 
     @staticmethod
     def parse_resume_with_llm(content: str) -> Dict[str, Any]:
@@ -204,6 +211,7 @@ class FileProcessor:
             "- contact_info: { email, phone, name (if available) }\n"
             "- summary: (brief summary or objective if available)\n"
             "- education: (list of education entries if available)\n"
+            "- projects: (list of projects entries if available)\n"
             "- experience: (list of job experiences if available)\n"
             "- skills: (list of technical and soft skills)\n"
             "- certifications: (list if available)\n"
@@ -240,6 +248,31 @@ class FileProcessor:
             f"Job Description:\n{normalized_content}\n\n"
             "Extracted JSON:"
         )
+        return FileProcessor._llm_extract(prompt)
+    
+    @staticmethod
+    async def generate_mcq_questions(content: str, difficulty: str , num_questions: int = 5) -> Dict[str, Any]:
+        """
+        Generate MCQ-style mock interview questions from given text content using LLM.
+        """
+        normalized_content = JobDescriptionNormalizer.normalize_job_description(content)
+        
+        prompt = (
+            f"You are an AI that creates mock interview questions based only on the relevant professional details of a resume.\n"
+            f"Use ONLY the following sections to generate questions: 'skills', 'projects', 'education', 'certifications' and 'experience'.\n"
+            f"Ignore other parts like summary, contact info, or raw text.\n\n"
+            f"Generate {num_questions} multiple choice questions (MCQs) from the provided content.\n"
+            f"Ensure the difficulty level is '{difficulty}'. Each question must be a JSON object with:\n"
+            f"- question: the question text\n"
+            f"- options: list of 4 options\n"
+            f"- answer: the correct option text\n"
+            f"- explanation: short explanation of correct answer\n\n"
+            f"Respond ONLY with a valid JSON list. Do not include extra commentary or text.\n"
+            f"Format: [{{\"question\": \"...\", \"options\": [...], \"answer\": \"...\", \"explanation\": \"...\"}}, ...]\n\n"
+            f"Resume sections:\n{normalized_content}\n\n"
+            f"Questions:"
+        )
+
         return FileProcessor._llm_extract(prompt)
     
     @staticmethod

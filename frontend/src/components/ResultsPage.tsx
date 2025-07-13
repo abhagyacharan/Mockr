@@ -1,9 +1,9 @@
 "use client"
 
-import { Button } from "../components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card"
-import { Progress } from "../components/ui/progress"
-import { Badge } from "../components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Progress } from "@/components/ui/progress"
+import { Badge } from "@/components/ui/badge"
 import { Trophy, Target, Clock, CheckCircle, XCircle, RotateCcw, Home } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 import type { MockSession } from "../App"

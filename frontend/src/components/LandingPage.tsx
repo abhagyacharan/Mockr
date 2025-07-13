@@ -1,7 +1,7 @@
 "use client";
 
-import { Button } from "../components/ui/button";
-import { Card, CardContent } from "../components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { Upload, Brain, Target, CheckCircle, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -50,7 +50,7 @@ export default function LandingPage({
         <nav className="flex items-center justify-between">
           <div
             onClick={() => navigate("/")}
-            className="flex items-center space-x-2 cursor-pointer hover:opacity-90 transition"
+            className="flex items-center space-x-2 cursor-pointer hover:opacity-80 transition"
           >
             <Brain className="h-8 w-8 text-blue-600" />
             <span className="text-2xl font-bold text-gray-900">Mockr</span>

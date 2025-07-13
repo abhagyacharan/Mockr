@@ -1,148 +1,135 @@
-"use client";
+"use client"
 
-import type React from "react";
+import type React from "react"
 
-import { useState } from "react";
-import { Button } from "../components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
-import { Input } from "../components/ui/input";
-import { Label } from "../components/ui/label";
-import { X, Eye, EyeOff, Loader2 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useState } from "react"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { X, Eye, EyeOff, Loader2 } from "lucide-react"
+import { useNavigate } from "react-router-dom"
 
 interface AuthModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  mode: "login" | "signup";
-  setMode: (mode: "login" | "signup") => void;
-  setUser: (user: { id: string; name: string; email: string }) => void;
+  isOpen: boolean
+  onClose: () => void
+  mode: "login" | "signup"
+  setMode: (mode: "login" | "signup") => void
+  setUser: (user: { id: string; name: string; email: string }) => void
 }
 
-export default function AuthModal({
-  isOpen,
-  onClose,
-  mode,
-  setMode,
-  setUser,
-}: AuthModalProps) {
+export default function AuthModal({ isOpen, onClose, mode, setMode, setUser }: AuthModalProps) {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
     confirmPassword: "",
-  });
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const navigate = useNavigate();
+  })
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [errors, setErrors] = useState<Record<string, string>>({})
+  const navigate = useNavigate()
 
-  if (!isOpen) return null;
+  if (!isOpen) return null
 
   const validateForm = () => {
-    const newErrors: Record<string, string> = {};
+    const newErrors: Record<string, string> = {}
 
     if (!formData.email) {
-      newErrors.email = "Email is required";
+      newErrors.email = "Email is required"
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = "Email is invalid";
+      newErrors.email = "Email is invalid"
     }
 
     if (!formData.password) {
-      newErrors.password = "Password is required";
+      newErrors.password = "Password is required"
     } 
-    // else if (formData.password.length < 6) {
-    //   newErrors.password = "Password must be at least 6 characters";
-    // }
 
     if (mode === "signup") {
       if (!formData.name) {
-        newErrors.name = "Name is required";
+        newErrors.name = "Name is required"
       }
       if (formData.password !== formData.confirmPassword) {
-        newErrors.confirmPassword = "Passwords do not match";
+        newErrors.confirmPassword = "Passwords do not match"
       }
     }
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  e.preventDefault()
 
-    if (!validateForm()) return;
+  if (!validateForm()) return
 
-    setIsLoading(true);
-    setErrors({}); // Clear previous errors
+  setIsLoading(true)
+  setErrors({}) // Clear previous errors
 
-    try {
-      const endpoint =
-        mode === "signup" ? "/api/auth/register" : "/api/auth/login";
-      const payload =
-        mode === "signup"
-          ? { email: formData.email, password: formData.password }
-          : { email: formData.email, password: formData.password };
+  try {
+    const endpoint = mode === "signup" ? "/api/auth/register" : "/api/auth/login"
+    const payload =
+      mode === "signup"
+        ? { email: formData.email, password: formData.password }
+        : { email: formData.email, password: formData.password }
 
-      const response = await fetch(`http://localhost:8000${endpoint}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
+    const response = await fetch(`http://localhost:8000${endpoint}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    })
 
-      const data = await response.json();
-      console.log("Backend response:", data)
+    const data = await response.json()
 
-      if (!response.ok) {
-        throw new Error(data.detail || "Authentication failed");
-      }
+    if (!response.ok) {
+      throw new Error(data.detail || "Authentication failed")
+    }
 
-      // For signup, if token is not returned, ask user to login again
-      if (mode === "signup" && !data.access_token) {
-        setMode("login");
-        setErrors({ general: "Account created. Please log in." });
-        setIsLoading(false);
-        return;
-      }
+    // For signup, if token is not returned, ask user to login again
+    if (mode === "signup" && !data.access_token) {
+      setMode("login")
+      setErrors({ general: "Account created. Please log in." })
+      setIsLoading(false)
+      return
+    }
 
-      // Save token
-      localStorage.setItem("access_token", data.access_token);
+    // Save token
+    localStorage.setItem("access_token", data.access_token)
 
-      // Set user (optionally returned by backend, or mock one if not included)
-      const userData = data.user || {
+    // Set user (optionally returned by backend, or mock one if not included)
+    const userData =
+      data.user || {
         id: "user-" + Date.now(),
         name: formData.name || formData.email.split("@")[0],
         email: formData.email,
-      };
+      }
 
-      setUser(userData);
+    setUser(userData)
 
-      // Close modal and redirect
-      onClose();
-      navigate("/dashboard");
-    } catch (err: any) {
-      setErrors({ general: err.message });
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    // Close modal and redirect
+    onClose()
+    navigate("/dashboard")
+  } catch (err: any) {
+    setErrors({ general: err.message })
+  } finally {
+    setIsLoading(false)
+  }
+}
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData({ ...formData, [field]: value });
+    setFormData({ ...formData, [field]: value })
     if (errors[field]) {
-      setErrors({ ...errors, [field]: "" });
+      setErrors({ ...errors, [field]: "" })
     }
-  };
+  }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       {/* Backdrop */}
-      <div
-        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
-        onClick={onClose}
-      />
+      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
 
       {/* Modal */}
       <Card className="relative w-full max-w-md mx-4 backdrop-blur-md bg-white/95 border-white/20 shadow-2xl">
@@ -162,9 +149,7 @@ export default function AuthModal({
           <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg">
             <button
               className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
-                mode === "login"
-                  ? "bg-white text-blue-600 shadow-sm"
-                  : "text-gray-600 hover:text-gray-900"
+                mode === "login" ? "bg-white text-blue-600 shadow-sm" : "text-gray-600 hover:text-gray-900"
               }`}
               onClick={() => setMode("login")}
             >
@@ -172,9 +157,7 @@ export default function AuthModal({
             </button>
             <button
               className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
-                mode === "signup"
-                  ? "bg-white text-blue-600 shadow-sm"
-                  : "text-gray-600 hover:text-gray-900"
+                mode === "signup" ? "bg-white text-blue-600 shadow-sm" : "text-gray-600 hover:text-gray-900"
               }`}
               onClick={() => setMode("signup")}
             >
@@ -196,9 +179,7 @@ export default function AuthModal({
                   onChange={(e) => handleInputChange("name", e.target.value)}
                   className={errors.name ? "border-red-500" : ""}
                 />
-                {errors.name && (
-                  <p className="text-sm text-red-500">{errors.name}</p>
-                )}
+                {errors.name && <p className="text-sm text-red-500">{errors.name}</p>}
               </div>
             )}
 
@@ -212,9 +193,7 @@ export default function AuthModal({
                 onChange={(e) => handleInputChange("email", e.target.value)}
                 className={errors.email ? "border-red-500" : ""}
               />
-              {errors.email && (
-                <p className="text-sm text-red-500">{errors.email}</p>
-              )}
+              {errors.email && <p className="text-sm text-red-500">{errors.email}</p>}
             </div>
 
             <div className="space-y-2">
@@ -225,9 +204,7 @@ export default function AuthModal({
                   type={showPassword ? "text" : "password"}
                   placeholder="Enter your password"
                   value={formData.password}
-                  onChange={(e) =>
-                    handleInputChange("password", e.target.value)
-                  }
+                  onChange={(e) => handleInputChange("password", e.target.value)}
                   className={errors.password ? "border-red-500 pr-10" : "pr-10"}
                 />
                 <button
@@ -235,16 +212,10 @@ export default function AuthModal({
                   className="absolute right-3 top-1/2 transform -translate-y-1/2"
                   onClick={() => setShowPassword(!showPassword)}
                 >
-                  {showPassword ? (
-                    <EyeOff className="h-4 w-4" />
-                  ) : (
-                    <Eye className="h-4 w-4" />
-                  )}
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
               </div>
-              {errors.password && (
-                <p className="text-sm text-red-500">{errors.password}</p>
-              )}
+              {errors.password && <p className="text-sm text-red-500">{errors.password}</p>}
             </div>
 
             {mode === "signup" && (
@@ -256,30 +227,18 @@ export default function AuthModal({
                     type={showConfirmPassword ? "text" : "password"}
                     placeholder="Confirm your password"
                     value={formData.confirmPassword}
-                    onChange={(e) =>
-                      handleInputChange("confirmPassword", e.target.value)
-                    }
-                    className={
-                      errors.confirmPassword ? "border-red-500 pr-10" : "pr-10"
-                    }
+                    onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
+                    className={errors.confirmPassword ? "border-red-500 pr-10" : "pr-10"}
                   />
                   <button
                     type="button"
                     className="absolute right-3 top-1/2 transform -translate-y-1/2"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   >
-                    {showConfirmPassword ? (
-                      <EyeOff className="h-4 w-4" />
-                    ) : (
-                      <Eye className="h-4 w-4" />
-                    )}
+                    {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
                 </div>
-                {errors.confirmPassword && (
-                  <p className="text-sm text-red-500">
-                    {errors.confirmPassword}
-                  </p>
-                )}
+                {errors.confirmPassword && <p className="text-sm text-red-500">{errors.confirmPassword}</p>}
               </div>
             )}
 
@@ -307,20 +266,14 @@ export default function AuthModal({
             {mode === "login" ? (
               <p>
                 Don't have an account?{" "}
-                <button
-                  className="text-blue-600 hover:text-blue-500 font-medium"
-                  onClick={() => setMode("signup")}
-                >
+                <button className="text-blue-600 hover:text-blue-500 font-medium" onClick={() => setMode("signup")}>
                   Sign up
                 </button>
               </p>
             ) : (
               <p>
                 Already have an account?{" "}
-                <button
-                  className="text-blue-600 hover:text-blue-500 font-medium"
-                  onClick={() => setMode("login")}
-                >
+                <button className="text-blue-600 hover:text-blue-500 font-medium" onClick={() => setMode("login")}>
                   Sign in
                 </button>
               </p>
@@ -329,5 +282,5 @@ export default function AuthModal({
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }

@@ -32,7 +32,7 @@ class MockSessionResponse(BaseModel):
     completed_at: Optional[datetime]
     
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class AnswerSubmission(BaseModel):
     question_index: int
@@ -55,4 +55,4 @@ class UserResponseResponse(BaseModel):
     created_at: datetime
     
     class Config:
-        orm_mode = True
+        from_attributes = True

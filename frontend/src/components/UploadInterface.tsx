@@ -1,15 +1,16 @@
 "use client"
 
 import type React from "react"
-
 import { useState, useRef } from "react"
-import { Button } from "../components/ui/button"
-import { Card, CardContent, CardHeader } from "../components/ui/card"
-import { Textarea } from "../components/ui/textarea"
-import { Label } from "../components/ui/label"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader } from "@/components/ui/card"
+import { Textarea } from "@/components/ui/textarea"
+import { Label } from "@/components/ui/label"
 import { Upload, FileText, Loader2, AlertCircle } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 import type { MockSession } from "../App"
+
+const API_BASE_URL = "http://localhost:8000" // adjust if needed
 
 interface UploadInterfaceProps {
   setMockSession: (session: MockSession) => void
@@ -47,33 +48,22 @@ export default function UploadInterface({
     e.preventDefault()
     e.stopPropagation()
     setDragActive(false)
-
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      const file = e.dataTransfer.files[0]
-      if (
-        file.type === "application/pdf" ||
-        file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-      ) {
-        setResumeFile(file)
-        setError(null)
-      } else {
-        setError("Please upload a PDF or DOCX file")
-      }
+    const file = e.dataTransfer.files?.[0]
+    if (file && (file.type === "application/pdf" || file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document")) {
+      setResumeFile(file)
+      setError(null)
+    } else {
+      setError("Please upload a PDF or DOCX file")
     }
   }
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0]
-      if (
-        file.type === "application/pdf" ||
-        file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-      ) {
-        setResumeFile(file)
-        setError(null)
-      } else {
-        setError("Please upload a PDF or DOCX file")
-      }
+    const file = e.target.files?.[0]
+    if (file && (file.type === "application/pdf" || file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document")) {
+      setResumeFile(file)
+      setError(null)
+    } else {
+      setError("Please upload a PDF or DOCX file")
     }
   }
 
@@ -82,76 +72,66 @@ export default function UploadInterface({
     setError(null)
 
     try {
-      // Simulate API call - replace with actual API endpoint
-      await new Promise((resolve) => setTimeout(resolve, 2000))
+      let response: Response
 
-      // Mock response data
+      if (activeTab === "resume" && resumeFile) {
+        const formData = new FormData()
+        formData.append("file", resumeFile)
+
+        response = await fetch(`${API_BASE_URL}/upload/resume`, {
+          method: "POST",
+          body: formData,
+          // headers: { Authorization: `Bearer ${yourToken}` }, // add token if needed
+        })
+      } else if (activeTab === "jd" && jobDescription.trim().length > 50) {
+        response = await fetch(`${API_BASE_URL}/upload/job-description`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            // Authorization: `Bearer ${yourToken}`, // add token if needed
+          },
+          body: JSON.stringify({ job_description: jobDescription }),
+        })
+      } else {
+        throw new Error("Invalid input. Provide a resume or job description.")
+      }
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.detail || "Failed to generate questions")
+      }
+
+      const session = await response.json()
+
+      const processedQuestions = session.questions.map((q: any, index: number) => ({
+        id: index.toString(),
+        type: q.type || "mcq",
+        question: q.question,
+        options: q.options || [],
+        correctAnswer: q.answer || "",
+        points: 10,
+      }))
+
       const mockSession: MockSession = {
-        id: "session-" + Date.now(),
+        id: session.id,
         currentQuestionIndex: 0,
         score: 0,
-        totalQuestions: 5,
+        totalQuestions: session.total_questions,
         isCompleted: false,
-        questions: [
-          {
-            id: "1",
-            type: "mcq",
-            question: "What is the time complexity of binary search?",
-            options: ["O(n)", "O(log n)", "O(n²)", "O(1)"],
-            correctAnswer: "O(log n)",
-            points: 10,
-          },
-          {
-            id: "2",
-            type: "qa",
-            question: "Explain the difference between let, const, and var in JavaScript.",
-            points: 15,
-          },
-          {
-            id: "3",
-            type: "mcq",
-            question: "Which HTTP status code indicates a successful request?",
-            options: ["404", "500", "200", "301"],
-            correctAnswer: "200",
-            points: 10,
-          },
-          {
-            id: "4",
-            type: "qa",
-            question: "Describe your experience with React hooks and provide an example.",
-            points: 20,
-          },
-          {
-            id: "5",
-            type: "mcq",
-            question: "What does REST stand for?",
-            options: [
-              "Representational State Transfer",
-              "Remote State Transfer",
-              "Relational State Transfer",
-              "Reactive State Transfer",
-            ],
-            correctAnswer: "Representational State Transfer",
-            points: 10,
-          },
-        ],
+        questions: processedQuestions,
       }
 
       setMockSession(mockSession)
       navigate("/questions")
-    } catch (err) {
-      setError("Failed to generate questions. Please try again.")
+    } catch (err: any) {
+      setError(err.message || "An error occurred.")
     } finally {
       setIsLoading(false)
     }
   }
 
   const canSubmit = () => {
-    if (activeTab === "resume") {
-      return resumeFile !== null
-    } else {
-      return jobDescription.trim().length > 50
-    }
+    return activeTab === "resume" ? resumeFile !== null : jobDescription.trim().length > 50
   }
 
   return (
@@ -159,9 +139,7 @@ export default function UploadInterface({
       <div className="container mx-auto px-4 max-w-4xl">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Upload Your Information</h1>
-          <p className="text-gray-600">
-            Upload your resume or provide a job description to generate personalized mock interview questions
-          </p>
+          <p className="text-gray-600">Upload your resume or provide a job description to generate personalized mock interview questions</p>
         </div>
 
         <Card className="mb-6">
@@ -233,7 +211,7 @@ export default function UploadInterface({
                 <Label htmlFor="job-description">Job Description</Label>
                 <Textarea
                   id="job-description"
-                  placeholder="Paste the job description here... Include requirements, responsibilities, and any specific skills mentioned."
+                  placeholder="Paste the job description here..."
                   value={jobDescription}
                   onChange={(e) => setJobDescription(e.target.value)}
                   className="min-h-[200px]"

@@ -180,7 +180,7 @@ class FileProcessor:
         client = Groq(api_key=settings.chatgroq_api_key)
 
         response = client.chat.completions.create(
-            model="llama3-70b-8192",
+            model="llama-3.3-70b-versatile",
             messages=[
                 {
                     "role": "user",
@@ -188,7 +188,7 @@ class FileProcessor:
                 }
             ],
             temperature=0.6,
-            max_tokens=1500,
+            max_tokens=2000,
         )
 
         try:
@@ -243,6 +243,11 @@ class FileProcessor:
             "- requirements (list)\n"
             "- qualifications (list)\n"
             "- skills: (list of technical and soft skills)\n"
+                "languages: [...], \n"
+                "data_science: [...]\n"
+                "full_stack: [...]\n"
+                "databases: [...]\n"
+                "technologies: [...]\n"
             "- raw_text: (include original text)\n\n"
             "Respond ONLY with valid JSON and no extra text."
             f"Job Description:\n{normalized_content}\n\n"

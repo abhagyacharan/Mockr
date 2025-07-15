@@ -1,31 +1,21 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Progress } from "@/components/ui/progress";
 import { Clock, CheckCircle, ArrowRight, ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import type { MockSession } from "../App";
 
-interface QuestionDisplayProps {
-  mockSession: MockSession | null;
-  setMockSession: (session: MockSession) => void;
-}
+import { useMockSession } from "@/context/MockSessionContext";;
 
 export default function QuestionDisplay({
-  mockSession,
-  setMockSession,
-}: QuestionDisplayProps) {
+}) {
   const [currentAnswer, setCurrentAnswer] = useState("");
   const [timeLeft, setTimeLeft] = useState(300); // 5 minutes per question
   const [isAnswered, setIsAnswered] = useState(false);
   const navigate = useNavigate();
-
+  const { mockSession, setMockSession } = useMockSession();
+  
   useEffect(() => {
+    console.log("mockSession in QuestionDisplay:", mockSession);
     if (!mockSession) {
       navigate("/");
       return;
@@ -69,26 +59,52 @@ export default function QuestionDisplay({
     setCurrentAnswer(value);
   };
 
-  const handleSubmitAnswer = () => {
+  const handleSubmitAnswer = async () => {
+  const sessionId = mockSession.id;
+  const token = localStorage.getItem("access_token");
+
+  if (!token) {
+    console.error("No access token found");
+    return;
+  }
+
+  const answerPayload = {
+    question_index: mockSession.currentQuestionIndex,
+    question_text: currentQuestion.question,
+    question_type: currentQuestion.type,
+    user_answer: currentAnswer,
+    points: 100,
+    time_taken: 300 - timeLeft, // calculate time spent
+  };
+
+  try {
+    const res = await fetch(`http://localhost:8000/api/mock-sessions/${sessionId}/submit`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(answerPayload),
+    });
+
+    if (!res.ok) {
+      const errorData = await res.json();
+      console.error("Failed to submit answer:", errorData.detail);
+      return;
+    }
+
+    const responseData = await res.json();
+
     const updatedQuestions = [...mockSession.questions];
     updatedQuestions[mockSession.currentQuestionIndex] = {
       ...currentQuestion,
       userAnswer: currentAnswer,
+      is_correct: responseData.is_correct,
+      feedback: responseData.feedback,
+      score: responseData.score,
     };
 
-    let newScore = mockSession.score;
-    if (
-      currentQuestion.type === "mcq" &&
-      currentAnswer === currentQuestion.correctAnswer
-    ) {
-      newScore += currentQuestion.points || 0;
-    } else if (
-      currentQuestion.type === "qa" &&
-      currentAnswer.trim().length > 20
-    ) {
-      // Simple scoring for QA - in real app, this would be more sophisticated
-      newScore += Math.floor((currentQuestion.points || 0) * 0.7);
-    }
+    const newScore = mockSession.score + (responseData.score || 0);
 
     setMockSession({
       ...mockSession,
@@ -97,7 +113,10 @@ export default function QuestionDisplay({
     });
 
     setIsAnswered(true);
-  };
+  } catch (err) {
+    console.error("Error submitting answer:", err);
+  }
+};
 
   const handleNextQuestion = () => {
     if (mockSession.currentQuestionIndex < mockSession.totalQuestions - 1) {
@@ -147,21 +166,21 @@ export default function QuestionDisplay({
             </div>
           </div>
           {/* Progress Bar */}
-          <div className="relative h-4 w-full overflow-hidden rounded-full bg-secondary bg-gray-200">
+          <div className="relative h-4 w-full overflow-hidden rounded-full bg-gray-200">
             <div
-              className="h-full w-full flex-1 bg-primary transition-all bg-blue-600"
+              className="h-full w-full flex-1 transition-all bg-blue-600"
               style={{ transform: `translateX(-${100 - progress}%)` }}
             />
           </div>
         </div>
 
         {/* Question Card */}
-        <div className="rounded-lg border bg-card text-card-foreground shadow-sm mb-6 bg-white border-gray-200">
+        <div className="rounded-lg border bg-card text-card-foreground shadow-sm mb-6 border-gray-200">
           <div className="flex flex-col space-y-1.5 p-6">
             <h3 className="text-2xl font-semibold leading-none tracking-tight flex items-center justify-between">
               <span>Question {mockSession.currentQuestionIndex + 1}</span>
               <span className="text-sm font-normal text-gray-600">
-                {currentQuestion.points} points
+                {currentQuestion.score} points
               </span>
             </h3>
           </div>
@@ -224,7 +243,7 @@ export default function QuestionDisplay({
                     value={currentAnswer}
                     onChange={(e) => handleAnswerChange(e.target.value)}
                     disabled={isAnswered}
-                    className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 min-h-[150px] border-gray-300 bg-white focus-visible:ring-blue-500"
+                    className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                   />
                   <p className="text-sm text-gray-500">
                     {currentAnswer.length} characters (minimum 20 for scoring)
@@ -250,7 +269,7 @@ export default function QuestionDisplay({
           <button
             onClick={handlePreviousQuestion}
             disabled={mockSession.currentQuestionIndex === 0}
-            className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 border-gray-300 bg-white hover:bg-gray-50 text-gray-900"
+            className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 text-gray-900"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
             Previous
@@ -261,14 +280,14 @@ export default function QuestionDisplay({
               <button
                 onClick={handleSubmitAnswer}
                 disabled={!currentAnswer.trim()}
-                className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 bg-blue-600 text-white hover:bg-blue-700"
+                className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 text-primary-foreground h-10 px-4 py-2 bg-blue-600 hover:bg-blue-700"
               >
                 Submit Answer
               </button>
             ) : (
               <button
                 onClick={handleNextQuestion}
-                className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 bg-blue-600 text-white hover:bg-blue-700"
+                className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 text-primary-foreground h-10 px-4 py-2 bg-blue-600 hover:bg-blue-700"
               >
                 {mockSession.currentQuestionIndex <
                 mockSession.totalQuestions - 1 ? (

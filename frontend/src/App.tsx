@@ -1,80 +1,100 @@
-"use client"
+"use client";
 
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
-import LandingPage from "./components/LandingPage"
-import UploadInterface from "./components/UploadInterface"
-import QuestionDisplay from "./components/QuestionDisplay"
-import ResultsPage from "./components/ResultsPage"
-import { useState } from "react"
-import AuthModal from "./components/AuthModal"
-import Dashboard from "./components/Dashboard"
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import LandingPage from "./components/LandingPage";
+import UploadInterface from "./components/UploadInterface";
+import QuestionDisplay from "./components/QuestionDisplay";
+import ResultsPage from "./components/ResultsPage";
+import { useState } from "react";
+import AuthModal from "./components/AuthModal";
+import Dashboard from "./components/Dashboard";
+
+import { MockSessionProvider } from "./context/MockSessionContext";
 
 export interface Question {
-  id: string
-  type: "mcq" | "qa"
-  question: string
-  options?: string[]
-  correctAnswer?: string
-  userAnswer?: string
-  points?: number
-  is_correct?: "correct" | "incorrect" | "ungraded"
-  feedback?: string
+  id: string;
+  type: "mcq" | "qa";
+  question: string;
+  options?: string[];
+  correctAnswer?: string;
+  userAnswer?: string;
+  score?: number;
+  is_correct?: "correct" | "incorrect" | "ungraded";
+  feedback?: string;
 }
 
 export interface MockSession {
-  id: string
-  questions: Question[]
-  currentQuestionIndex: number
-  score: number
-  totalQuestions: number
-  isCompleted: boolean
+  id: string;
+  questions: Question[];
+  currentQuestionIndex: number;
+  score: number;
+  totalQuestions: number;
+  isCompleted: boolean;
 }
 
 function App() {
-  const [mockSession, setMockSession] = useState<MockSession | null>(null)
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false)
-  const [user, setUser] = useState<{ id: string; name: string; email: string } | null>(null)
-  const [authMode, setAuthMode] = useState<"login" | "signup">("signup")
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [user, setUser] = useState<{
+    id: string;
+    name: string;
+    email: string;
+  } | null>(null);
+  const [authMode, setAuthMode] = useState<"login" | "signup">("signup");
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Router>
-        <Routes>
-          <Route
-            path="/"
-            element={<LandingPage setIsAuthModalOpen={setIsAuthModalOpen} setAuthMode={setAuthMode} user={user} />}
+      <MockSessionProvider>
+        <Router>
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <LandingPage
+                  setIsAuthModalOpen={setIsAuthModalOpen}
+                  setAuthMode={setAuthMode}
+                  user={user}
+                />
+              }
+            />
+            <Route
+              path="/upload"
+              element={
+                <UploadInterface
+                  setIsLoading={setIsLoading}
+                  setError={setError}
+                  isLoading={isLoading}
+                  error={error}
+                />
+              }
+            />
+            <Route
+              path="/questions"
+              element={
+                <QuestionDisplay />
+              }
+            />
+            <Route
+              path="/results"
+              element={<ResultsPage />}
+            />
+            <Route
+              path="/dashboard"
+              element={<Dashboard user={user} setUser={setUser} />}
+            />
+          </Routes>
+          <AuthModal
+            isOpen={isAuthModalOpen}
+            onClose={() => setIsAuthModalOpen(false)}
+            mode={authMode}
+            setMode={setAuthMode}
+            setUser={setUser}
           />
-          <Route
-            path="/upload"
-            element={
-              <UploadInterface
-                setMockSession={setMockSession}
-                setIsLoading={setIsLoading}
-                setError={setError}
-                isLoading={isLoading}
-                error={error}
-              />
-            }
-          />
-          <Route
-            path="/questions"
-            element={<QuestionDisplay mockSession={mockSession} setMockSession={setMockSession} />}
-          />
-          <Route path="/results" element={<ResultsPage mockSession={mockSession} />} />
-          <Route path="/dashboard" element={<Dashboard user={user} setUser={setUser} />} />
-        </Routes>
-        <AuthModal
-        isOpen={isAuthModalOpen}
-        onClose={() => setIsAuthModalOpen(false)}
-        mode={authMode}
-        setMode={setAuthMode}
-        setUser={setUser}
-      />
-      </Router>
+        </Router>
+      </MockSessionProvider>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;

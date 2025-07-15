@@ -1,9 +1,5 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
-import { Badge } from "@/components/ui/badge";
 import {
   Trophy,
   Target,
@@ -14,14 +10,12 @@ import {
   Home,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import type { MockSession } from "../App";
 
-interface ResultsPageProps {
-  mockSession: MockSession | null;
-}
+import { useMockSession } from "@/context/MockSessionContext";
 
-export default function ResultsPage({ mockSession }: ResultsPageProps) {
+export default function ResultsPage() {
   const navigate = useNavigate();
+  const { mockSession } = useMockSession();
 
   if (!mockSession) {
     navigate("/");
@@ -29,7 +23,7 @@ export default function ResultsPage({ mockSession }: ResultsPageProps) {
   }
 
   const totalPossiblePoints = mockSession.questions.reduce(
-    (sum, q) => sum + (q.points || 0),
+    (sum, q) => sum + (q.score || 0),
     0
   );
   const scorePercentage = (mockSession.score / totalPossiblePoints) * 100;
@@ -80,8 +74,11 @@ export default function ResultsPage({ mockSession }: ResultsPageProps) {
     }
   };
 
-  function getScoreBadgeVariant(scorePercentage: number) {
-    throw new Error("Function not implemented.");
+  function getScoreBadgeVariant(scorePercentage: number): string {
+    if (scorePercentage >= 90) return "bg-green-200 text-green-800";
+    if (scorePercentage >= 70) return "bg-yellow-200 text-yellow-800";
+    if (scorePercentage >= 50) return "bg-orange-200 text-orange-800";
+    return "bg-red-200 text-red-800";
   }
 
   return (
@@ -111,7 +108,7 @@ export default function ResultsPage({ mockSession }: ResultsPageProps) {
         </div>
 
         {/* Score Overview */}
-        <div className="rounded-lg border bg-card text-card-foreground shadow-sm mb-8 bg-white border-gray-200">
+        <div className="rounded-lg border bg-card text-card-foreground shadow-sm mb-8 border-gray-200">
           <div className="flex flex-col space-y-1.5 p-6">
             <h3 className="text-2xl font-semibold leading-none tracking-tight">
               Overall Score
@@ -130,7 +127,7 @@ export default function ResultsPage({ mockSession }: ResultsPageProps) {
                 {mockSession.score} out of {totalPossiblePoints} points
               </div>
               <span
-                className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 text-lg px-4 py-1 ${getScoreBadgeVariant(
+                className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 ${getScoreBadgeVariant(
                   scorePercentage
                 )}`}
               >
@@ -138,9 +135,9 @@ export default function ResultsPage({ mockSession }: ResultsPageProps) {
               </span>
             </div>
             {/* Progress Bar */}
-            <div className="relative h-4 w-full overflow-hidden rounded-full bg-secondary bg-gray-200 mb-4">
+            <div className="relative h-4 w-full overflow-hidden rounded-full bg-gray-200 mb-4">
               <div
-                className="h-full w-full flex-1 bg-primary transition-all bg-blue-600"
+                className="h-full w-full flex-1 transition-all bg-blue-600"
                 style={{ transform: `translateX(-${100 - scorePercentage}%)` }}
               />
             </div>
@@ -180,7 +177,7 @@ export default function ResultsPage({ mockSession }: ResultsPageProps) {
         </div>
 
         {/* Question Breakdown */}
-        <div className="rounded-lg border bg-card text-card-foreground shadow-sm mb-8 bg-white border-gray-200">
+        <div className="rounded-lg border bg-card text-card-foreground shadow-sm mb-8 border-gray-200">
           <div className="flex flex-col space-y-1.5 p-6">
             <h3 className="text-2xl font-semibold leading-none tracking-tight">
               Question Breakdown
@@ -218,7 +215,7 @@ export default function ResultsPage({ mockSession }: ResultsPageProps) {
                               : "Open Ended"}
                           </span>
                           <span className="text-sm text-gray-600">
-                            {question.points} pts
+                            {question.score} pts
                           </span>
                         </div>
                         <p className="text-gray-700 mb-2">
@@ -277,7 +274,7 @@ export default function ResultsPage({ mockSession }: ResultsPageProps) {
         </div>
 
         {/* Recommendations */}
-        <div className="rounded-lg border bg-card text-card-foreground shadow-sm mb-8 bg-white border-gray-200">
+        <div className="rounded-lg border bg-card text-card-foreground shadow-sm mb-8 border-gray-200">
           <div className="flex flex-col space-y-1.5 p-6">
             <h3 className="text-2xl font-semibold leading-none tracking-tight">
               Recommendations
@@ -300,15 +297,15 @@ export default function ResultsPage({ mockSession }: ResultsPageProps) {
         {/* Actions */}
         <div className="flex justify-center space-x-4">
           <button
-            onClick={() => navigate("/")}
-            className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 border-gray-300 bg-white hover:bg-gray-50 text-gray-900"
+            onClick={() => navigate("/dashboard")}
+            className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border  hover:text-accent-foreground h-10 px-4 py-2 border-gray-300 bg-white hover:bg-gray-50 text-gray-900"
           >
             <Home className="mr-2 h-4 w-4" />
-            Back to Home
+            Back to Dashboard
           </button>
           <button
             onClick={() => navigate("/upload")}
-            className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 bg-blue-600 text-white hover:bg-blue-700"
+            className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-10 px-4 py-2 bg-blue-600 text-white hover:bg-blue-700"
           >
             <RotateCcw className="mr-2 h-4 w-4" />
             Take Another Mock Interview

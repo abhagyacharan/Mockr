@@ -5,6 +5,7 @@ import { useState, useRef } from "react";
 import { Upload, FileText, Loader2, AlertCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import type { MockSession } from "../App";
+import DifficultySelector from "./ChooseDifficulty";
 
 import { useMockSession } from "@/context/MockSessionContext";
 import LoadingScreen from "./LoadingScreen"; // ✅ Import the new component
@@ -28,9 +29,11 @@ export default function UploadInterface({
   const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [jobDescription, setJobDescription] = useState("");
   const [mockName, setMockName] = useState("");
-  const [practiceMode, setPracticeMode] = useState<"mcq" | "qa" | "both">(
-    "mcq"
-  );
+  const [numQuestions, setNumQuestions] = useState(10);
+  const [practiceMode, setPracticeMode] = useState<"mcq" | "qa">("mcq");
+  const [selectedDifficulty, setSelectedDifficulty] = useState<
+    "easy" | "medium" | "hard"
+  >("medium");
   const [dragActive, setDragActive] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
@@ -113,6 +116,9 @@ export default function UploadInterface({
         const formData = new FormData();
         formData.append("file", resumeFile);
         formData.append("mock_name", mockName);
+        formData.append("num_questions", numQuestions.toString());
+        formData.append("difficulty", selectedDifficulty);
+        formData.append("practice_mode", practiceMode);
 
         response = await fetch(`${API_BASE_URL}/resumes/upload/`, {
           method: "POST",
@@ -120,14 +126,23 @@ export default function UploadInterface({
           headers: { Authorization: `Bearer ${token}` },
         });
       } else if (activeTab === "jd" && jobDescription.trim().length > 50) {
-        response = await fetch(`${API_BASE_URL}/job-descriptions/`, {
+        const formData = new FormData();
+        formData.append("title", mockName || "Untitled JD");
+        formData.append("company", ""); // optional, or collect from user
+        formData.append("content", jobDescription);
+        formData.append("mock_name", mockName || "Untitled JD");
+        formData.append("num_questions", numQuestions.toString());
+        formData.append("difficulty", selectedDifficulty);
+        formData.append("practice_mode", practiceMode);
+
+        response = await fetch(`${API_BASE_URL}/job-descriptions/upload/`, {
           method: "POST",
           headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${token}`, // ✅ DO NOT set Content-Type
           },
-          body: JSON.stringify({ job_description: jobDescription }),
+          body: formData,
         });
+        console.log(response);
       } else {
         throw new Error("Invalid input. Provide a resume or job description.");
       }
@@ -226,23 +241,44 @@ export default function UploadInterface({
           <div className="p-6 pt-0">
             {activeTab === "resume" ? (
               <div className="space-y-4">
-                <div>
-                  <label
-                    htmlFor="mock-name"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Mock Name
-                  </label>
-                  <input
-                    type="text"
-                    id="mock-name"
-                    value={mockName}
-                    onChange={(e) => setMockName(e.target.value)}
-                    placeholder="e.g. Full Stack Developer"
-                    className="w-full rounded-md border px-3 py-2 text-sm"
-                  />
+                <div className="flex gap-4 items-end">
+                  <div className="w-[70%]">
+                    <label
+                      htmlFor="mock-name"
+                      className="block text-sm font-medium text-gray-700"
+                    >
+                      Mock Name
+                    </label>
+                    <input
+                      type="text"
+                      id="mock-name"
+                      value={mockName}
+                      onChange={(e) => setMockName(e.target.value)}
+                      placeholder="e.g. Full Stack Developer"
+                      className="w-full rounded-md border px-3 py-2 text-sm"
+                    />
+                  </div>
+                  <div className="w-[30%]">
+                    <label
+                      htmlFor="num-questions"
+                      className="block text-sm font-medium text-gray-700"
+                    >
+                      # Questions
+                    </label>
+                    <input
+                      type="number"
+                      id="num-questions"
+                      min={1}
+                      max={50}
+                      placeholder="e.g. 10"
+                      className="w-full rounded-md border px-3 py-2 text-sm"
+                      value={numQuestions}
+                      onChange={(e) => setNumQuestions(Number(e.target.value))}
+                    />
+                  </div>
                 </div>
-                <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 mt-4">
+
+                <div className="rounded-lg border border-gray-200 bg-gradient-to-br from-white to-blue-50 p-4 mt-4">
                   <h2 className="text-sm font-medium text-gray-900 mb-1">
                     Choose Practice Mode
                   </h2>
@@ -292,6 +328,10 @@ export default function UploadInterface({
                     </label>
                   </div>
                 </div>
+                <DifficultySelector
+                  selectedDifficulty={selectedDifficulty}
+                  setSelectedDifficulty={setSelectedDifficulty}
+                />
                 <div
                   className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
                     dragActive
@@ -339,24 +379,44 @@ export default function UploadInterface({
               </div>
             ) : (
               <div className="space-y-4">
-                <div>
-                  <label
-                    htmlFor="mock-name"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Mock Name
-                  </label>
-                  <input
-                    type="text"
-                    id="mock-name"
-                    value={mockName}
-                    onChange={(e) => setMockName(e.target.value)}
-                    placeholder="e.g. Full Stack Developer"
-                    className="w-full rounded-md border px-3 py-2 text-sm"
-                  />
+                <div className="flex gap-4 items-end">
+                  <div className="w-[70%]">
+                    <label
+                      htmlFor="mock-name"
+                      className="block text-sm font-medium text-gray-700"
+                    >
+                      Mock Name
+                    </label>
+                    <input
+                      type="text"
+                      id="mock-name"
+                      value={mockName}
+                      onChange={(e) => setMockName(e.target.value)}
+                      placeholder="e.g. Full Stack Developer"
+                      className="w-full rounded-md border px-3 py-2 text-sm"
+                    />
+                  </div>
+                  <div className="w-[30%]">
+                    <label
+                      htmlFor="num-questions"
+                      className="block text-sm font-medium text-gray-700"
+                    >
+                      # Questions
+                    </label>
+                    <input
+                      type="number"
+                      id="num-questions"
+                      min={1}
+                      max={50}
+                      placeholder="e.g. 10"
+                      className="w-full rounded-md border px-3 py-2 text-sm"
+                      value={numQuestions}
+                      onChange={(e) => setNumQuestions(Number(e.target.value))}
+                    />
+                  </div>
                 </div>
 
-                <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 mt-4">
+                <div className="rounded-lg border border-gray-200 bg-gradient-to-br from-white to-blue-50 p-4 mt-4">
                   <h2 className="text-sm font-medium text-gray-900 mb-1">
                     Choose Practice Mode
                   </h2>
@@ -407,7 +467,10 @@ export default function UploadInterface({
                     </label>
                   </div>
                 </div>
-
+                <DifficultySelector
+                  selectedDifficulty={selectedDifficulty}
+                  setSelectedDifficulty={setSelectedDifficulty}
+                />
                 <label
                   htmlFor="job-description"
                   className="text-sm font-medium leading-none"

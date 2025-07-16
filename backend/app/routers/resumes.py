@@ -32,6 +32,9 @@ MAX_FILE_SIZE = 10 * 1024 * 1024  # 10MB
 async def upload_resume(
     file: UploadFile = File(...),
     mock_name: str = Form(...),
+    num_questions: str = Form(...),
+    difficulty: str = Form(...),
+    practice_mode: str = Form(...),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
@@ -100,8 +103,8 @@ async def upload_resume(
     # return db_resume
 
     # ➕ Create mock session automatically
-    questions = await FileProcessor.generate_mcq_questions(
-        json.dumps(parsed_data), difficulty="medium"
+    questions = await FileProcessor.generate_questions(
+        json.dumps(parsed_data), difficulty=difficulty, practice_mode=practice_mode, num_questions=num_questions
     )
 
     if not questions:
@@ -120,7 +123,7 @@ async def upload_resume(
         total_questions=len(questions),
         answered_questions=0,
         status="ongoing",
-        difficulty_level="medium",
+        difficulty_level=difficulty,
         created_at=datetime.now(timezone.utc),
     )
 

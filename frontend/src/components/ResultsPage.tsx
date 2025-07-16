@@ -22,10 +22,7 @@ export default function ResultsPage() {
     return null;
   }
 
-  const totalPossiblePoints = mockSession.questions.reduce(
-    (sum, q) => sum + (q.score || 0),
-    0
-  );
+  const totalPossiblePoints = mockSession.totalQuestions * 100;
   const scorePercentage = (mockSession.score / totalPossiblePoints) * 100;
   const correctAnswers = mockSession.questions.filter((q) => {
     if (q.type === "mcq") {
@@ -121,10 +118,10 @@ export default function ResultsPage() {
                   scorePercentage
                 )}`}
               >
-                {Math.round(scorePercentage)}%
+                {Math.round(mockSession.score / totalPossiblePoints * 100)}%
               </div>
               <div className="text-xl text-gray-600 mb-4">
-                {mockSession.score} out of {totalPossiblePoints} points
+                {mockSession.score} out of {mockSession.totalQuestions * 100} points
               </div>
               <span
                 className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 ${getScoreBadgeVariant(

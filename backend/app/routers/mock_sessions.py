@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 from uuid import UUID
 from typing import List
@@ -15,11 +16,12 @@ import json
 
 router = APIRouter()
 
+
 @router.post("/", response_model=MockSessionResponse)
 async def create_mock_session(
     session_data: MockSessionCreate,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_user),
 ):
     """Create a new mock interview session (resume or job_description source)"""
     source_id = session_data.source_id
@@ -27,15 +29,24 @@ async def create_mock_session(
     difficulty = session_data.difficulty_level
 
     if source_type == "resume":
-        resume = db.query(Resume).filter(Resume.id == source_id, Resume.user_id == current_user.id).first()
+        resume = (
+            db.query(Resume)
+            .filter(Resume.id == source_id, Resume.user_id == current_user.id)
+            .first()
+        )
         if not resume:
             raise HTTPException(status_code=404, detail="Resume not found")
         parsed = resume.parsed_data
     else:
-        raise HTTPException(status_code=400, detail="Unsupported source type (only 'resume' supported for now)")
+        raise HTTPException(
+            status_code=400,
+            detail="Unsupported source type (only 'resume' supported for now)",
+        )
 
     # Generate questions from parsed JSON
-    questions = await FileProcessor.generate_mcq_questions(json.dumps(parsed), difficulty)
+    questions = await FileProcessor.generate_mcq_questions(
+        json.dumps(parsed), difficulty
+    )
 
     if not questions:
         raise HTTPException(status_code=500, detail="Failed to generate questions")
@@ -46,7 +57,8 @@ async def create_mock_session(
         user_id=current_user.id,
         source_type=source_type,
         source_id=source_id,
-        session_name=session_data.session_name or f"Mock Session {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M')}",
+        session_name=session_data.session_name
+        or f"Mock Session {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M')}",
         questions=questions,
         total_questions=len(questions),
         answered_questions=0,
@@ -60,37 +72,87 @@ async def create_mock_session(
     db.refresh(db_session)
     return db_session
 
+
 @router.get("/", response_model=List[MockSessionResponse])
 async def list_user_mock_sessions(
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    db: Session = Depends(get_db), current_user: User = Depends(get_current_user)
 ):
     """Get all mock sessions of current user"""
     return db.query(MockSession).filter(MockSession.user_id == current_user.id).all()
+
+
+@router.get("/user-sessions", response_model=List[dict])
+def get_user_sessions(
+    db: Session = Depends(get_db), current_user: User = Depends(get_current_user)
+):
+    """
+    Fetch mock sessions for the current user.
+    """
+    sessions = (
+        db.query(MockSession)
+        .filter(MockSession.user_id == current_user.id)
+        .order_by(MockSession.created_at.desc())
+        .all()
+    )
+
+    return [
+        {
+            "id": str(session.id),
+            "session_name": session.session_name,
+            "date": session.created_at.strftime("%Y-%m-%d"),
+            "type": session.source_type,
+            "totalQuestions": session.total_questions,
+            "score": (
+                (session.answered_questions // session.total_questions) * 100
+                if session.answered_questions > 0
+                else "N/A"
+            ),
+            # "duration": (
+            #     (
+            #         session.completed_at.replace(tzinfo=None)
+            #         - session.created_at.replace(tzinfo=None)
+            #     ).total_seconds()
+            #     // 60
+            # ),
+            "difficulty": session.difficulty_level,
+            "status": session.status,
+        }
+        for session in sessions
+    ]
+
 
 @router.get("/{session_id}", response_model=MockSessionResponse)
 async def get_mock_session(
     session_id: UUID,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_user),
 ):
     """Get details of a specific session"""
-    session = db.query(MockSession).filter(MockSession.id == session_id, MockSession.user_id == current_user.id).first()
+    session = (
+        db.query(MockSession)
+        .filter(MockSession.id == session_id, MockSession.user_id == current_user.id)
+        .first()
+    )
     if not session:
         raise HTTPException(status_code=404, detail="Mock session not found")
     return session
+
 
 @router.delete("/{session_id}")
 async def delete_mock_session(
     session_id: UUID,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_user),
 ):
     """Delete a mock session"""
-    session = db.query(MockSession).filter(MockSession.id == session_id, MockSession.user_id == current_user.id).first()
+    session = (
+        db.query(MockSession)
+        .filter(MockSession.id == session_id, MockSession.user_id == current_user.id)
+        .first()
+    )
     if not session:
         raise HTTPException(status_code=404, detail="Mock session not found")
-    
+
     db.delete(session)
     db.commit()
     return {"message": "Mock session deleted successfully"}

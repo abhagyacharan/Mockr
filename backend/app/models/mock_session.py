@@ -20,7 +20,7 @@ class MockSession(Base):
     status = Column(String(50), default='active')  # active, completed, abandoned
     difficulty_level = Column(String(20), default='medium')
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
-    completed_at = Column(DateTime)
+    completed_at = Column(DateTime, nullable=True)
     
     # Relationships
     user = relationship("User", back_populates="mock_sessions")

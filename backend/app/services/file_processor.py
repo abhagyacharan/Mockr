@@ -180,7 +180,7 @@ class FileProcessor:
         client = Groq(api_key=settings.chatgroq_api_key)
 
         response = client.chat.completions.create(
-            model="llama-3.3-70b-versatile",
+            model="meta-llama/llama-4-scout-17b-16e-instruct",
             messages=[
                 {
                     "role": "user",

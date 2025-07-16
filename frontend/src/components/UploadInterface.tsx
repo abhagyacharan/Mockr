@@ -27,6 +27,10 @@ export default function UploadInterface({
   const [activeTab, setActiveTab] = useState<"resume" | "jd">("resume");
   const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [jobDescription, setJobDescription] = useState("");
+  const [mockName, setMockName] = useState("");
+  const [practiceMode, setPracticeMode] = useState<"mcq" | "qa" | "both">(
+    "mcq"
+  );
   const [dragActive, setDragActive] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
@@ -108,6 +112,7 @@ export default function UploadInterface({
       if (activeTab === "resume" && resumeFile) {
         const formData = new FormData();
         formData.append("file", resumeFile);
+        formData.append("mock_name", mockName);
 
         response = await fetch(`${API_BASE_URL}/resumes/upload/`, {
           method: "POST",
@@ -196,7 +201,7 @@ export default function UploadInterface({
           <div className="p-6">
             <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg">
               <button
-                className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
+                className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors cursor-pointer ${
                   activeTab === "resume"
                     ? "bg-white text-blue-600 shadow-sm"
                     : "text-gray-600 hover:text-gray-900"
@@ -206,7 +211,7 @@ export default function UploadInterface({
                 Upload Resume
               </button>
               <button
-                className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
+                className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors cursor-pointer ${
                   activeTab === "jd"
                     ? "bg-white text-blue-600 shadow-sm"
                     : "text-gray-600 hover:text-gray-900"
@@ -221,6 +226,72 @@ export default function UploadInterface({
           <div className="p-6 pt-0">
             {activeTab === "resume" ? (
               <div className="space-y-4">
+                <div>
+                  <label
+                    htmlFor="mock-name"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Mock Name
+                  </label>
+                  <input
+                    type="text"
+                    id="mock-name"
+                    value={mockName}
+                    onChange={(e) => setMockName(e.target.value)}
+                    placeholder="e.g. Full Stack Developer"
+                    className="w-full rounded-md border px-3 py-2 text-sm"
+                  />
+                </div>
+                <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 mt-4">
+                  <h2 className="text-sm font-medium text-gray-900 mb-1">
+                    Choose Practice Mode
+                  </h2>
+                  <p className="text-sm text-gray-500 mb-3">
+                    Select how you'd like to practice your interview
+                  </p>
+                  <div className="flex space-x-4">
+                    <label
+                      className={`flex-1 border rounded-lg p-4 cursor-pointer transition ${
+                        practiceMode === "mcq"
+                          ? "border-blue-600 bg-white"
+                          : "border-gray-200 bg-gray-100"
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name="practiceMode"
+                        value="mcq"
+                        checked={practiceMode === "mcq"}
+                        onChange={() => setPracticeMode("mcq")}
+                        className="sr-only"
+                      />
+                      <div className="font-medium text-sm mb-1">MCQ Mode</div>
+                      <div className="text-xs text-gray-500">
+                        Multiple choice questions for quick practice
+                      </div>
+                    </label>
+                    <label
+                      className={`flex-1 border rounded-lg p-4 cursor-pointer transition ${
+                        practiceMode === "qa"
+                          ? "border-blue-600 bg-white"
+                          : "border-gray-200 bg-gray-100"
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name="practiceMode"
+                        value="qa"
+                        checked={practiceMode === "qa"}
+                        onChange={() => setPracticeMode("qa")}
+                        className="sr-only"
+                      />
+                      <div className="font-medium text-sm mb-1">Q&A Mode</div>
+                      <div className="text-xs text-gray-500">
+                        Open-ended questions with text responses
+                      </div>
+                    </label>
+                  </div>
+                </div>
                 <div
                   className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
                     dragActive
@@ -240,7 +311,7 @@ export default function UploadInterface({
                     <p className="text-gray-600">
                       or{" "}
                       <button
-                        className="text-blue-600 hover:text-blue-500 font-medium"
+                        className="text-blue-600 hover:text-blue-500 font-medium cursor-pointer"
                         onClick={() => fileInputRef.current?.click()}
                       >
                         browse files
@@ -258,6 +329,7 @@ export default function UploadInterface({
                     onChange={handleFileChange}
                   />
                 </div>
+
                 {resumeFile && (
                   <div className="flex items-center space-x-2 text-sm text-green-600">
                     <FileText className="h-4 w-4" />
@@ -267,6 +339,75 @@ export default function UploadInterface({
               </div>
             ) : (
               <div className="space-y-4">
+                <div>
+                  <label
+                    htmlFor="mock-name"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Mock Name
+                  </label>
+                  <input
+                    type="text"
+                    id="mock-name"
+                    value={mockName}
+                    onChange={(e) => setMockName(e.target.value)}
+                    placeholder="e.g. Full Stack Developer"
+                    className="w-full rounded-md border px-3 py-2 text-sm"
+                  />
+                </div>
+
+                <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 mt-4">
+                  <h2 className="text-sm font-medium text-gray-900 mb-1">
+                    Choose Practice Mode
+                  </h2>
+                  <p className="text-sm text-gray-500 mb-3">
+                    Select how you'd like to practice your interview
+                  </p>
+                  <div className="flex space-x-4">
+                    <label
+                      className={`flex-1 border rounded-lg p-4 cursor-pointer transition ${
+                        practiceMode === "mcq"
+                          ? "border-blue-600 bg-white"
+                          : "border-gray-200 bg-gray-100"
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name="practiceMode"
+                        value="mcq"
+                        checked={practiceMode === "mcq"}
+                        onChange={() => setPracticeMode("mcq")}
+                        className="sr-only"
+                      />
+                      <div className="font-medium text-sm mb-1">MCQ Mode</div>
+                      <div className="text-xs text-gray-500">
+                        Multiple choice questions for quick practice
+                      </div>
+                    </label>
+
+                    <label
+                      className={`flex-1 border rounded-lg p-4 cursor-pointer transition ${
+                        practiceMode === "qa"
+                          ? "border-blue-600 bg-white"
+                          : "border-gray-200 bg-gray-100"
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name="practiceMode"
+                        value="qa"
+                        checked={practiceMode === "qa"}
+                        onChange={() => setPracticeMode("qa")}
+                        className="sr-only"
+                      />
+                      <div className="font-medium text-sm mb-1">Q&A Mode</div>
+                      <div className="text-xs text-gray-500">
+                        Open-ended questions with text responses
+                      </div>
+                    </label>
+                  </div>
+                </div>
+
                 <label
                   htmlFor="job-description"
                   className="text-sm font-medium leading-none"

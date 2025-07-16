@@ -37,5 +37,5 @@ async def get_current_user(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Inactive user"
         )
-    
+    print("Fetching current user from token...")
     return user

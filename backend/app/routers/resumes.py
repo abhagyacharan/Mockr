@@ -1,6 +1,6 @@
 # app/routers/resumes.py
 from uuid import uuid4
-from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File
+from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File, Form
 from sqlalchemy.orm import Session
 from typing import List
 from app.database import get_db
@@ -31,6 +31,7 @@ MAX_FILE_SIZE = 10 * 1024 * 1024  # 10MB
 )
 async def upload_resume(
     file: UploadFile = File(...),
+    mock_name: str = Form(...),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
@@ -114,7 +115,7 @@ async def upload_resume(
         user_id=current_user.id,
         source_type="resume",
         source_id=db_resume.id,
-        session_name=f"Resume Session {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M')}",
+        session_name=mock_name,
         questions=questions,
         total_questions=len(questions),
         answered_questions=0,

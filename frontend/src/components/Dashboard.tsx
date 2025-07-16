@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Brain,
   History,
@@ -22,45 +22,45 @@ interface DashboardProps {
   setUser: (user: null) => void;
 }
 
-// Mock data for user history and analytics
-const mockHistory = [
-  {
-    id: "session-1",
-    date: "2024-01-15",
-    type: "Resume-based",
-    score: 85,
-    totalQuestions: 5,
-    duration: "12 min",
-    status: "completed",
-  },
-  {
-    id: "session-2",
-    date: "2024-01-12",
-    type: "Job Description",
-    score: 72,
-    totalQuestions: 6,
-    duration: "15 min",
-    status: "completed",
-  },
-  {
-    id: "session-3",
-    date: "2024-01-10",
-    type: "Resume-based",
-    score: 91,
-    totalQuestions: 4,
-    duration: "10 min",
-    status: "completed",
-  },
-  {
-    id: "session-4",
-    date: "2024-01-08",
-    type: "Job Description",
-    score: 68,
-    totalQuestions: 7,
-    duration: "18 min",
-    status: "completed",
-  },
-];
+// // Mock data for user history and analytics
+// const mockHistory = [
+//   {
+//     id: "session-1",
+//     date: "2024-01-15",
+//     type: "Resume-based",
+//     score: 85,
+//     totalQuestions: 5,
+//     difficulty: "12 min",
+//     status: "completed",
+//   },
+//   {
+//     id: "session-2",
+//     date: "2024-01-12",
+//     type: "Job Description",
+//     score: 72,
+//     totalQuestions: 6,
+//     difficulty: "15 min",
+//     status: "completed",
+//   },
+//   {
+//     id: "session-3",
+//     date: "2024-01-10",
+//     type: "Resume-based",
+//     score: 91,
+//     totalQuestions: 4,
+//     difficulty: "10 min",
+//     status: "completed",
+//   },
+//   {
+//     id: "session-4",
+//     date: "2024-01-08",
+//     type: "Job Description",
+//     score: 68,
+//     totalQuestions: 7,
+//     difficulty: "18 min",
+//     status: "completed",
+//   },
+// ];
 
 const performanceMetrics = {
   totalSessions: 12,
@@ -74,7 +74,53 @@ const performanceMetrics = {
 
 export default function Dashboard({ user, setUser }: DashboardProps) {
   const [activeTab, setActiveTab] = useState("overview");
+  const [sessionHistory, setSessionHistory] = useState<any[]>([]);
+  const [userMetrics, setUserMetrics] = useState<any>({
+    average_score: 0,
+    best_score: 0,
+    time_spent_minutes: 0,
+  });
+
   const navigate = useNavigate();
+  const token = localStorage.getItem("access_token");
+
+  useEffect(() => {
+    const fetchUserMetrics = async () => {
+      try {
+        const res = await fetch("http://localhost:8000/api/user-metrics", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (!res.ok) throw new Error("Failed to fetch metrics");
+        const data = await res.json();
+        setUserMetrics(data);
+      } catch (error) {
+        console.error("Failed to fetch user metrics:", error);
+      }
+    };
+
+    const fetchUserSessions = async () => {
+      if (!user || !token) return;
+      try {
+        const res = await fetch(
+          "http://localhost:8000/api/mock-sessions/user-sessions",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        const data = await res.json();
+        setSessionHistory(data);
+      } catch (error) {
+        console.error("Failed to fetch session history:", error);
+      }
+    };
+
+    fetchUserMetrics()
+    fetchUserSessions();
+  }, [user, token]);
 
   if (!user) {
     navigate("/");
@@ -137,12 +183,12 @@ export default function Dashboard({ user, setUser }: DashboardProps) {
         </div>
       </header>
 
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8 ">
         <div className="space-y-6">
           {/* Tabs */}
           <div className="inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground">
             <button
-              className={`inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 ${
+              className={`inline-flex cursor-pointer items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 ${
                 activeTab === "overview"
                   ? "bg-white text-gray-900 shadow-sm"
                   : ""
@@ -152,7 +198,7 @@ export default function Dashboard({ user, setUser }: DashboardProps) {
               Overview
             </button>
             <button
-              className={`inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 ${
+              className={`inline-flex cursor-pointer items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 ${
                 activeTab === "new-mock"
                   ? "bg-white text-gray-900 shadow-sm"
                   : ""
@@ -162,7 +208,7 @@ export default function Dashboard({ user, setUser }: DashboardProps) {
               New Mock
             </button>
             <button
-              className={`inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 ${
+              className={`inline-flex cursor-pointer items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 ${
                 activeTab === "history"
                   ? "bg-white text-gray-900 shadow-sm"
                   : ""
@@ -172,7 +218,7 @@ export default function Dashboard({ user, setUser }: DashboardProps) {
               History
             </button>
             <button
-              className={`inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 ${
+              className={`inline-flex cursor-pointer items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 ${
                 activeTab === "analytics"
                   ? "bg-white text-gray-900 shadow-sm"
                   : ""
@@ -218,7 +264,7 @@ export default function Dashboard({ user, setUser }: DashboardProps) {
               </div>
 
               {/* Quick Stats */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <div className="rounded-lg border bg-card text-card-foreground shadow-sm border-gray-200">
                   <div className="p-6">
                     <div className="flex items-center space-x-2">
@@ -226,7 +272,7 @@ export default function Dashboard({ user, setUser }: DashboardProps) {
                       <div>
                         <p className="text-sm text-gray-600">Total Sessions</p>
                         <p className="text-2xl font-bold">
-                          {performanceMetrics.totalSessions}
+                          {sessionHistory.length}
                         </p>
                       </div>
                     </div>
@@ -240,7 +286,7 @@ export default function Dashboard({ user, setUser }: DashboardProps) {
                       <div>
                         <p className="text-sm text-gray-600">Average Score</p>
                         <p className="text-2xl font-bold">
-                          {performanceMetrics.averageScore}%
+                          {userMetrics.average_score != null ? `${userMetrics.average_score}%` : "N/A"}
                         </p>
                       </div>
                     </div>
@@ -254,27 +300,27 @@ export default function Dashboard({ user, setUser }: DashboardProps) {
                       <div>
                         <p className="text-sm text-gray-600">Best Score</p>
                         <p className="text-2xl font-bold">
-                          {performanceMetrics.bestScore}%
+                          {userMetrics.best_score}%
                         </p>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                <div className="rounded-lg border bg-card text-card-foreground shadow-sm  border-gray-200">
+                {/* <div className="rounded-lg border bg-card text-card-foreground shadow-sm  border-gray-200">
                   <div className="p-6">
                     <div className="flex items-center space-x-2">
                       <Clock className="h-8 w-8 text-purple-600" />
                       <div>
                         <p className="text-sm text-gray-600">Time Practiced</p>
                         <p className="text-2xl font-bold">
-                          {performanceMetrics.totalTimeSpent}
+                          {userMetrics.time_spent_minutes}
                         </p>
                       </div>
                     </div>
                   </div>
-                </div>
-              </div>
+                </div>*/}
+              </div> 
 
               {/* Recent Sessions */}
               <div className="rounded-lg border bg-card text-card-foreground shadow-sm  border-gray-200">
@@ -283,18 +329,21 @@ export default function Dashboard({ user, setUser }: DashboardProps) {
                     <History className="h-5 w-5" />
                     <span>Recent Sessions</span>
                   </h3>
+                  <p>Your latest interview practice sessions</p>
                 </div>
                 <div className="p-6 pt-0">
                   <div className="space-y-4">
-                    {mockHistory.slice(0, 3).map((session) => (
+                    {sessionHistory.slice(0, 3).map((session) => (
                       <div
                         key={session.id}
-                        className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
+                        className="flex items-center justify-between p-4 rounded-lg border border-gray-200 hover:bg-gray-100"
                       >
                         <div className="flex items-center space-x-4">
                           <FileText className="h-5 w-5 text-gray-600" />
                           <div>
-                            <p className="font-medium">{session.type}</p>
+                            <p className="font-medium">
+                              {session.session_name}
+                            </p>
                             <p className="text-sm text-gray-600">
                               {session.date} • {session.duration}
                             </p>
@@ -344,10 +393,10 @@ export default function Dashboard({ user, setUser }: DashboardProps) {
                 </div>
                 <div className="p-6 pt-0">
                   <div className="space-y-4">
-                    {mockHistory.map((session) => (
+                    {sessionHistory.map((session) => (
                       <div
                         key={session.id}
-                        className="border rounded-lg p-4 hover:bg-gray-50 transition-colors border-gray-200"
+                        className="border rounded-lg p-4 hover:bg-gray-100 transition-colors border-gray-200"
                       >
                         <div className="flex items-center justify-between">
                           <div className="flex items-center space-x-4">
@@ -356,7 +405,7 @@ export default function Dashboard({ user, setUser }: DashboardProps) {
                             </div>
                             <div>
                               <h3 className="font-medium">
-                                {session.type} Interview
+                                {session.session_name}
                               </h3>
                               <div className="flex items-center space-x-4 text-sm text-gray-600 mt-1">
                                 <span className="flex items-center space-x-1">

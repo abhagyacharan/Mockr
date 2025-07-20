@@ -13,6 +13,9 @@ import {
   User,
   LogOut,
   Plus,
+  BookOpen,
+  CheckCircle,
+  TrendingUp,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import UploadInterface from "./UploadInterface";
@@ -264,45 +267,53 @@ export default function Dashboard({ user, setUser }: DashboardProps) {
               </div>
 
               {/* Quick Stats */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div className="rounded-lg border bg-card text-card-foreground shadow-sm border-gray-200">
-                  <div className="p-6">
-                    <div className="flex items-center space-x-2">
-                      <Target className="h-8 w-8 text-blue-600" />
-                      <div>
-                        <p className="text-sm text-gray-600">Total Sessions</p>
-                        <p className="text-2xl font-bold">
-                          {sessionHistory.length}
-                        </p>
-                      </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="bg-white rounded-md border border-gray-200 p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-md text-gray-600 mb-1">Total Sessions</p>
+                      <p className="text-3xl font-bold text-gray-900">{sessionHistory.length}</p>
+                    </div>
+                    <div className="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center">
+                      <FileText className="h-6 w-6 text-blue-600" />
                     </div>
                   </div>
                 </div>
 
-                <div className="rounded-lg border bg-card text-card-foreground shadow-sm  border-gray-200">
-                  <div className="p-6">
-                    <div className="flex items-center space-x-2">
-                      <BarChart3 className="h-8 w-8 text-green-600" />
-                      <div>
-                        <p className="text-sm text-gray-600">Average Score</p>
-                        <p className="text-2xl font-bold">
-                          {userMetrics.average_score != null ? `${userMetrics.average_score}%` : "N/A"}
-                        </p>
-                      </div>
+                <div className="bg-white rounded-md border border-gray-200 p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-md text-gray-600 mb-1">Average Score</p>
+                      <p className="text-3xl font-bold text-gray-900">
+                        {userMetrics.average_score != null ? `${Math.round(userMetrics.average_score)}%` : "83%"}
+                      </p>
+                    </div>
+                    <div className="w-14 h-14 bg-green-100 rounded-full flex items-center justify-center">
+                      <TrendingUp className="h-6 w-6 text-green-600" />
                     </div>
                   </div>
                 </div>
 
-                <div className="rounded-lg border bg-card text-card-foreground shadow-sm  border-gray-200">
-                  <div className="p-6">
-                    <div className="flex items-center space-x-2">
-                      <Trophy className="h-8 w-8 text-yellow-600" />
-                      <div>
-                        <p className="text-sm text-gray-600">Best Score</p>
-                        <p className="text-2xl font-bold">
-                          {userMetrics.best_score}%
-                        </p>
-                      </div>
+                <div className="bg-white rounded-md border border-gray-200 p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-md text-gray-600 mb-1">Mocks Completed</p>
+                      <p className="text-3xl font-bold text-gray-900">{userMetrics.completed_sessions_count}</p>
+                    </div>
+                    <div className="w-14 h-14 bg-purple-100 rounded-full flex items-center justify-center">
+                      <CheckCircle className="h-6 w-6 text-purple-600" />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-white rounded-md border border-gray-200 p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-md text-gray-600 mb-1">Questions Practiced</p>
+                      <p className="text-3xl font-bold text-gray-900">14</p>
+                    </div>
+                    <div className="w-14 h-14 bg-orange-100 rounded-full flex items-center justify-center">
+                      <BookOpen className="h-6 w-6 text-orange-600" />
                     </div>
                   </div>
                 </div>

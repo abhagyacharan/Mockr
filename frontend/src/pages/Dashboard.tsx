@@ -339,7 +339,10 @@ export default function Dashboard({ user, setUser }: DashboardProps) {
           {/* History Tab */}   
 
           {activeTab === 'history' && (
-            <HistoryPage />
+            <HistoryPage 
+              user={null}
+              setUser={() => {}}
+            />
             )}   
           {/* {activeTab === "history" && (
             <div className="space-y-6">

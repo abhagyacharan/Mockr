@@ -141,8 +141,6 @@ def get_user_sessions(
     
     return result
 
-
-
 @router.get("/{session_id}", response_model=MockSessionResponse)
 async def get_mock_session(
     session_id: UUID,

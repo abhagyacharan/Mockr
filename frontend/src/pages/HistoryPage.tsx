@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from "react"
+import { useEffect, useState, type ReactNode } from "react"
 import {
   Search,
   Filter,
@@ -13,8 +13,8 @@ import {
   Clock,
   ChevronDown
 } from "lucide-react"
+import { useNavigate } from "react-router-dom"
 
-// Mock history data
 const mockSessions = [
   {
     id: "1",
@@ -209,11 +209,19 @@ const SelectItem = ({ value, children }: SelectItemProps) => {
   return <option value={value}>{children}</option>
 }
 
-export default function HistoryPage() {
+interface HistoryPageProps {
+  user: { id: string; name: string; email: string } | null;
+  setUser: (user: null) => void;
+}
+
+export default function HistoryPage({ user }: HistoryPageProps) {
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
   const [typeFilter, setTypeFilter] = useState("all")
   const [sortBy, setSortBy] = useState("date")
+  const [sessionHistory, setSessionHistory] = useState<any[]>([]);
+  const navigate = useNavigate();
+  const token = localStorage.getItem("access_token");
 
   const filteredSessions = mockSessions.filter((session) => {
     const matchesSearch = session.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -231,6 +239,46 @@ export default function HistoryPage() {
         mockSessions.filter((s) => s.score).length,
     ),
   }
+
+  const deleteMockSession = async (sessionId: string) => {
+    try {
+      await fetch(`http://localhost:8000/api/mock-sessions/${sessionId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const updatedHistory = sessionHistory.filter((session) => session.id !== sessionId);
+      setSessionHistory(updatedHistory);
+    } catch (error) {
+      console.error("Failed to delete mock session:", error);
+    }
+  };
+
+  useEffect(() => {
+      if(!user && !token){
+        navigate("/");
+        return;
+      }
+       
+      const fetchUserSessions = async () => {
+        try {
+          const res = await fetch(
+            "http://localhost:8000/api/mock-sessions/user-sessions",
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          const data = await res.json();
+          setSessionHistory(data);
+        } catch (error) {
+          console.error("Failed to fetch session history:", error);
+        }
+      };
+      fetchUserSessions();
+    }, [user, token]);
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
@@ -351,7 +399,7 @@ export default function HistoryPage() {
         {/* Sessions Table */}
         <Card>
           <div className="p-6 border-b border-gray-200">
-            <h2 className="text-lg font-semibold text-gray-900">Interview Sessions ({filteredSessions.length})</h2>
+            <h2 className="text-lg font-semibold text-gray-900">Interview Sessions ({sessionHistory.length})</h2>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full">
@@ -360,22 +408,22 @@ export default function HistoryPage() {
                   <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Session Name</th>
                   <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
                   <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Score</th>
-                  <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Duration</th>
+                  <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Questions</th>
                   <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
                   <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                   <th className="px-4 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {filteredSessions.map((session) => (
+                {sessionHistory.map((session) => (
                   <tr key={session.id} className="hover:bg-gray-50">
                     <td className="px-4 py-6 whitespace-nowrap">
-                      <div className="text-base font-semibold text-gray-900">{session.name}</div>
-                      <div className="text-sm text-gray-500">{session.category}</div>
+                      <div className="text-base font-semibold text-gray-900">{session.session_name}</div>
+                      <div className="text-sm text-gray-500">{session.type}</div>
                     </td>
                     <td className="px-4 py-6 whitespace-nowrap">
                       <Badge variant="outline" className="flex items-center w-fit text-sm px-3 py-1">
-                        {session.type === "Resume" ? (
+                        {session.type === "resume" ? (
                           <FileText className="w-4 h-4 mr-2" />
                         ) : (
                           <Briefcase className="w-4 h-4 mr-2" />
@@ -384,7 +432,7 @@ export default function HistoryPage() {
                       </Badge>
                     </td>
                     <td className="px-4 py-6 whitespace-nowrap">
-                      {session.score ? (
+                      {session.score && session.score !== "N/A" ? (
                         <span
                           className={`text-lg font-bold ${
                             session.score >= 80
@@ -401,8 +449,8 @@ export default function HistoryPage() {
                       )}
                     </td>
                     <td className="px-4 py-6 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">{session.duration}</div>
-                      <div className="text-xs text-gray-500">{session.questions} questions</div>
+                      {/* <div className="text-sm text-gray-900">{session.duration}</div> */}
+                      <div className="text-sm text-gray-900">{session.totalQuestions} questions</div>
                     </td>
                     <td className="px-4 py-6 whitespace-nowrap text-gray-600">
                       <div className="flex items-center text-sm">
@@ -422,7 +470,7 @@ export default function HistoryPage() {
                     </td>
                     <td className="px-4 py-6 whitespace-nowrap text-right">
                       <div className="flex justify-end space-x-3">
-                        {session.status === "in-progress" ? (
+                        {session.status === "ongoing" ? (
                           <Button size="md">
                             <Play className="w-4 h-4 mr-2" />
                             Continue
@@ -439,7 +487,12 @@ export default function HistoryPage() {
                             </Button>
                           </>
                         )}
-                        <Button variant="outline" size="md" className="text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200">
+                        <Button
+                          variant="outline"
+                          size="md"
+                          className="text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200"
+                          onClick={() => deleteMockSession(session.id)}
+                        >
                           <Trash2 className="w-4 h-4" />
                         </Button>
                       </div>

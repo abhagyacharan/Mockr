@@ -71,7 +71,10 @@ function App() {
                 />
               }
             />
-            <Route path="/history" element={<HistoryPage />} />
+            <Route
+              path="/history"
+              element={<HistoryPage user={user} setUser={setUser} />}
+            />
             <Route path="/questions" element={<QuestionDisplay />} />
             <Route path="/results" element={<ResultsPage />} />
             <Route

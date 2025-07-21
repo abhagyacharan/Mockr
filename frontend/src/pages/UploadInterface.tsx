@@ -10,6 +10,8 @@ import PracticeModeSelector from "../components/PracticeModeSelector";
 
 import { useMockSession } from "@/context/MockSessionContext";
 import LoadingScreen from "../components/LoadingScreen"; // ✅ Import the new component
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 
 const API_BASE_URL = "http://localhost:8000/api";
 
@@ -44,6 +46,8 @@ export default function UploadInterface({
   const [loadingVisible, setLoadingVisible] = useState(false);
   const [progress, setProgress] = useState(0);
 
+  const [focusAreas, setFocusAreas] = useState<string[]>([])
+
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -53,6 +57,10 @@ export default function UploadInterface({
       setDragActive(false);
     }
   };
+
+  const toggleFocusArea = (area: string) => {
+    setFocusAreas((prev) => (prev.includes(area) ? prev.filter((a) => a !== area) : [...prev, area]))
+  }
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
@@ -331,6 +339,35 @@ export default function UploadInterface({
                   selectedDifficulty={selectedDifficulty}
                   setSelectedDifficulty={setSelectedDifficulty}
                 />
+
+                <div className="space-y-4">
+                  <Label className="text-lg font-medium">
+                    Focus Areas (Optional)
+                  </Label>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    {[
+                      "Technical Skills",
+                      "Leadership",
+                      "Problem Solving",
+                      "Communication",
+                      "System Design",
+                      "Behavioral",
+                      "Culture Fit",
+                      "Industry Knowledge",
+                    ].map((area) => (
+                      <Button
+                        key={area}
+                        variant={
+                          focusAreas.includes(area) ? "default" : "outline"
+                        }
+                        onClick={() => toggleFocusArea(area)}
+                        className="h-12"
+                      >
+                        {area}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
               </div>
             ) : (
               <div className="space-y-4">
@@ -370,7 +407,7 @@ export default function UploadInterface({
                     />
                   </div>
                 </div>
-                
+
                 <label
                   htmlFor="job-description"
                   className="text-sm font-medium leading-none"

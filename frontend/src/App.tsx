@@ -11,6 +11,7 @@ import Dashboard from "./pages/Dashboard";
 // import PrivateRoute from "./context/PrivateRoute";
 
 import { MockSessionProvider } from "./context/MockSessionContext";
+import HistoryPage from "./pages/HistoryPage";
 
 export interface Question {
   id: string;
@@ -70,6 +71,7 @@ function App() {
                 />
               }
             />
+            <Route path="/history" element={<HistoryPage />} />
             <Route path="/questions" element={<QuestionDisplay />} />
             <Route path="/results" element={<ResultsPage />} />
             <Route

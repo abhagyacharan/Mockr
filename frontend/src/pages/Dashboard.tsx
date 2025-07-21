@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import UploadInterface from "./UploadInterface";
+import HistoryPage from "./HistoryPage";
 
 interface DashboardProps {
   user: { id: string; name: string; email: string } | null;
@@ -36,7 +37,7 @@ const performanceMetrics = {
 };
 
 export default function Dashboard({ user, setUser }: DashboardProps) {
-  const [activeTab, setActiveTab] = useState("overview");
+  const [activeTab, setActiveTab] = useState("dashboard");
   const [sessionHistory, setSessionHistory] = useState<any[]>([]);
   const [userMetrics, setUserMetrics] = useState<any>({});
 
@@ -44,7 +45,6 @@ export default function Dashboard({ user, setUser }: DashboardProps) {
   const token = localStorage.getItem("access_token");
 
   useEffect(() => {
-
     if(!user && !token){
       navigate("/");
       return;
@@ -111,24 +111,64 @@ export default function Dashboard({ user, setUser }: DashboardProps) {
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <header className="bg-white border-b border-gray-200">
-        <div className="container mx-auto px-4 py-4">
+        <div className="w-75/100 mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <div
-                onClick={() => navigate("/")}
-                className="flex items-center space-x-2 cursor-pointer hover:opacity-80 transition"
-              >
-                <Brain className="h-8 w-8 text-blue-600" />
-                <span className="text-2xl font-bold text-gray-900">Mockr</span>
-              </div>
-              <div className="hidden md:block w-px h-6 bg-gray-300" />
-              <div className="hidden md:block">
-                <h1 className="text-xl font-semibold text-gray-900">
+            {/* Logo */}
+            <div
+              onClick={() => navigate("/")}
+              className="flex items-center space-x-2 cursor-pointer hover:opacity-80 transition"
+            >
+              <Brain className="h-8 w-8 text-blue-600" />
+              <span className="text-2xl font-bold text-gray-900">Mockr</span>
+            </div>
+
+            {/* Navigation Tabs */}
+            <div className="flex items-center justify-center">
+              <div className="inline-flex h-10 items-center justify-center rounded-md bg-gray-200 p-1 text-gray-600">
+                <button
+                  className={`inline-flex cursor-pointer items-center justify-center whitespace-nowrap rounded-sm px-4 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 ${
+                    activeTab === "dashboard"
+                      ? "bg-white text-gray-900 shadow-sm"
+                      : ""
+                  }`}
+                  onClick={() => setActiveTab("dashboard")}
+                >
                   Dashboard
-                </h1>
+                </button>
+                <button
+                  className={`inline-flex cursor-pointer items-center justify-center whitespace-nowrap rounded-sm px-4 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 ${
+                    activeTab === "new-mock"
+                      ? "bg-white text-gray-900 shadow-sm"
+                      : ""
+                  }`}
+                  onClick={() => setActiveTab("new-mock")}
+                >
+                  New Mock
+                </button>
+                <button
+                  className={`inline-flex cursor-pointer items-center justify-center whitespace-nowrap rounded-sm px-4 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 ${
+                    activeTab === "history"
+                      ? "bg-white text-gray-900 shadow-sm"
+                      : ""
+                  }`}
+                  onClick={() => setActiveTab("history")}
+                >
+                  History
+                </button>
+                <button
+                  className={`inline-flex cursor-pointer items-center justify-center whitespace-nowrap rounded-sm px-4 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 ${
+                    activeTab === "analytics"
+                      ? "bg-white text-gray-900 shadow-sm"
+                      : ""
+                  }`}
+                  onClick={() => setActiveTab("analytics")}
+                >
+                  Analytics
+                </button>
               </div>
             </div>
 
+            {/* User Info & Logout */}
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-2">
                 <User className="h-5 w-5 text-gray-600" />
@@ -146,54 +186,10 @@ export default function Dashboard({ user, setUser }: DashboardProps) {
         </div>
       </header>
 
-      <div className="container mx-auto px-4 py-8 ">
-        <div className="space-y-6 ">
-          {/* Tabs */}
-          <div className="inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground">
-            <button
-              className={`inline-flex cursor-pointer items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 ${
-                activeTab === "overview"
-                  ? "bg-white text-gray-900 shadow-sm"
-                  : ""
-              }`}
-              onClick={() => setActiveTab("overview")}
-            >
-              Overview
-            </button>
-            <button
-              className={`inline-flex cursor-pointer items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 ${
-                activeTab === "new-mock"
-                  ? "bg-white text-gray-900 shadow-sm"
-                  : ""
-              }`}
-              onClick={() => setActiveTab("new-mock")}
-            >
-              New Mock
-            </button>
-            <button
-              className={`inline-flex cursor-pointer items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 ${
-                activeTab === "history"
-                  ? "bg-white text-gray-900 shadow-sm"
-                  : ""
-              }`}
-              onClick={() => setActiveTab("history")}
-            >
-              History
-            </button>
-            <button
-              className={`inline-flex cursor-pointer items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 ${
-                activeTab === "analytics"
-                  ? "bg-white text-gray-900 shadow-sm"
-                  : ""
-              }`}
-              onClick={() => setActiveTab("analytics")}
-            >
-              Analytics
-            </button>
-          </div>
-
-          {/* Overview Tab */}
-          {activeTab === "overview" && (
+      <div className="w-75/100 mx-auto px-4 py-8">
+        <div className="space-y-6">
+          {/* Dashboard Tab */}
+          {activeTab === "dashboard" && (
             <div className="space-y-6">
               {/* Welcome Section */}
               <div className="rounded-lg border bg-card text-card-foreground shadow-sm bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
@@ -232,7 +228,8 @@ export default function Dashboard({ user, setUser }: DashboardProps) {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-md text-gray-600 mb-1">Mock Sessions</p>
-                      <p className="text-3xl font-bold text-gray-900">{userMetrics.completed_sessions_count}</p>
+                      <p className="text-3xl font-bold text-gray-900 mb-1">{userMetrics.completed_sessions_count}</p>
+                      {/* <p className="text-sm text-gray-600 mb-1">of {sessionHistory.length}</p> */}
                     </div>
                     <div className="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center">
                       <FileText className="h-6 w-6 text-blue-600" />
@@ -277,22 +274,10 @@ export default function Dashboard({ user, setUser }: DashboardProps) {
                     </div>
                   </div>
                 </div>
-
-                {/* <div className="bg-white rounded-md border border-gray-200 p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-md text-gray-600 mb-1">Best Score</p>
-                      <p className="text-3xl font-bold text-gray-900">{userMetrics.best_score}</p>
-                    </div>
-                    <div className="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center">
-                      <FileText className="h-6 w-6 text-red-600" />
-                    </div>
-                  </div>
-                </div> */}
-              </div> 
+              </div>
 
               {/* Recent Sessions */}
-              <div className="rounded-lg border bg-card text-card-foreground shadow-sm  border-gray-200">
+              <div className="rounded-lg border bg-card text-card-foreground shadow-sm border-gray-200">
                 <div className="flex flex-col space-y-1.5 p-6">
                   <h3 className="text-2xl font-semibold leading-none tracking-tight flex items-center space-x-2">
                     <History className="h-5 w-5" />
@@ -351,10 +336,14 @@ export default function Dashboard({ user, setUser }: DashboardProps) {
             />
           )}
 
-          {/* History Tab */}      
-          {activeTab === "history" && (
+          {/* History Tab */}   
+
+          {activeTab === 'history' && (
+            <HistoryPage />
+            )}   
+          {/* {activeTab === "history" && (
             <div className="space-y-6">
-              <div className="rounded-lg border bg-card text-card-foreground shadow-sm  border-gray-200">
+              <div className="rounded-lg border bg-card text-card-foreground shadow-sm border-gray-200">
                 <div className="flex flex-col space-y-1.5 p-6">
                   <h3 className="text-2xl font-semibold leading-none tracking-tight">
                     Session History
@@ -417,7 +406,7 @@ export default function Dashboard({ user, setUser }: DashboardProps) {
                 </div>
               </div>
             </div>
-          )}
+          )} */}
 
           {/* Analytics Tab */}
           {activeTab === "analytics" && (

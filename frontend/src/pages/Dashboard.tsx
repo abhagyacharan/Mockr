@@ -25,46 +25,6 @@ interface DashboardProps {
   setUser: (user: null) => void;
 }
 
-// // Mock data for user history and analytics
-// const mockHistory = [
-//   {
-//     id: "session-1",
-//     date: "2024-01-15",
-//     type: "Resume-based",
-//     score: 85,
-//     totalQuestions: 5,
-//     difficulty: "12 min",
-//     status: "completed",
-//   },
-//   {
-//     id: "session-2",
-//     date: "2024-01-12",
-//     type: "Job Description",
-//     score: 72,
-//     totalQuestions: 6,
-//     difficulty: "15 min",
-//     status: "completed",
-//   },
-//   {
-//     id: "session-3",
-//     date: "2024-01-10",
-//     type: "Resume-based",
-//     score: 91,
-//     totalQuestions: 4,
-//     difficulty: "10 min",
-//     status: "completed",
-//   },
-//   {
-//     id: "session-4",
-//     date: "2024-01-08",
-//     type: "Job Description",
-//     score: 68,
-//     totalQuestions: 7,
-//     difficulty: "18 min",
-//     status: "completed",
-//   },
-// ];
-
 const performanceMetrics = {
   totalSessions: 12,
   averageScore: 78,
@@ -78,16 +38,17 @@ const performanceMetrics = {
 export default function Dashboard({ user, setUser }: DashboardProps) {
   const [activeTab, setActiveTab] = useState("overview");
   const [sessionHistory, setSessionHistory] = useState<any[]>([]);
-  const [userMetrics, setUserMetrics] = useState<any>({
-    average_score: 0,
-    best_score: 0,
-    time_spent_minutes: 0,
-  });
+  const [userMetrics, setUserMetrics] = useState<any>({});
 
   const navigate = useNavigate();
   const token = localStorage.getItem("access_token");
 
   useEffect(() => {
+
+    if(!user && !token){
+      navigate("/");
+      return;
+    }
     const fetchUserMetrics = async () => {
       try {
         const res = await fetch("http://localhost:8000/api/user-metrics", {
@@ -104,7 +65,6 @@ export default function Dashboard({ user, setUser }: DashboardProps) {
     };
 
     const fetchUserSessions = async () => {
-      if (!user || !token) return;
       try {
         const res = await fetch(
           "http://localhost:8000/api/mock-sessions/user-sessions",
@@ -271,8 +231,8 @@ export default function Dashboard({ user, setUser }: DashboardProps) {
                 <div className="bg-white rounded-md border border-gray-200 p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-md text-gray-600 mb-1">Total Sessions</p>
-                      <p className="text-3xl font-bold text-gray-900">{sessionHistory.length}</p>
+                      <p className="text-md text-gray-600 mb-1">Mock Sessions</p>
+                      <p className="text-3xl font-bold text-gray-900">{userMetrics.completed_sessions_count}</p>
                     </div>
                     <div className="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center">
                       <FileText className="h-6 w-6 text-blue-600" />
@@ -297,8 +257,8 @@ export default function Dashboard({ user, setUser }: DashboardProps) {
                 <div className="bg-white rounded-md border border-gray-200 p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-md text-gray-600 mb-1">Mocks Completed</p>
-                      <p className="text-3xl font-bold text-gray-900">{userMetrics.completed_sessions_count}</p>
+                      <p className="text-md text-gray-600 mb-1">Resume - JD</p>
+                      <p className="text-3xl font-bold text-gray-900">{userMetrics.resume_sessions_count} - {userMetrics.job_description_sessions_count}</p>
                     </div>
                     <div className="w-14 h-14 bg-purple-100 rounded-full flex items-center justify-center">
                       <CheckCircle className="h-6 w-6 text-purple-600" />
@@ -310,7 +270,7 @@ export default function Dashboard({ user, setUser }: DashboardProps) {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-md text-gray-600 mb-1">Questions Practiced</p>
-                      <p className="text-3xl font-bold text-gray-900">14</p>
+                      <p className="text-3xl font-bold text-gray-900">{userMetrics.practiced_questions_count}</p>
                     </div>
                     <div className="w-14 h-14 bg-orange-100 rounded-full flex items-center justify-center">
                       <BookOpen className="h-6 w-6 text-orange-600" />
@@ -318,19 +278,17 @@ export default function Dashboard({ user, setUser }: DashboardProps) {
                   </div>
                 </div>
 
-                {/* <div className="rounded-lg border bg-card text-card-foreground shadow-sm  border-gray-200">
-                  <div className="p-6">
-                    <div className="flex items-center space-x-2">
-                      <Clock className="h-8 w-8 text-purple-600" />
-                      <div>
-                        <p className="text-sm text-gray-600">Time Practiced</p>
-                        <p className="text-2xl font-bold">
-                          {userMetrics.time_spent_minutes}
-                        </p>
-                      </div>
+                {/* <div className="bg-white rounded-md border border-gray-200 p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-md text-gray-600 mb-1">Best Score</p>
+                      <p className="text-3xl font-bold text-gray-900">{userMetrics.best_score}</p>
+                    </div>
+                    <div className="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center">
+                      <FileText className="h-6 w-6 text-red-600" />
                     </div>
                   </div>
-                </div>*/}
+                </div> */}
               </div> 
 
               {/* Recent Sessions */}
@@ -393,7 +351,7 @@ export default function Dashboard({ user, setUser }: DashboardProps) {
             />
           )}
 
-          {/* History Tab */}
+          {/* History Tab */}      
           {activeTab === "history" && (
             <div className="space-y-6">
               <div className="rounded-lg border bg-card text-card-foreground shadow-sm  border-gray-200">

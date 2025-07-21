@@ -8,7 +8,7 @@ from app.database import get_db
 from app.models.user import User
 from app.models.resume import Resume
 from app.models.job_description import JobDescription
-from app.models.mock_session import MockSession
+from app.models.mock_session import MockSession, UserResponse
 from app.schemas.mock_session import MockSessionCreate, MockSessionResponse
 from app.services.file_processor import FileProcessor
 from datetime import datetime, timezone
@@ -98,27 +98,36 @@ def get_user_sessions(
     db: Session = Depends(get_db), current_user: User = Depends(get_current_user)
 ):
     """
-    Fetch mock sessions for the current user.
+    Fetch mock sessions for the current user with calculated scores.
     """
-    sessions = (
-        db.query(MockSession)
+    # Query sessions with aggregated scores from responses
+    sessions_with_scores = (
+        db.query(
+            MockSession,
+            func.avg(UserResponse.score).label("avg_score")
+        )
+        .outerjoin(UserResponse, MockSession.id == UserResponse.session_id)
         .filter(MockSession.user_id == current_user.id)
+        .group_by(MockSession.id)
         .order_by(MockSession.created_at.desc())
         .all()
     )
-
-    return [
-        {
+    
+    result = []
+    for session, avg_score in sessions_with_scores:
+        # Format the score
+        if avg_score is not None:
+            score = round(float(avg_score), 1)
+        else:
+            score = "N/A"
+        
+        result.append({
             "id": str(session.id),
             "session_name": session.session_name,
             "date": session.created_at.strftime("%Y-%m-%d"),
             "type": session.source_type,
             "totalQuestions": session.total_questions,
-            "score": (
-                (session.answered_questions // session.total_questions) * 100
-                if session.answered_questions > 0
-                else "N/A"
-            ),
+            "score": score,
             # "duration": (
             #     (
             #         session.completed_at.replace(tzinfo=None)
@@ -128,9 +137,10 @@ def get_user_sessions(
             # ),
             "difficulty": session.difficulty_level,
             "status": session.status,
-        }
-        for session in sessions
-    ]
+        })
+    
+    return result
+
 
 
 @router.get("/{session_id}", response_model=MockSessionResponse)

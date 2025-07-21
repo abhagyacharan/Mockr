@@ -1,13 +1,14 @@
 "use client";
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import LandingPage from "./components/LandingPage";
-import UploadInterface from "./components/UploadInterface";
-import QuestionDisplay from "./components/QuestionDisplay";
-import ResultsPage from "./components/ResultsPage";
+import LandingPage from "./pages/LandingPage";
+import UploadInterface from "./pages/UploadInterface";
+import QuestionDisplay from "./pages/QuestionDisplay";
+import ResultsPage from "./pages/ResultsPage";
 import { useState } from "react";
 import AuthModal from "./components/AuthModal";
-import Dashboard from "./components/Dashboard";
+import Dashboard from "./pages/Dashboard";
+// import PrivateRoute from "./context/PrivateRoute";
 
 import { MockSessionProvider } from "./context/MockSessionContext";
 
@@ -69,16 +70,8 @@ function App() {
                 />
               }
             />
-            <Route
-              path="/questions"
-              element={
-                <QuestionDisplay />
-              }
-            />
-            <Route
-              path="/results"
-              element={<ResultsPage />}
-            />
+            <Route path="/questions" element={<QuestionDisplay />} />
+            <Route path="/results" element={<ResultsPage />} />
             <Route
               path="/dashboard"
               element={<Dashboard user={user} setUser={setUser} />}

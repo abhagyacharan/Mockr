@@ -31,7 +31,7 @@ export default function AuthModal({
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [isModalLoaded, setIsModalLoaded] = useState(false)
+  const [isModalLoaded, setIsModalLoaded] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -119,10 +119,11 @@ export default function AuthModal({
       };
 
       setUser(userData);
-
-      // Close modal and redirect
       onClose();
-      navigate("/dashboard");
+
+      setTimeout(() => {
+        navigate("/dashboard", { replace: true });
+      }, 50);
     } catch (err: any) {
       setErrors({ general: err.message });
     } finally {

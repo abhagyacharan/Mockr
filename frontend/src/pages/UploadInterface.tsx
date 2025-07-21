@@ -5,10 +5,11 @@ import { useState, useRef } from "react";
 import { Upload, FileText, Loader2, AlertCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import type { MockSession } from "../App";
-import DifficultySelector from "./ChooseDifficulty";
+import DifficultySelector from "../components/ChooseDifficulty";
+import PracticeModeSelector from "../components/PracticeModeSelector";
 
 import { useMockSession } from "@/context/MockSessionContext";
-import LoadingScreen from "./LoadingScreen"; // ✅ Import the new component
+import LoadingScreen from "../components/LoadingScreen"; // ✅ Import the new component
 
 const API_BASE_URL = "http://localhost:8000/api";
 
@@ -278,60 +279,6 @@ export default function UploadInterface({
                   </div>
                 </div>
 
-                <div className="rounded-lg border border-gray-200 bg-gradient-to-br from-white to-blue-50 p-4 mt-4">
-                  <h2 className="text-sm font-medium text-gray-900 mb-1">
-                    Choose Practice Mode
-                  </h2>
-                  <p className="text-sm text-gray-500 mb-3">
-                    Select how you'd like to practice your interview
-                  </p>
-                  <div className="flex space-x-4">
-                    <label
-                      className={`flex-1 border rounded-lg p-4 cursor-pointer transition ${
-                        practiceMode === "mcq"
-                          ? "border-blue-600 bg-white"
-                          : "border-gray-200 bg-gray-100"
-                      }`}
-                    >
-                      <input
-                        type="radio"
-                        name="practiceMode"
-                        value="mcq"
-                        checked={practiceMode === "mcq"}
-                        onChange={() => setPracticeMode("mcq")}
-                        className="sr-only"
-                      />
-                      <div className="font-medium text-sm mb-1">MCQ Mode</div>
-                      <div className="text-xs text-gray-500">
-                        Multiple choice questions for quick practice
-                      </div>
-                    </label>
-                    <label
-                      className={`flex-1 border rounded-lg p-4 cursor-pointer transition ${
-                        practiceMode === "qa"
-                          ? "border-blue-600 bg-white"
-                          : "border-gray-200 bg-gray-100"
-                      }`}
-                    >
-                      <input
-                        type="radio"
-                        name="practiceMode"
-                        value="qa"
-                        checked={practiceMode === "qa"}
-                        onChange={() => setPracticeMode("qa")}
-                        className="sr-only"
-                      />
-                      <div className="font-medium text-sm mb-1">Q&A Mode</div>
-                      <div className="text-xs text-gray-500">
-                        Open-ended questions with text responses
-                      </div>
-                    </label>
-                  </div>
-                </div>
-                <DifficultySelector
-                  selectedDifficulty={selectedDifficulty}
-                  setSelectedDifficulty={setSelectedDifficulty}
-                />
                 <div
                   className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
                     dragActive
@@ -376,6 +323,14 @@ export default function UploadInterface({
                     <span>Resume uploaded successfully</span>
                   </div>
                 )}
+                <PracticeModeSelector
+                  practiceMode={practiceMode}
+                  setPracticeMode={setPracticeMode}
+                />
+                <DifficultySelector
+                  selectedDifficulty={selectedDifficulty}
+                  setSelectedDifficulty={setSelectedDifficulty}
+                />
               </div>
             ) : (
               <div className="space-y-4">
@@ -415,62 +370,7 @@ export default function UploadInterface({
                     />
                   </div>
                 </div>
-
-                <div className="rounded-lg border border-gray-200 bg-gradient-to-br from-white to-blue-50 p-4 mt-4">
-                  <h2 className="text-sm font-medium text-gray-900 mb-1">
-                    Choose Practice Mode
-                  </h2>
-                  <p className="text-sm text-gray-500 mb-3">
-                    Select how you'd like to practice your interview
-                  </p>
-                  <div className="flex space-x-4">
-                    <label
-                      className={`flex-1 border rounded-lg p-4 cursor-pointer transition ${
-                        practiceMode === "mcq"
-                          ? "border-blue-600 bg-white"
-                          : "border-gray-200 bg-gray-100"
-                      }`}
-                    >
-                      <input
-                        type="radio"
-                        name="practiceMode"
-                        value="mcq"
-                        checked={practiceMode === "mcq"}
-                        onChange={() => setPracticeMode("mcq")}
-                        className="sr-only"
-                      />
-                      <div className="font-medium text-sm mb-1">MCQ Mode</div>
-                      <div className="text-xs text-gray-500">
-                        Multiple choice questions for quick practice
-                      </div>
-                    </label>
-
-                    <label
-                      className={`flex-1 border rounded-lg p-4 cursor-pointer transition ${
-                        practiceMode === "qa"
-                          ? "border-blue-600 bg-white"
-                          : "border-gray-200 bg-gray-100"
-                      }`}
-                    >
-                      <input
-                        type="radio"
-                        name="practiceMode"
-                        value="qa"
-                        checked={practiceMode === "qa"}
-                        onChange={() => setPracticeMode("qa")}
-                        className="sr-only"
-                      />
-                      <div className="font-medium text-sm mb-1">Q&A Mode</div>
-                      <div className="text-xs text-gray-500">
-                        Open-ended questions with text responses
-                      </div>
-                    </label>
-                  </div>
-                </div>
-                <DifficultySelector
-                  selectedDifficulty={selectedDifficulty}
-                  setSelectedDifficulty={setSelectedDifficulty}
-                />
+                
                 <label
                   htmlFor="job-description"
                   className="text-sm font-medium leading-none"
@@ -487,6 +387,14 @@ export default function UploadInterface({
                 <p className="text-sm text-gray-500">
                   {jobDescription.length}/50 characters minimum
                 </p>
+                <PracticeModeSelector
+                  practiceMode={practiceMode}
+                  setPracticeMode={setPracticeMode}
+                />
+                <DifficultySelector
+                  selectedDifficulty={selectedDifficulty}
+                  setSelectedDifficulty={setSelectedDifficulty}
+                />
               </div>
             )}
           </div>
@@ -501,7 +409,7 @@ export default function UploadInterface({
 
         <div className="flex justify-center space-x-4">
           <button
-            onClick={() => navigate("/")}
+            onClick={() => navigate("/dashboard")}
             disabled={isLoading}
             className="border bg-white text-gray-900 h-10 px-4 py-2 rounded-md text-sm"
           >

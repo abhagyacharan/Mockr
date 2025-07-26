@@ -1,6 +1,6 @@
 # app/schemas/mock_session.py
 from pydantic import BaseModel
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any, Literal, Optional
 from datetime import datetime
 import uuid
 
@@ -22,6 +22,7 @@ class MockSessionResponse(BaseModel):
     user_id: uuid.UUID
     source_type: str
     source_id: uuid.UUID
+    practice_mode: Literal["mcq", "qa"] = "mcq"
     session_name: Optional[str]
     questions: List[Dict[str, Any]]
     total_questions: int
@@ -51,6 +52,7 @@ class UserResponseResponse(BaseModel):
     is_correct: Optional[str]
     score: Optional[int]
     feedback: Optional[str]
+    detailed_feedback: Optional[Dict[str, List[str]]] = None
     time_taken: Optional[int]
     created_at: datetime
     

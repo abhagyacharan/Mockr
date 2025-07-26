@@ -12,6 +12,7 @@ class MockSession(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
     source_type = Column(String(50), nullable=False)  # 'resume' or 'job_description'
+    practice_mode = Column(String(10), nullable=False, default="mcq")  # "mcq" or "qa"
     source_id = Column(UUID(as_uuid=True), nullable=False)
     session_name = Column(String(255))
     questions = Column(JSONB, nullable=False)
@@ -38,6 +39,7 @@ class UserResponse(Base):
     is_correct = Column(String(20))  # For MCQ: correct/incorrect, For open: good/average/poor
     score = Column(Integer)  # 0-100
     feedback = Column(String(1000))
+    detailed_feedback = Column(JSONB, nullable=True)
     time_taken = Column(Integer)  # in seconds
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     

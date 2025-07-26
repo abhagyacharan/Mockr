@@ -71,6 +71,7 @@ async def upload_job_description(
         id=mock_session_id,
         user_id=current_user.id,
         source_type="job_description",
+        practice_mode=practice_mode,
         source_id=db_job.id,
         session_name=mock_name,
         questions=questions,

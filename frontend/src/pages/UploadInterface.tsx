@@ -176,6 +176,7 @@ export default function UploadInterface({
 
       const mockSession: MockSession = {
         id: session.id,
+        practice_mode: session.practice_mode,
         currentQuestionIndex: 0,
         score: 0,
         totalQuestions: session.total_questions,
@@ -210,7 +211,7 @@ export default function UploadInterface({
       {/* ✅ Loading overlay */}
       <LoadingScreen isVisible={loadingVisible} progress={progress} />
 
-      <div className="container mx-auto px-4 max-w-4xl">
+      <div className="container mx-auto px-4 max-w-5xl">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
             Upload Your Information

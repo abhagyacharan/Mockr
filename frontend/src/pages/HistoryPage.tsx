@@ -341,7 +341,6 @@ export default function HistoryPage({ user }: HistoryPageProps) {
               Track your progress and review past interviews
             </p>
           </div>
-          <Button className="mt-4 sm:mt-0">Start New Interview</Button>
         </div>
 
         {/* Stats Cards */}

@@ -117,6 +117,7 @@ async def upload_resume(
         id=mock_session_id,
         user_id=current_user.id,
         source_type="resume",
+        practice_mode=practice_mode,
         source_id=db_resume.id,
         session_name=mock_name,
         questions=questions,

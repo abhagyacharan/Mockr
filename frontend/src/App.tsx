@@ -15,7 +15,6 @@ import HistoryPage from "./pages/HistoryPage";
 
 export interface Question {
   id: string;
-  type: "mcq" | "qa";
   question: string;
   options?: string[];
   correctAnswer?: string;
@@ -23,16 +22,23 @@ export interface Question {
   score?: number;
   is_correct?: "correct" | "incorrect" | "ungraded";
   feedback?: string;
+  detailed_feedback?: {
+    strengths?: string[];
+    improvements?: string[];
+  } | null;
 }
 
 export interface MockSession {
+  practice_mode: "mcq" | "qa" | "open";
   id: string;
   questions: Question[];
   currentQuestionIndex: number;
-  score: number;
   totalQuestions: number;
-  isCompleted: boolean;
+  score: number;
+  difficulty_level?: string;
+  isCompleted?: boolean;
 }
+
 
 function App() {
   const [isLoading, setIsLoading] = useState(false);

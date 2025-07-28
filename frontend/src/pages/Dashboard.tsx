@@ -16,10 +16,14 @@ import {
   BookOpen,
   CheckCircle,
   TrendingUp,
+  Play,
+  Eye,
+  Briefcase,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import UploadInterface from "./UploadInterface";
 import HistoryPage from "./HistoryPage";
+import RecentSessionsCard from "@/components/RecentSessions";
 
 interface DashboardProps {
   user: { id: string; name: string; email: string } | null;
@@ -45,7 +49,7 @@ export default function Dashboard({ user, setUser }: DashboardProps) {
   const token = localStorage.getItem("access_token");
 
   useEffect(() => {
-    if(!user && !token){
+    if (!user && !token) {
       navigate("/");
       return;
     }
@@ -81,7 +85,7 @@ export default function Dashboard({ user, setUser }: DashboardProps) {
       }
     };
 
-    fetchUserMetrics()
+    fetchUserMetrics();
     fetchUserSessions();
   }, [user, token]);
 
@@ -227,8 +231,12 @@ export default function Dashboard({ user, setUser }: DashboardProps) {
                 <div className="bg-white rounded-md border border-gray-200 p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-md text-gray-600 mb-1">Mock Sessions</p>
-                      <p className="text-3xl font-bold text-gray-900 mb-1">{userMetrics.completed_sessions_count}</p>
+                      <p className="text-md text-gray-600 mb-1">
+                        Mock Sessions
+                      </p>
+                      <p className="text-3xl font-bold text-gray-900 mb-1">
+                        {userMetrics.completed_sessions_count}
+                      </p>
                       {/* <p className="text-sm text-gray-600 mb-1">of {sessionHistory.length}</p> */}
                     </div>
                     <div className="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center">
@@ -240,9 +248,13 @@ export default function Dashboard({ user, setUser }: DashboardProps) {
                 <div className="bg-white rounded-md border border-gray-200 p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-md text-gray-600 mb-1">Average Score</p>
+                      <p className="text-md text-gray-600 mb-1">
+                        Average Score
+                      </p>
                       <p className="text-3xl font-bold text-gray-900">
-                        {userMetrics.average_score != null ? `${Math.round(userMetrics.average_score)}%` : "83%"}
+                        {userMetrics.average_score != null
+                          ? `${Math.round(userMetrics.average_score)}%`
+                          : "83%"}
                       </p>
                     </div>
                     <div className="w-14 h-14 bg-green-100 rounded-full flex items-center justify-center">
@@ -255,7 +267,10 @@ export default function Dashboard({ user, setUser }: DashboardProps) {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-md text-gray-600 mb-1">Resume - JD</p>
-                      <p className="text-3xl font-bold text-gray-900">{userMetrics.resume_sessions_count} - {userMetrics.job_description_sessions_count}</p>
+                      <p className="text-3xl font-bold text-gray-900">
+                        {userMetrics.resume_sessions_count} -{" "}
+                        {userMetrics.job_description_sessions_count}
+                      </p>
                     </div>
                     <div className="w-14 h-14 bg-purple-100 rounded-full flex items-center justify-center">
                       <CheckCircle className="h-6 w-6 text-purple-600" />
@@ -266,8 +281,12 @@ export default function Dashboard({ user, setUser }: DashboardProps) {
                 <div className="bg-white rounded-md border border-gray-200 p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-md text-gray-600 mb-1">Questions Practiced</p>
-                      <p className="text-3xl font-bold text-gray-900">{userMetrics.practiced_questions_count}</p>
+                      <p className="text-md text-gray-600 mb-1">
+                        Questions Practiced
+                      </p>
+                      <p className="text-3xl font-bold text-gray-900">
+                        {userMetrics.practiced_questions_count}
+                      </p>
                     </div>
                     <div className="w-14 h-14 bg-orange-100 rounded-full flex items-center justify-center">
                       <BookOpen className="h-6 w-6 text-orange-600" />
@@ -277,52 +296,12 @@ export default function Dashboard({ user, setUser }: DashboardProps) {
               </div>
 
               {/* Recent Sessions */}
-              <div className="rounded-lg border bg-card text-card-foreground shadow-sm border-gray-200">
-                <div className="flex flex-col space-y-1.5 p-6">
-                  <h3 className="text-2xl font-semibold leading-none tracking-tight flex items-center space-x-2">
-                    <History className="h-5 w-5" />
-                    <span>Recent Sessions</span>
-                  </h3>
-                  <p>Your latest interview practice sessions</p>
-                </div>
-                <div className="p-6 pt-0">
-                  <div className="space-y-4">
-                    {sessionHistory.slice(0, 3).map((session) => (
-                      <div
-                        key={session.id}
-                        className="flex items-center justify-between p-4 rounded-lg border border-gray-200 hover:bg-gray-100"
-                      >
-                        <div className="flex items-center space-x-4">
-                          <FileText className="h-5 w-5 text-gray-600" />
-                          <div>
-                            <p className="font-medium">
-                              {session.session_name}
-                            </p>
-                            <p className="text-sm text-gray-600">
-                              {session.date} • {session.duration}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <span
-                            className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 ${getScoreBadgeVariant(
-                              session.score
-                            )}`}
-                          >
-                            {session.score}%
-                          </span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                  <button
-                    onClick={() => setActiveTab("history")}
-                    className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 w-full mt-4 text-gray-900 cursor-pointer"
-                  >
-                    View All Sessions
-                  </button>
-                </div>
-              </div>
+
+              {/* <RecentSessionsTable sessionHistory={sessionHistory} /> */}
+              <RecentSessionsCard
+                sessions={sessionHistory}
+                onViewAll={() => setActiveTab("history")} // assuming you have a tab switcher
+              />
             </div>
           )}
 
@@ -336,14 +315,11 @@ export default function Dashboard({ user, setUser }: DashboardProps) {
             />
           )}
 
-          {/* History Tab */}   
+          {/* History Tab */}
 
-          {activeTab === 'history' && (
-            <HistoryPage 
-              user={null}
-              setUser={() => {}}
-            />
-            )}   
+          {activeTab === "history" && (
+            <HistoryPage user={null} setUser={() => {}} />
+          )}
           {/* {activeTab === "history" && (
             <div className="space-y-6">
               <div className="rounded-lg border bg-card text-card-foreground shadow-sm border-gray-200">

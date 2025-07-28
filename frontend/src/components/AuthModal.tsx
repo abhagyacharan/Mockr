@@ -156,12 +156,12 @@ export default function AuthModal({
             <X className="h-5 w-5" />
           </button>
 
-          <h2 className="text-2xl font-semibold text-center mb-4">
+          <h2 className="text-2xl font-semibold text-center mb-6">
             {mode === "login" ? "Welcome Back" : "Create Account"}
           </h2>
 
           {/* Toggle */}
-          <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg mb-6">
+          <div className="flex space-x-1 bg-gray-200 p-1 rounded-lg mb-2">
             <button
               className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
                 mode === "login"

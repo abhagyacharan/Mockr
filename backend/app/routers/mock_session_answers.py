@@ -1,4 +1,5 @@
 import json
+from typing import List
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from uuid import UUID
@@ -143,3 +144,20 @@ async def get_session_context(session: MockSession, db: Session) -> str:
         return "No additional context available"
     except Exception:
         return "No additional context available"
+
+@router.get("/{session_id}/responses", response_model=List[UserResponseResponse])
+async def get_responses_for_session(
+    session_id: UUID,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """Return all user responses for a session"""
+    session = db.query(MockSession).filter(
+        MockSession.id == session_id,
+        MockSession.user_id == current_user.id
+    ).first()
+
+    if not session:
+        raise HTTPException(status_code=404, detail="Session not found")
+
+    return session.responses

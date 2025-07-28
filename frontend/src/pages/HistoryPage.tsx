@@ -330,7 +330,7 @@ export default function HistoryPage({ user }: HistoryPageProps) {
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
-      <div className="w-3/4 mx-auto space-y-8">
+      <div className="w-75/100 mx-auto space-y-8">
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
           <div>
@@ -518,9 +518,6 @@ export default function HistoryPage({ user }: HistoryPageProps) {
                       <div className="text-base font-semibold text-gray-900">
                         {session.session_name}
                       </div>
-                      {/* <div className="text-sm text-gray-500">
-                        {session.type}
-                      </div> */}
                     </td>
                     <td className="px-4 py-6 whitespace-nowrap">
                       <Badge
@@ -553,7 +550,6 @@ export default function HistoryPage({ user }: HistoryPageProps) {
                       )}
                     </td>
                     <td className="px-4 py-6 whitespace-nowrap">
-                      {/* <div className="text-sm text-gray-900">{session.duration}</div> */}
                       <div className="text-sm text-gray-900">
                         {session.totalQuestions} questions
                       </div>
@@ -591,10 +587,15 @@ export default function HistoryPage({ user }: HistoryPageProps) {
                           </Button>
                         ) : (
                           <>
-                            <Button variant="outline" size="md">
+                            <Button
+                              variant="outline"
+                              size="md"
+                              onClick={() => navigate(`/results/${session.id}`)}
+                            >
                               <Eye className="w-4 h-4 mr-2" />
                               View
                             </Button>
+
                             <Button variant="outline" size="md">
                               <Download className="w-4 h-4 mr-2" />
                               Export

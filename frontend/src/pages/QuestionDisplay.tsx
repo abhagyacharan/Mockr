@@ -248,9 +248,9 @@ export default function QuestionDisplay() {
                 </p>
                 {currentQuestion.detailed_feedback && (
                   <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg space-y-2">
-                    <p className="text-sm text-blue-800">
+                    {/* <p className="text-sm text-blue-800">
                       <strong>Feedback:</strong> {currentQuestion.feedback}
-                    </p>
+                    </p> */}
 
                     {Array.isArray(
                       currentQuestion.detailed_feedback.strengths

@@ -25,7 +25,7 @@ export default function ResultsPage() {
   const totalPossiblePoints = mockSession.totalQuestions * 100;
   const scorePercentage = (mockSession.score / totalPossiblePoints) * 100;
   const correctAnswers = mockSession.questions.filter((q) => {
-    if (q.type === "mcq") {
+    if (mockSession.practice_mode === "mcq") {
       return q.userAnswer === q.correctAnswer;
     } else {
       return q.userAnswer && q.userAnswer.trim().length > 20;
@@ -184,7 +184,7 @@ export default function ResultsPage() {
             <div className="space-y-4">
               {mockSession.questions.map((question, index) => {
                 const isCorrect =
-                  question.type === "mcq"
+                  mockSession.practice_mode === "mcq"
                     ? question.userAnswer === question.correctAnswer
                     : question.userAnswer &&
                       question.userAnswer.trim().length > 20;
@@ -202,12 +202,12 @@ export default function ResultsPage() {
                           </span>
                           <span
                             className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 ${
-                              question.type === "mcq"
+                              mockSession.practice_mode === "mcq"
                                 ? "bg-blue-600 text-white"
                                 : "bg-gray-200 text-gray-900"
                             }`}
                           >
-                            {question.type === "mcq"
+                            {mockSession.practice_mode === "mcq"
                               ? "Multiple Choice"
                               : "Open Ended"}
                           </span>
@@ -228,7 +228,7 @@ export default function ResultsPage() {
                       </div>
                     </div>
 
-                    {question.type === "mcq" && (
+                    {mockSession.practice_mode === "mcq" && (
                       <div className="space-y-1 text-sm">
                         <div className="flex items-center space-x-2">
                           <span className="text-gray-600">Your answer:</span>
@@ -255,7 +255,7 @@ export default function ResultsPage() {
                       </div>
                     )}
 
-                    {question.type === "qa" && (
+                    {mockSession.practice_mode === "qa" && (
                       <div className="text-sm">
                         <div className="text-gray-600 mb-1">Your answer:</div>
                         <div className="bg-gray-50 p-2 rounded text-gray-700 max-h-20 overflow-y-auto">

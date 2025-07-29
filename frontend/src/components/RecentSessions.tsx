@@ -51,7 +51,7 @@ export default function RecentSessionsCard({
               <TableHead>Score</TableHead>
               <TableHead>Date</TableHead>
               <TableHead>Status</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              <TableHead className="w-[1%] whitespace-nowrap">Actions</TableHead>
             </TableRow>
           </TableHeader>
 

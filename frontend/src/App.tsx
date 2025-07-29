@@ -1,18 +1,18 @@
+// App.tsx
 "use client";
 
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import LandingPage from "./pages/LandingPage";
 import UploadInterface from "./pages/UploadInterface";
 import QuestionDisplay from "./pages/QuestionDisplay";
 import ResultsPage from "./pages/ResultsPage";
 import { useState } from "react";
 import AuthModal from "./components/AuthModal";
-import Dashboard from "./pages/Dashboard";
 import SessionResults from "./pages/SessionResult";
-// import PrivateRoute from "./context/PrivateRoute";
-
-import { MockSessionProvider } from "./context/MockSessionContext";
+import DashboardLayout from "./pages/DashboardLayout";
+import DashboardHome from "./pages/DashboardHome";
 import HistoryPage from "./pages/HistoryPage";
+import { MockSessionProvider } from "./context/MockSessionContext";
 
 export interface Question {
   id: string;
@@ -66,27 +66,32 @@ function App() {
                 />
               }
             />
-            <Route
-              path="/upload"
-              element={
-                <UploadInterface
-                  setIsLoading={setIsLoading}
-                  setError={setError}
-                  isLoading={isLoading}
-                  error={error}
-                />
-              }
-            />
-            <Route
-              path="/history"
-              element={<HistoryPage user={user} setUser={setUser} />}
-            />
+
+            {/* Dashboard and children */}
+            <Route path="/" element={<DashboardLayout />}>
+              <Route
+                path="dashboard"
+                element={<DashboardHome />}
+              />
+              <Route
+                path="uploadinterface"
+                element={
+                  <UploadInterface
+                    setIsLoading={setIsLoading}
+                    setError={setError}
+                    isLoading={isLoading}
+                    error={error}
+                  />
+                }
+              />
+              <Route
+                path="history"
+                element={<HistoryPage user={user} setUser={setUser} />}
+              />
+            </Route>
+
             <Route path="/questions" element={<QuestionDisplay />} />
             <Route path="/results" element={<ResultsPage />} />
-            <Route
-              path="/dashboard"
-              element={<Dashboard user={user} setUser={setUser} />}
-            />
             <Route path="/results/:sessionId" element={<SessionResults />} />
           </Routes>
           <AuthModal

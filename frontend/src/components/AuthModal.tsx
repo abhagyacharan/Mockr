@@ -163,7 +163,7 @@ export default function AuthModal({
           {/* Toggle */}
           <div className="flex space-x-1 bg-gray-200 p-1 rounded-lg mb-2">
             <button
-              className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
+              className={`flex-1 py-2 px-4 rounded-sm text-sm font-medium transition-colors ${
                 mode === "login"
                   ? "bg-white text-blue-600 shadow-sm"
                   : "text-gray-600 hover:text-gray-900"
@@ -173,7 +173,7 @@ export default function AuthModal({
               Login
             </button>
             <button
-              className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
+              className={`flex-1 py-2 px-4 rounded-sm text-sm font-medium transition-colors ${
                 mode === "signup"
                   ? "bg-white text-blue-600 shadow-sm"
                   : "text-gray-600 hover:text-gray-900"
@@ -201,9 +201,9 @@ export default function AuthModal({
                   placeholder="Enter your full name"
                   value={formData.name}
                   onChange={(e) => handleInputChange("name", e.target.value)}
-                  className={`flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ${
-                    errors.name ? "border-red-500" : "border-gray-300"
-                  } bg-white focus-visible:ring-blue-500`}
+                  className={`flex h-10 w-full rounded-sm border ${
+                    errors.email ? "border-red-500" : "border-gray-300"
+                  } bg-white px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:opacity-50`}
                 />
                 {errors.name && (
                   <p className="text-sm text-red-500">{errors.name}</p>
@@ -224,9 +224,9 @@ export default function AuthModal({
                 placeholder="Enter your email"
                 value={formData.email}
                 onChange={(e) => handleInputChange("email", e.target.value)}
-                className={`flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ${
+                className={`flex h-10 w-full rounded-sm border ${
                   errors.email ? "border-red-500" : "border-gray-300"
-                } bg-white focus-visible:ring-blue-500`}
+                } bg-white px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:opacity-50`}
               />
               {errors.email && (
                 <p className="text-sm text-red-500">{errors.email}</p>
@@ -249,11 +249,12 @@ export default function AuthModal({
                   onChange={(e) =>
                     handleInputChange("password", e.target.value)
                   }
-                  className={`flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ${
-                    errors.password
-                      ? "border-red-500 pr-10"
-                      : "border-gray-300 pr-10"
-                  } bg-white focus-visible:ring-blue-500`}
+                  className={`flex h-10 w-full rounded-sm border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus:outline-none focus:ring-0
+                              disabled:cursor-not-allowed disabled:opacity-50 ${
+                                errors.password
+                                  ? "border-red-500 pr-10"
+                                  : "border-gray-300 pr-10"
+                              } bg-white`}
                 />
                 <button
                   type="button"
@@ -289,11 +290,11 @@ export default function AuthModal({
                     onChange={(e) =>
                       handleInputChange("confirmPassword", e.target.value)
                     }
-                    className={`flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ${
+                    className={`flex h-10 w-full rounded-sm border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:opacity-50 ${
                       errors.confirmPassword
                         ? "border-red-500 pr-10"
                         : "border-gray-300 pr-10"
-                    } bg-white focus-visible:ring-blue-500`}
+                    } bg-white `}
                   />
                   <button
                     type="button"
@@ -316,7 +317,7 @@ export default function AuthModal({
             )}
 
             {errors.general && (
-              <div className="p-3 bg-red-50 border border-red-200 rounded-md">
+              <div className="p-3 bg-red-50 border border-red-200 rounded-sm">
                 <p className="text-sm text-red-600">{errors.general}</p>
               </div>
             )}
@@ -324,7 +325,7 @@ export default function AuthModal({
             <button
               type="submit"
               disabled={isLoading}
-              className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 w-full"
+              className="inline-flex items-center justify-center rounded-sm text-sm font-medium ring-offset-background transition-colors focus:outline-none focus:ring-0 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 w-full"
             >
               {isLoading ? (
                 <>

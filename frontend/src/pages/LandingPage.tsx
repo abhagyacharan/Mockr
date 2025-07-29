@@ -68,7 +68,7 @@ export default function LandingPage({
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-200 via-white to-purple-200">
+    <div className="min-h-screen bg-gradient-to-br from-blue-200 to-purple-200">
       {/* Header */}
       <header className="container mx-auto px-4 py-6">
         <nav className="flex items-center justify-between">
@@ -289,8 +289,7 @@ export default function LandingPage({
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button
               size="lg"
-              variant="secondary"
-              className="text-lg px-8"
+              className="text-lg px-8 bg-white text-gray-900 hover:bg-gray-50"
               onClick={() => {
                 if (user) {
                   navigate("/dashboard");

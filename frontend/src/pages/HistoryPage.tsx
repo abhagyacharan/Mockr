@@ -330,7 +330,7 @@ export default function HistoryPage({ user }: HistoryPageProps) {
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
-      <div className="w-75/100 mx-auto space-y-8">
+      <div className="space-y-8">
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
           <div>
@@ -344,7 +344,7 @@ export default function HistoryPage({ user }: HistoryPageProps) {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
           <Card>
             <div className="p-6">
               <div className="flex items-center justify-between">
@@ -358,6 +358,27 @@ export default function HistoryPage({ user }: HistoryPageProps) {
                 </div>
                 <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
                   <FileText className="h-6 w-6 text-blue-600" />
+                </div>
+              </div>
+            </div>
+          </Card>
+
+          <Card>
+            <div className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">
+                    In Progress
+                  </p>
+                  <p className="text-3xl font-bold text-gray-900">
+                    {
+                      sessionHistory.filter((s) => s.status === "ongoing")
+                        .length
+                    }
+                  </p>
+                </div>
+                <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
+                  <Clock className="h-6 w-6 text-yellow-600" />
                 </div>
               </div>
             </div>
@@ -484,8 +505,8 @@ export default function HistoryPage({ user }: HistoryPageProps) {
               Interview Sessions ({sessionHistory.length})
             </h2>
           </div>
-          <div className="overflow-x-auto">
-            <table className="w-full">
+          <div className="w-full overflow-x-auto">
+            <table className="min-w-[900px] w-full">
               <thead className="bg-gray-50">
                 <tr>
                   <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">

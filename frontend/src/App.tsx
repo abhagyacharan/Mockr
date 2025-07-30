@@ -1,7 +1,7 @@
 // App.tsx
 "use client";
 
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import LandingPage from "./pages/LandingPage";
 import UploadInterface from "./pages/UploadInterface";
 import QuestionDisplay from "./pages/QuestionDisplay";

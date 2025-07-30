@@ -31,7 +31,7 @@ export default function AuthModal({
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [isModalLoaded, setIsModalLoaded] = useState(false);
+  const [, setIsModalLoaded] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {

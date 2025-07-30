@@ -3,22 +3,14 @@
 import { useState, useEffect } from "react";
 import {
   Brain,
-  History,
-  Calendar,
-  Target,
-  Clock,
   Trophy,
   FileText,
-  BarChart3,
   User,
   LogOut,
   Plus,
   BookOpen,
   CheckCircle,
   TrendingUp,
-  Play,
-  Eye,
-  Briefcase,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import UploadInterface from "./UploadInterface";
@@ -97,18 +89,6 @@ export default function Dashboard({ user, setUser }: DashboardProps) {
   const handleLogout = () => {
     setUser(null);
     navigate("/");
-  };
-
-  const getScoreColor = (score: number) => {
-    if (score >= 80) return "text-green-600";
-    if (score >= 60) return "text-yellow-600";
-    return "text-red-600";
-  };
-
-  const getScoreBadgeVariant = (score: number) => {
-    if (score >= 80) return "default";
-    if (score >= 60) return "secondary";
-    return "destructive";
   };
 
   return (
@@ -322,7 +302,6 @@ export default function Dashboard({ user, setUser }: DashboardProps) {
           )}
 
           {/* Analytics Tab */}
-          
         </div>
       </div>
     </div>

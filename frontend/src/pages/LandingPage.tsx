@@ -363,7 +363,7 @@ export default function LandingPage({
             <div className="flex items-center justify-center space-x-2 mt-4">
               <span className="text-gray-400">Made with ❤️ by</span>
               <a
-                href="https://github.com/your-username/your-repo"
+                href="https://github.com/abhagyacharan"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center space-x-1 text-gray-400 hover:text-white transition-colors"

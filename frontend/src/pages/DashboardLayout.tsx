@@ -54,8 +54,8 @@ export default function DashboardLayout() {
               Dashboard
             </button>
             <button
-              className={getTabClass("uploadinterface")}
-              onClick={() => navigate("/uploadinterface")}
+              className={getTabClass("upload")}
+              onClick={() => navigate("/upload")}
             >
               New Mock
             </button>

@@ -16,25 +16,39 @@ export default function QuestionDisplay() {
   const { mockSession, setMockSession } = useMockSession();
 
   // 1. Setup total time dynamically once session loads
+  // Single useEffect to handle timer for each question
   useEffect(() => {
     if (!mockSession) {
       navigate("/");
       return;
     }
 
-    const totalTime = mockSession.totalQuestions * 5 * 60; // 5 min per question
-    setTimeLeft(totalTime);
-    setSessionDuration(totalTime);
+    // Reset answer state when question changes
+    setCurrentAnswer("");
+    setIsAnswered(false);
+
+    // Set 5 minutes per question
+    const timePerQuestion = 5 * 60;
+    setTimeLeft(timePerQuestion);
+    setSessionDuration(timePerQuestion);
 
     const timer = setInterval(() => {
       setTimeLeft((prev) => {
         if (prev <= 1) {
           clearInterval(timer);
-          setMockSession({
-            ...mockSession,
-            isCompleted: true,
-          });
-          navigate("/results");
+          // When time runs out, auto-submit and move to next question or end session
+          if (
+            mockSession.currentQuestionIndex <
+            mockSession.totalQuestions - 1
+          ) {
+            handleSubmitAnswer();
+          } else {
+            setMockSession({
+              ...mockSession,
+              isCompleted: true,
+            });
+            navigate("/results");
+          }
           return 0;
         }
         return prev - 1;
@@ -42,16 +56,12 @@ export default function QuestionDisplay() {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [mockSession]);
-
-  useEffect(() => {
-    setCurrentAnswer("");
-    setIsAnswered(false);
-  }, [mockSession?.currentQuestionIndex]);
+  }, [mockSession?.currentQuestionIndex]); // Runs when question changes
 
   if (!mockSession) return null;
 
-  const currentQuestion = mockSession.questions[mockSession.currentQuestionIndex];
+  const currentQuestion =
+    mockSession.questions[mockSession.currentQuestionIndex];
   const questionType = mockSession.practice_mode;
 
   const formatTime = (seconds: number) => {

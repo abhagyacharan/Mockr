@@ -66,7 +66,7 @@ function App() {
               <Route path="/" element={<DashboardLayout />}>
                 <Route path="dashboard" element={<DashboardHome />} />
                 <Route
-                  path="uploadinterface"
+                  path="upload"
                   element={
                     <UploadInterface
                       setIsLoading={setIsLoading}

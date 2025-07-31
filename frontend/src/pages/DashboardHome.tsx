@@ -17,6 +17,7 @@ export default function DashboardHome() {
   const [userMetrics, setUserMetrics] = useState<any>({});
   const [sessionHistory, setSessionHistory] = useState<any[]>([]);
   const [loadingMetrics, setLoadingMetrics] = useState(true);
+  const [loadingSessions, setLoadingSessions] = useState(true);
   const { user, token } = useAuth();
   const navigate = useNavigate();
 
@@ -32,7 +33,7 @@ export default function DashboardHome() {
     };
 
     const fetchUserSessions = async () => {
-      setLoadingMetrics(true);
+      setLoadingSessions(true);
       const res = await fetch(
         `${API_BASE_URL}/api/mock-sessions/user-sessions`,
         {
@@ -41,7 +42,7 @@ export default function DashboardHome() {
       );
       const data = await res.json();
       setSessionHistory(data);
-      setLoadingMetrics(false);
+      setLoadingSessions(false);
     };
 
     fetchUserMetrics();
@@ -113,11 +114,38 @@ export default function DashboardHome() {
         />
       </div>
 
-      {/* Recent Sessions */}
-      <RecentSessionsCard
-        sessions={sessionHistory}
-        onViewAll={() => navigate("/history")}
-      />
+      {/* Recent Sessions or No Sessions Message */}
+      {loadingSessions ? (
+        <div className="rounded-lg border bg-white shadow-sm p-6">
+          <div className="flex justify-center items-center h-32">
+            <div className="text-gray-500">Loading sessions...</div>
+          </div>
+        </div>
+      ) : sessionHistory.length > 0 ? (
+        <RecentSessionsCard
+          sessions={sessionHistory}
+          onViewAll={() => navigate("/history")}
+        />
+      ) : (
+        <div className="rounded-lg border bg-white shadow-sm p-6">
+          <div className="flex flex-col items-center justify-center h-32 text-center">
+            <FileText className="h-12 w-12 text-gray-300 mb-3" />
+            <h3 className="text-lg font-medium text-gray-900 mb-2">
+              No Mock Sessions
+            </h3>
+            <p className="text-gray-500 mb-4">
+              You haven't started any mock interviews yet. Begin your first session!
+            </p>
+            <button
+              onClick={() => navigate("/uploadinterface")}
+              className="inline-flex items-center justify-center bg-blue-600 text-white hover:bg-blue-700 rounded-md px-4 py-2 text-sm"
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Start First Mock Interview
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

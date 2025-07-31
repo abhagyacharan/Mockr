@@ -9,10 +9,12 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import RecentSessionsCard from "@/components/RecentSessions";
+import { StatsCard } from "@/components/StatsCard";
 
 export default function DashboardHome() {
   const [userMetrics, setUserMetrics] = useState<any>({});
   const [sessionHistory, setSessionHistory] = useState<any[]>([]);
+  const [loadingMetrics, setLoadingMetrics] = useState(true);
   const navigate = useNavigate();
 
   const token = localStorage.getItem("access_token");
@@ -20,14 +22,17 @@ export default function DashboardHome() {
 
   useEffect(() => {
     const fetchUserMetrics = async () => {
+      setLoadingMetrics(true);
       const res = await fetch("http://localhost:8000/api/user-metrics", {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
       setUserMetrics(data);
+      setLoadingMetrics(false);
     };
 
     const fetchUserSessions = async () => {
+      setLoadingMetrics(true);
       const res = await fetch(
         "http://localhost:8000/api/mock-sessions/user-sessions",
         {
@@ -36,6 +41,7 @@ export default function DashboardHome() {
       );
       const data = await res.json();
       setSessionHistory(data);
+      setLoadingMetrics(false);
     };
 
     fetchUserMetrics();
@@ -78,28 +84,32 @@ export default function DashboardHome() {
         <StatsCard
           label="Mock Sessions"
           value={userMetrics?.completed_sessions_count ?? 0}
-          icon={<FileText />}
+          icon={<FileText className="w-6 h-6" />}
           color="blue"
+          isLoading={loadingMetrics}
         />
         <StatsCard
           label="Average Score"
           value={`${Math.round(userMetrics?.average_score ?? 0)}%`}
-          icon={<TrendingUp />}
+          icon={<TrendingUp className="w-6 h-6" />}
           color="green"
+          isLoading={loadingMetrics}
         />
         <StatsCard
           label="Resume - JD"
           value={`${userMetrics?.resume_sessions_count ?? 0} - ${
             userMetrics?.job_description_sessions_count ?? 0
           }`}
-          icon={<CheckCircle />}
+          icon={<CheckCircle className="w-6 h-6" />}
           color="purple"
+          isLoading={loadingMetrics}
         />
         <StatsCard
           label="Questions Practiced"
           value={userMetrics?.practiced_questions_count ?? 0}
-          icon={<BookOpen />}
+          icon={<BookOpen className="w-6 h-6" />}
           color="orange"
+          isLoading={loadingMetrics}
         />
       </div>
 
@@ -108,38 +118,6 @@ export default function DashboardHome() {
         sessions={sessionHistory}
         onViewAll={() => navigate("/history")}
       />
-    </div>
-  );
-}
-
-type StatsCardProps = {
-  label: string;
-  value: string | number;
-  icon: React.ReactNode;
-  color: "blue" | "green" | "purple" | "orange";
-};
-
-function StatsCard({ label, value, icon, color }: StatsCardProps) {
-  const bg = {
-    blue: "bg-blue-100 text-blue-600",
-    green: "bg-green-100 text-green-600",
-    purple: "bg-purple-100 text-purple-600",
-    orange: "bg-orange-100 text-orange-600",
-  }[color];
-
-  return (
-    <div className="bg-white rounded-md border border-gray-200 p-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="text-md text-gray-600 mb-1">{label}</p>
-          <p className="text-3xl font-bold text-gray-900">{value}</p>
-        </div>
-        <div
-          className={`w-14 h-14 ${bg} rounded-full flex items-center justify-center`}
-        >
-          {icon}
-        </div>
-      </div>
     </div>
   );
 }

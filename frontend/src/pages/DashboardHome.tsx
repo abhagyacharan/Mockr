@@ -137,7 +137,7 @@ export default function DashboardHome() {
               You haven't started any mock interviews yet. Begin your first session!
             </p>
             <button
-              onClick={() => navigate("/uploadinterface")}
+              onClick={() => navigate("/upload")}
               className="inline-flex items-center justify-center bg-blue-600 text-white hover:bg-blue-700 rounded-md px-4 py-2 text-sm"
             >
               <Plus className="h-4 w-4 mr-2" />

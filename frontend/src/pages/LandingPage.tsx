@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Brain, Target, ArrowRight, Star, FileText } from "lucide-react";
+import { Brain, Target, ArrowRight, Star, FileText, Github } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 interface LandingPageProps {
@@ -23,13 +23,15 @@ export default function LandingPage({
     {
       icon: <Brain className="h-8 w-8 text-blue-600" />,
       title: "AI-Generated Questions",
-      description: "Get personalized interview questions tailored to your resume and target job description",
+      description:
+        "Get personalized interview questions tailored to your resume and target job description",
       bgColor: "bg-blue-100",
     },
     {
       icon: <FileText className="h-8 w-8 text-purple-600" />,
       title: "Resume & JD Analysis",
-      description: "Upload your resume or paste job descriptions for targeted interview preparation",
+      description:
+        "Upload your resume or paste job descriptions for targeted interview preparation",
       bgColor: "bg-purple-100",
     },
     {
@@ -43,7 +45,8 @@ export default function LandingPage({
   const testimonials = [
     {
       rating: 5,
-      content: "Mockr's AI questions were spot-on for my software engineering interview. I felt so prepared and confident!",
+      content:
+        "Mockr's AI questions were spot-on for my software engineering interview. I felt so prepared and confident!",
       name: "Sarah Chen",
       role: "Software Engineer at Google",
       avatar: "S",
@@ -51,7 +54,8 @@ export default function LandingPage({
     },
     {
       rating: 5,
-      content: "The resume-based questions helped me identify gaps in my experience. Landed my PM role at a unicorn startup!",
+      content:
+        "The resume-based questions helped me identify gaps in my experience. Landed my PM role at a unicorn startup!",
       name: "Michael Rodriguez",
       role: "Product Manager at Stripe",
       avatar: "M",
@@ -59,7 +63,8 @@ export default function LandingPage({
     },
     {
       rating: 5,
-      content: "Perfect for behavioral questions! The feedback helped me improve my storytelling and got me into consulting.",
+      content:
+        "Perfect for behavioral questions! The feedback helped me improve my storytelling and got me into consulting.",
       name: "Aisha Patel",
       role: "Consultant at McKinsey",
       avatar: "A",
@@ -86,6 +91,8 @@ export default function LandingPage({
               <>
                 <Button
                   variant="outline"
+                  size={"lg"}
+                  className="cursor-pointer"
                   onClick={() => {
                     setAuthMode("login");
                     setIsAuthModalOpen(true);
@@ -94,6 +101,8 @@ export default function LandingPage({
                   Login
                 </Button>
                 <Button
+                  size={"lg"}
+                  className="cursor-pointer"
                   onClick={() => {
                     setAuthMode("signup");
                     setIsAuthModalOpen(true);
@@ -120,13 +129,14 @@ export default function LandingPage({
             </span>
           </h1>
           <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-            Get personalized mock interview questions generated from your resume or job descriptions. Practice with
-            confidence and land your dream job.
+            Get personalized mock interview questions generated from your resume
+            or job descriptions. Practice with confidence and land your dream
+            job.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button
               size="lg"
-              className="text-lg px-8"
+              className="text-lg px-8 cursor-pointer"
               onClick={() => {
                 if (user) {
                   navigate("/dashboard");
@@ -136,12 +146,13 @@ export default function LandingPage({
                 }
               }}
             >
-              {user ? "Go to Dashboard" : "Get Started"} <ArrowRight className="ml-2 h-5 w-5" />
+              {user ? "Go to Dashboard" : "Get Started"}{" "}
+              <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
             <Button
-              variant="outline"
+              variant="secondary"
               size="lg"
-              className="text-lg px-8 bg-transparent"
+              className="text-lg px-8 bg-white hover:bg-gray-100 cursor-pointer"
               onClick={() => {
                 if (user) {
                   navigate("/dashboard");
@@ -160,17 +171,25 @@ export default function LandingPage({
       {/* Features Section */}
       <section className="container mx-auto px-4 py-16">
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Why Choose Mockr?</h2>
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            Why Choose Mockr?
+          </h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Our AI-powered platform adapts to your specific needs and helps you prepare effectively
+            Our AI-powered platform adapts to your specific needs and helps you
+            prepare effectively
           </p>
         </div>
 
         <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
           {features.map((feature, index) => (
-            <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-shadow">
+            <Card
+              key={index}
+              className="border-0 shadow-lg hover:shadow-xl transition-shadow"
+            >
               <CardContent className="p-8 text-center">
-                <div className={`w-16 h-16 ${feature.bgColor} rounded-full flex items-center justify-center mx-auto mb-4`}>
+                <div
+                  className={`w-16 h-16 ${feature.bgColor} rounded-full flex items-center justify-center mx-auto mb-4`}
+                >
                   {feature.icon}
                 </div>
                 <h3 className="text-xl font-semibold mb-3">{feature.title}</h3>
@@ -185,8 +204,12 @@ export default function LandingPage({
       <section className=" py-16">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">How It Works</h2>
-            <p className="text-xl text-gray-600">Get started in just three simple steps</p>
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              How It Works
+            </h2>
+            <p className="text-xl text-gray-600">
+              Get started in just three simple steps
+            </p>
           </div>
           <div className="flex flex-col lg:flex-row items-center justify-center gap-8 max-w-6xl mx-auto">
             {/* Step 1 */}
@@ -197,7 +220,8 @@ export default function LandingPage({
                 </div>
                 <h3 className="text-xl font-semibold mb-4">Upload & Input</h3>
                 <p className="text-gray-600">
-                  Upload your resume or paste the job description you're targeting
+                  Upload your resume or paste the job description you're
+                  targeting
                 </p>
               </CardContent>
             </Card>
@@ -218,7 +242,8 @@ export default function LandingPage({
                 </div>
                 <h3 className="text-xl font-semibold mb-4">Practice</h3>
                 <p className="text-gray-600">
-                  Answer AI-generated questions tailored to your profile and target role
+                  Answer AI-generated questions tailored to your profile and
+                  target role
                 </p>
               </CardContent>
             </Card>
@@ -239,7 +264,8 @@ export default function LandingPage({
                 </div>
                 <h3 className="text-xl font-semibold mb-4">Improve</h3>
                 <p className="text-gray-600">
-                  Get instant feedback and scoring to improve your interview performance
+                  Get instant feedback and scoring to improve your interview
+                  performance
                 </p>
               </CardContent>
             </Card>
@@ -250,8 +276,12 @@ export default function LandingPage({
       {/* Testimonials Section */}
       <section className="container mx-auto px-4 py-16">
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Success Stories</h2>
-          <p className="text-xl text-gray-600">See how Mockr helped professionals land their dream jobs</p>
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            Success Stories
+          </h2>
+          <p className="text-xl text-gray-600">
+            See how Mockr helped professionals land their dream jobs
+          </p>
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
@@ -260,12 +290,17 @@ export default function LandingPage({
               <CardContent className="p-6">
                 <div className="flex items-center mb-4">
                   {[...Array(testimonial.rating)].map((_, i) => (
-                    <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                    <Star
+                      key={i}
+                      className="h-4 w-4 fill-yellow-400 text-yellow-400"
+                    />
                   ))}
                 </div>
                 <p className="text-gray-600 mb-4">"{testimonial.content}"</p>
                 <div className="flex items-center">
-                  <div className={`w-10 h-10 ${testimonial.bgColor} rounded-full flex items-center justify-center text-white font-semibold`}>
+                  <div
+                    className={`w-10 h-10 ${testimonial.bgColor} rounded-full flex items-center justify-center text-white font-semibold`}
+                  >
                     {testimonial.avatar}
                   </div>
                   <div className="ml-3">
@@ -282,14 +317,17 @@ export default function LandingPage({
       {/* CTA Section */}
       <section className="container mx-auto px-4 py-16">
         <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 md:p-12 text-center text-white">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">Ready to Ace Your Next Interview?</h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">
+            Ready to Ace Your Next Interview?
+          </h2>
           <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
-            Join thousands of professionals who've successfully prepared with Mockr's AI-powered platform
+            Join thousands of professionals who've successfully prepared with
+            Mockr's AI-powered platform
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button
               size="lg"
-              className="text-lg px-8 bg-white text-gray-900 hover:bg-gray-50"
+              className="text-lg px-8 bg-white text-gray-900 hover:bg-gray-100 cursor-pointer"
               onClick={() => {
                 if (user) {
                   navigate("/dashboard");
@@ -313,8 +351,30 @@ export default function LandingPage({
               <Brain className="h-6 w-6" />
               <span className="text-2xl font-bold">Mockr</span>
             </div>
-            <p className="text-gray-400 mb-4">AI-powered interview preparation for your success</p>
-            <p className="text-sm text-gray-500">© 2024 Mockr. All rights reserved.</p>
+            <p className="text-gray-400 mb-4">
+              AI-powered interview preparation for your success
+            </p>
+
+            <p className="text-sm text-gray-500">
+              © 2025 Mockr. All rights reserved.
+            </p>
+
+            {/* GitHub Link Section */}
+            <div className="flex items-center justify-center space-x-2 mt-4">
+              <span className="text-gray-400">Made with ❤️ by</span>
+              <a
+                href="https://github.com/your-username/your-repo"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center space-x-1 text-gray-400 hover:text-white transition-colors"
+                aria-label="View on GitHub"
+              >
+                <Github className="h-5 w-5" />
+                <span>A Bhagya Charan</span>
+              </a>
+            </div>
+
+            
           </div>
         </div>
       </footer>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { API_BASE_URL } from "@/lib/api";
 import {
   Brain,
   Trophy,
@@ -16,11 +17,7 @@ import { useNavigate } from "react-router-dom";
 import UploadInterface from "./UploadInterface";
 import HistoryPage from "./HistoryPage";
 import RecentSessionsCard from "@/components/RecentSessions";
-
-interface DashboardProps {
-  user: { id: string; name: string; email: string } | null;
-  setUser: (user: null) => void;
-}
+import { useAuth } from "@/context/AuthContext";
 
 const performanceMetrics = {
   totalSessions: 12,
@@ -32,13 +29,13 @@ const performanceMetrics = {
   improvementAreas: ["System Design", "Behavioral Questions"],
 };
 
-export default function Dashboard({ user, setUser }: DashboardProps) {
+export default function Dashboard() {
   const [activeTab, setActiveTab] = useState("dashboard");
   const [sessionHistory, setSessionHistory] = useState<any[]>([]);
   const [userMetrics, setUserMetrics] = useState<any>({});
 
+  const { user, token } = useAuth();
   const navigate = useNavigate();
-  const token = localStorage.getItem("access_token");
 
   useEffect(() => {
     if (!user && !token) {
@@ -47,7 +44,7 @@ export default function Dashboard({ user, setUser }: DashboardProps) {
     }
     const fetchUserMetrics = async () => {
       try {
-        const res = await fetch("http://localhost:8000/api/user-metrics", {
+        const res = await fetch(`${API_BASE_URL}/api/user-metrics`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -63,7 +60,7 @@ export default function Dashboard({ user, setUser }: DashboardProps) {
     const fetchUserSessions = async () => {
       try {
         const res = await fetch(
-          "http://localhost:8000/api/mock-sessions/user-sessions",
+          `${API_BASE_URL}/api/mock-sessions/user-sessions`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -87,7 +84,6 @@ export default function Dashboard({ user, setUser }: DashboardProps) {
   }
 
   const handleLogout = () => {
-    setUser(null);
     navigate("/");
   };
 
@@ -298,7 +294,7 @@ export default function Dashboard({ user, setUser }: DashboardProps) {
           {/* History Tab */}
 
           {activeTab === "history" && (
-            <HistoryPage user={null} setUser={() => {}} />
+            <HistoryPage />
           )}
 
           {/* Analytics Tab */}

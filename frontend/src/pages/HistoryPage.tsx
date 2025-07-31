@@ -20,6 +20,8 @@ import { StatsCard } from "@/components/StatsCard";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
+import { useAuth } from "@/context/AuthContext";
+import { API_BASE_URL } from "@/lib/api";
 
 const formatSelectLabel = (value: string) => {
   switch (value) {
@@ -110,12 +112,8 @@ const SelectItem = ({ value, children }: SelectItemProps) => {
 };
 
 
-interface HistoryPageProps {
-  user: { id: string; name: string; email: string } | null;
-  setUser: (user: null) => void;
-}
-
-export default function HistoryPage({ user }: HistoryPageProps) {
+export default function HistoryPage() {
+  const { user } = useAuth();
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [typeFilter, setTypeFilter] = useState("all");
@@ -159,7 +157,7 @@ export default function HistoryPage({ user }: HistoryPageProps) {
 
   const deleteMockSession = async (sessionId: string) => {
     try {
-      await fetch(`http://localhost:8000/api/mock-sessions/${sessionId}`, {
+      await fetch(`${API_BASE_URL}/api/mock-sessions/${sessionId}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -181,7 +179,7 @@ export default function HistoryPage({ user }: HistoryPageProps) {
     }
     const fetchUserMetrics = async () => {
       try {
-        const res = await fetch("http://localhost:8000/api/user-metrics", {
+        const res = await fetch(`${API_BASE_URL}/api/user-metrics`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -196,7 +194,7 @@ export default function HistoryPage({ user }: HistoryPageProps) {
     const fetchUserSessions = async () => {
       try {
         const res = await fetch(
-          "http://localhost:8000/api/mock-sessions/user-sessions",
+          `${API_BASE_URL}/api/mock-sessions/user-sessions`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

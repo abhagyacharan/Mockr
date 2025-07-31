@@ -5,18 +5,18 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Brain, Target, ArrowRight, Star, FileText, Github } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/context/AuthContext";
 
 interface LandingPageProps {
   setIsAuthModalOpen: (open: boolean) => void;
   setAuthMode: (mode: "login" | "signup") => void;
-  user: { id: string; name: string; email: string } | null;
 }
 
 export default function LandingPage({
   setIsAuthModalOpen,
   setAuthMode,
-  user,
 }: LandingPageProps) {
+  const { user } = useAuth();
   const navigate = useNavigate();
 
   const features = [
@@ -119,7 +119,7 @@ export default function LandingPage({
       {/* Hero Section */}
       <section className="container mx-auto px-4 pt-20 pb-16">
         <div className="text-center max-w-4xl mx-auto">
-          <Badge variant="secondary" className="mb-4">
+          <Badge variant="secondary" className="mb-4 px-2">
             AI-Powered Interview Preparation
           </Badge>
           <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight">

@@ -12,8 +12,7 @@ import { useMockSession } from "@/context/MockSessionContext";
 import LoadingScreen from "../components/LoadingScreen"; // ✅ Import the new component
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-
-const API_BASE_URL = "http://localhost:8000/api";
+import { API_BASE_URL } from "@/lib/api";
 
 type UploadInterfaceProps = {
   setIsLoading: (loading: boolean) => void;
@@ -129,7 +128,7 @@ export default function UploadInterface({
         formData.append("difficulty", selectedDifficulty);
         formData.append("practice_mode", practiceMode);
 
-        response = await fetch(`${API_BASE_URL}/resumes/upload/`, {
+        response = await fetch(`${API_BASE_URL}/api/resumes/upload/`, {
           method: "POST",
           body: formData,
           headers: { Authorization: `Bearer ${token}` },
@@ -144,7 +143,7 @@ export default function UploadInterface({
         formData.append("difficulty", selectedDifficulty);
         formData.append("practice_mode", practiceMode);
 
-        response = await fetch(`${API_BASE_URL}/job-descriptions/upload/`, {
+        response = await fetch(`${API_BASE_URL}/api/job-descriptions/upload/`, {
           method: "POST",
           headers: {
             Authorization: `Bearer ${token}`, // ✅ DO NOT set Content-Type

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { API_BASE_URL } from "@/lib/api";
 import {
   FileText,
   TrendingUp,
@@ -10,20 +11,19 @@ import {
 import { useNavigate } from "react-router-dom";
 import RecentSessionsCard from "@/components/RecentSessions";
 import { StatsCard } from "@/components/StatsCard";
+import { useAuth } from "@/context/AuthContext";
 
 export default function DashboardHome() {
   const [userMetrics, setUserMetrics] = useState<any>({});
   const [sessionHistory, setSessionHistory] = useState<any[]>([]);
   const [loadingMetrics, setLoadingMetrics] = useState(true);
+  const { user, token } = useAuth();
   const navigate = useNavigate();
-
-  const token = localStorage.getItem("access_token");
-  const user = JSON.parse(localStorage.getItem("user") || "null");
 
   useEffect(() => {
     const fetchUserMetrics = async () => {
       setLoadingMetrics(true);
-      const res = await fetch("http://localhost:8000/api/user-metrics", {
+      const res = await fetch(`${API_BASE_URL}/api/user-metrics`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -34,7 +34,7 @@ export default function DashboardHome() {
     const fetchUserSessions = async () => {
       setLoadingMetrics(true);
       const res = await fetch(
-        "http://localhost:8000/api/mock-sessions/user-sessions",
+        `${API_BASE_URL}/api/mock-sessions/user-sessions`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }

@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "@/lib/api";
 import {
   createContext,
   useContext,
@@ -22,14 +23,20 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [token, setToken] = useState<string | null>(() => localStorage.getItem("token"));
-  const [user, setUser] = useState<User | null>(null);
+  // Fix: Use consistent key "access_token"
+  const [token, setToken] = useState<string | null>(() =>
+    localStorage.getItem("access_token")
+  );
+  const [user, setUser] = useState<User | null>(() => {
+    const storedUser = localStorage.getItem("user");
+    return storedUser ? JSON.parse(storedUser) : null;
+  });
 
   useEffect(() => {
     const fetchUser = async () => {
       if (token) {
         try {
-          const response = await fetch("http://localhost:8000/api/users/me", {
+          const response = await fetch(`${API_BASE_URL}/api/users/me`, {
             headers: {
               Authorization: `Bearer ${token}`,
             },
@@ -37,11 +44,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           if (response.ok) {
             const data = await response.json();
             setUser(data);
-          } else {
-            logout(); // Invalid token
+          } else if (response.status === 401 || response.status === 403) {
+            // Token is invalid, clear everything
+            console.log("Token invalid, logging out");
+            logout();
           }
         } catch (error) {
-          logout(); // Network or server error
+          console.error("Auth check failed:", error);
+          logout();
         }
       }
     };
@@ -50,13 +60,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, [token]);
 
   const login = (newToken: string, user: User) => {
-    localStorage.setItem("token", newToken);
+    // Fix: Use consistent key "access_token"
+    localStorage.setItem("access_token", newToken);
+    localStorage.setItem("user", JSON.stringify(user));
     setToken(newToken);
     setUser(user);
   };
 
   const logout = () => {
-    localStorage.removeItem("token");
+    // Fix: Use consistent key "access_token"
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("user");
     setToken(null);
     setUser(null);
   };

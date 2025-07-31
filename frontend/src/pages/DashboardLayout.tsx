@@ -1,12 +1,25 @@
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { Brain, User, LogOut } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
+import { useEffect } from "react";
 
 export default function DashboardLayout() {
   const navigate = useNavigate();
   const location = useLocation();
-  const user = JSON.parse(localStorage.getItem("user") || "null");
-
+  const { user, logout, token } = useAuth();
   const currentPath = location.pathname;
+
+  useEffect(() => {
+    // Redirect to login if not authenticated
+    if (!token || !user) {
+      navigate("/", { replace: true });
+    }
+  }, [token, user, navigate]);
+
+  // Don't render dashboard if not authenticated
+  if (!token || !user) {
+    return <div>Loading...</div>;
+  }
 
   const getTabClass = (path: string) =>
     `inline-flex cursor-pointer items-center justify-center px-4 py-1.5 text-sm font-medium rounded-md ${
@@ -16,8 +29,7 @@ export default function DashboardLayout() {
     }`;
 
   const handleLogout = () => {
-    localStorage.removeItem("user");
-    localStorage.removeItem("access_token");
+    logout();
     navigate("/");
   };
 
@@ -35,13 +47,22 @@ export default function DashboardLayout() {
           </div>
 
           <div className="inline-flex h-10 items-center rounded-md bg-gray-200 p-1">
-            <button className={getTabClass("dashboard")} onClick={() => navigate("/dashboard")}>
+            <button
+              className={getTabClass("dashboard")}
+              onClick={() => navigate("/dashboard")}
+            >
               Dashboard
             </button>
-            <button className={getTabClass("uploadinterface")} onClick={() => navigate("/uploadinterface")}>
+            <button
+              className={getTabClass("uploadinterface")}
+              onClick={() => navigate("/uploadinterface")}
+            >
               New Mock
             </button>
-            <button className={getTabClass("history")} onClick={() => navigate("/history")}>
+            <button
+              className={getTabClass("history")}
+              onClick={() => navigate("/history")}
+            >
               History
             </button>
           </div>

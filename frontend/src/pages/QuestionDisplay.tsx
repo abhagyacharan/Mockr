@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Clock, CheckCircle, ArrowRight, ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useMockSession } from "@/context/MockSessionContext";
+import { API_BASE_URL } from "@/lib/api";
 
 export default function QuestionDisplay() {
   const [currentAnswer, setCurrentAnswer] = useState("");
@@ -81,7 +82,7 @@ export default function QuestionDisplay() {
 
     try {
       const res = await fetch(
-        `http://localhost:8000/api/mock-sessions/${sessionId}/submit`,
+        `${API_BASE_URL}/api/mock-sessions/${sessionId}/submit`,
         {
           method: "POST",
           headers: {

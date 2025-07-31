@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft, CheckCircle, XCircle, Clock } from "lucide-react";
+import { API_BASE_URL } from "@/lib/api";
 
 type UserResponse = {
   id: string;
@@ -30,7 +31,7 @@ export default function SessionResults() {
     const fetchResponses = async () => {
       try {
         const res = await fetch(
-          `http://localhost:8000/api/mock-sessions/${sessionId}/responses`,
+          `${API_BASE_URL}/api/mock-sessions/${sessionId}/responses`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

@@ -1,17 +1,17 @@
 "use client";
 
 import type React from "react";
-
 import { useState, useEffect } from "react";
 import { X, Eye, EyeOff, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/context/AuthContext"; // ✅ Import context
+import { API_BASE_URL } from "@/lib/api";
 
 interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
   mode: "login" | "signup";
   setMode: (mode: "login" | "signup") => void;
-  setUser: (user: { id: string; name: string; email: string }) => void;
 }
 
 export default function AuthModal({
@@ -19,8 +19,8 @@ export default function AuthModal({
   onClose,
   mode,
   setMode,
-  setUser,
 }: AuthModalProps) {
+  const { login } = useAuth(); // ✅ Access login method
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -35,11 +35,7 @@ export default function AuthModal({
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (isOpen) {
-      setIsModalLoaded(true);
-    } else {
-      setIsModalLoaded(false);
-    }
+    setIsModalLoaded(isOpen);
   }, [isOpen]);
 
   if (!isOpen) return null;
@@ -76,17 +72,18 @@ export default function AuthModal({
     if (!validateForm()) return;
 
     setIsLoading(true);
-    setErrors({}); // Clear previous errors
+    setErrors({});
 
     try {
       const endpoint =
         mode === "signup" ? "/api/auth/register" : "/api/auth/login";
-      const payload =
-        mode === "signup"
-          ? { email: formData.email, password: formData.password }
-          : { email: formData.email, password: formData.password };
+      const payload = {
+        email: formData.email,
+        password: formData.password,
+        ...(mode === "signup" && { name: formData.name }),
+      };
 
-      const response = await fetch(`http://localhost:8000${endpoint}`, {
+      const response = await fetch(`${API_BASE_URL}${endpoint}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -100,7 +97,6 @@ export default function AuthModal({
         throw new Error(data.detail || "Authentication failed");
       }
 
-      // For signup, if token is not returned, ask user to login again
       if (mode === "signup" && !data.access_token) {
         setMode("login");
         setErrors({ general: "Account created. Please log in." });
@@ -108,17 +104,14 @@ export default function AuthModal({
         return;
       }
 
-      // Save token
-      localStorage.setItem("access_token", data.access_token);
-
-      // Set user (optionally returned by backend, or mock one if not included)
-      const userData = data.user || {
+      const token = data.access_token;
+      const user = data.user || {
         id: "user-" + Date.now(),
         name: formData.name || formData.email.split("@")[0],
         email: formData.email,
       };
 
-      setUser(userData);
+      login(token, user); // ✅ Use context to store token and user
       onClose();
 
       setTimeout(() => {
@@ -140,13 +133,7 @@ export default function AuthModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
-      {/* Backdrop */}
-      <div
-        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
-        onClick={onClose}
-      />
-
-      {/* Modal */}
+      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
       <div className="relative w-full max-w-md mx-4 backdrop-blur-md bg-white/95 border-white/20 shadow-2xl rounded-lg border">
         <div className="relative p-6">
           <button
@@ -160,7 +147,6 @@ export default function AuthModal({
             {mode === "login" ? "Welcome Back" : "Create Account"}
           </h2>
 
-          {/* Toggle */}
           <div className="flex space-x-1 bg-gray-200 p-1 rounded-lg mb-2">
             <button
               className={`flex-1 py-2 px-4 rounded-sm text-sm font-medium transition-colors ${
@@ -189,10 +175,7 @@ export default function AuthModal({
           <form onSubmit={handleSubmit} className="space-y-4">
             {mode === "signup" && (
               <div className="space-y-2">
-                <label
-                  htmlFor="name"
-                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                >
+                <label htmlFor="name" className="text-sm font-medium">
                   Full Name
                 </label>
                 <input
@@ -201,21 +184,16 @@ export default function AuthModal({
                   placeholder="Enter your full name"
                   value={formData.name}
                   onChange={(e) => handleInputChange("name", e.target.value)}
-                  className={`flex h-10 w-full rounded-sm border ${
-                    errors.email ? "border-red-500" : "border-gray-300"
-                  } bg-white px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:opacity-50`}
+                  className={`w-full h-10 rounded-sm border px-3 py-2 text-sm ${
+                    errors.name ? "border-red-500" : "border-gray-300"
+                  }`}
                 />
-                {errors.name && (
-                  <p className="text-sm text-red-500">{errors.name}</p>
-                )}
+                {errors.name && <p className="text-sm text-red-500">{errors.name}</p>}
               </div>
             )}
 
             <div className="space-y-2">
-              <label
-                htmlFor="email"
-                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-              >
+              <label htmlFor="email" className="text-sm font-medium">
                 Email
               </label>
               <input
@@ -224,20 +202,15 @@ export default function AuthModal({
                 placeholder="Enter your email"
                 value={formData.email}
                 onChange={(e) => handleInputChange("email", e.target.value)}
-                className={`flex h-10 w-full rounded-sm border ${
+                className={`w-full h-10 rounded-sm border px-3 py-2 text-sm ${
                   errors.email ? "border-red-500" : "border-gray-300"
-                } bg-white px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:opacity-50`}
+                }`}
               />
-              {errors.email && (
-                <p className="text-sm text-red-500">{errors.email}</p>
-              )}
+              {errors.email && <p className="text-sm text-red-500">{errors.email}</p>}
             </div>
 
             <div className="space-y-2">
-              <label
-                htmlFor="password"
-                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-              >
+              <label htmlFor="password" className="text-sm font-medium">
                 Password
               </label>
               <div className="relative">
@@ -246,39 +219,25 @@ export default function AuthModal({
                   type={showPassword ? "text" : "password"}
                   placeholder="Enter your password"
                   value={formData.password}
-                  onChange={(e) =>
-                    handleInputChange("password", e.target.value)
-                  }
-                  className={`flex h-10 w-full rounded-sm border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus:outline-none focus:ring-0
-                              disabled:cursor-not-allowed disabled:opacity-50 ${
-                                errors.password
-                                  ? "border-red-500 pr-10"
-                                  : "border-gray-300 pr-10"
-                              } bg-white`}
+                  onChange={(e) => handleInputChange("password", e.target.value)}
+                  className={`w-full h-10 rounded-sm border px-3 py-2 text-sm pr-10 ${
+                    errors.password ? "border-red-500" : "border-gray-300"
+                  }`}
                 />
                 <button
                   type="button"
                   className="absolute right-3 top-1/2 transform -translate-y-1/2"
                   onClick={() => setShowPassword(!showPassword)}
                 >
-                  {showPassword ? (
-                    <EyeOff className="h-4 w-4" />
-                  ) : (
-                    <Eye className="h-4 w-4" />
-                  )}
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
               </div>
-              {errors.password && (
-                <p className="text-sm text-red-500">{errors.password}</p>
-              )}
+              {errors.password && <p className="text-sm text-red-500">{errors.password}</p>}
             </div>
 
             {mode === "signup" && (
               <div className="space-y-2">
-                <label
-                  htmlFor="confirmPassword"
-                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                >
+                <label htmlFor="confirmPassword" className="text-sm font-medium">
                   Confirm Password
                 </label>
                 <div className="relative">
@@ -290,11 +249,9 @@ export default function AuthModal({
                     onChange={(e) =>
                       handleInputChange("confirmPassword", e.target.value)
                     }
-                    className={`flex h-10 w-full rounded-sm border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:opacity-50 ${
-                      errors.confirmPassword
-                        ? "border-red-500 pr-10"
-                        : "border-gray-300 pr-10"
-                    } bg-white `}
+                    className={`w-full h-10 rounded-sm border px-3 py-2 text-sm pr-10 ${
+                      errors.confirmPassword ? "border-red-500" : "border-gray-300"
+                    }`}
                   />
                   <button
                     type="button"
@@ -309,9 +266,7 @@ export default function AuthModal({
                   </button>
                 </div>
                 {errors.confirmPassword && (
-                  <p className="text-sm text-red-500">
-                    {errors.confirmPassword}
-                  </p>
+                  <p className="text-sm text-red-500">{errors.confirmPassword}</p>
                 )}
               </div>
             )}
@@ -325,7 +280,7 @@ export default function AuthModal({
             <button
               type="submit"
               disabled={isLoading}
-              className="inline-flex items-center justify-center rounded-sm text-sm font-medium ring-offset-background transition-colors focus:outline-none focus:ring-0 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 w-full"
+              className="w-full inline-flex items-center justify-center rounded-sm text-sm font-medium bg-blue-600 text-white h-10 px-4 py-2 hover:bg-blue-700 transition-colors"
             >
               {isLoading ? (
                 <>

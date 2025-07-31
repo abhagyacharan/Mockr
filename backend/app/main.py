@@ -22,7 +22,7 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173",
-                   "https://mockr-abc.vercel.app/",
+                   "https://mockr-abc.vercel.app",
                    "https://mockr-git-main-aela-bhagya-charans-projects.vercel.app",
                    "https://mockr-25uvbreez-aela-bhagya-charans-projects.vercel.app"],  # Frontend URL
     allow_credentials=True,

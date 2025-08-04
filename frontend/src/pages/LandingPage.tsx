@@ -13,12 +13,48 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
-import {MockrDemo} from "@/components/MockrDemo";
+import { MockrDemo } from "@/components/MockrDemo";
+import { motion, type Variants } from "framer-motion";
 
 interface LandingPageProps {
   setIsAuthModalOpen: (open: boolean) => void;
   setAuthMode: (mode: "login" | "signup") => void;
 }
+
+// Animation Variants for Reusability
+const sectionFadeIn: Variants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.6,
+      ease: "easeOut",
+    },
+  },
+};
+
+const staggerContainer: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.15,
+    },
+  },
+};
+
+const cardFadeInUp: Variants = {
+  hidden: { opacity: 0, y: 50 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.5,
+      ease: "easeOut",
+    },
+  },
+};
 
 export default function LandingPage({
   setIsAuthModalOpen,
@@ -81,123 +117,162 @@ export default function LandingPage({
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-200 to-purple-200">
+    <div className="min-h-screen bg-gradient-to-br from-blue-200 to-purple-200 overflow-x-hidden">
       {/* Header */}
-      <header className="container mx-auto px-4 py-6">
+      <motion.header
+        initial={{ y: -100, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+        className="container mx-auto px-4 py-6"
+      >
         <nav className="flex items-center justify-between">
-          <div
+          <motion.div
+            whileHover={{ scale: 1.02 }}
             onClick={() => navigate("/")}
-            className="flex items-center space-x-2 cursor-pointer hover:opacity-80 transition"
+            className="flex items-center space-x-3 cursor-pointer"
           >
             <Brain className="h-8 w-8 text-blue-600" />
-            <span className="text-2xl font-bold text-gray-900">Mockr</span>
-          </div>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-2">
+              <span className="text-2xl font-bold text-gray-900">Mockr</span>
+              <span className="text-lg text-gray-500 hidden sm:inline">
+                | because <span className="font-bold italic">Interviews</span>{" "}
+                shouldn't be a surprise.
+              </span>
+            </div>
+          </motion.div>
+
           <div className="flex items-center space-x-3">
             {user ? (
-              <Button onClick={() => navigate("/dashboard")}>Dashboard</Button>
+              <motion.div>
+                <Button onClick={() => navigate("/dashboard")}>Dashboard</Button>
+              </motion.div>
             ) : (
               <>
-                <Button
-                  variant="outline"
-                  size={"lg"}
-                  className="cursor-pointer"
-                  onClick={() => {
-                    setAuthMode("login");
-                    setIsAuthModalOpen(true);
-                  }}
-                >
-                  Login
-                </Button>
-                <Button
-                  size={"lg"}
-                  className="cursor-pointer"
-                  onClick={() => {
-                    setAuthMode("signup");
-                    setIsAuthModalOpen(true);
-                  }}
-                >
-                  Get Started
-                </Button>
+                <motion.div>
+                  <Button
+                    variant="outline"
+                    size={"lg"}
+                    className="cursor-pointer"
+                    onClick={() => {
+                      setAuthMode("login");
+                      setIsAuthModalOpen(true);
+                    }}
+                  >
+                    Login
+                  </Button>
+                </motion.div>
+                <motion.div>
+                  <Button
+                    size={"lg"}
+                    className="cursor-pointer"
+                    onClick={() => {
+                      setAuthMode("signup");
+                      setIsAuthModalOpen(true);
+                    }}
+                  >
+                    Get Started
+                  </Button>
+                </motion.div>
               </>
             )}
           </div>
         </nav>
-      </header>
+      </motion.header>
 
       {/* Hero Section Split */}
       <section className="container mx-auto px-4 pt-20 pb-16">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left Half - Text Content */}
-          <div className="text-center lg:text-left">
-            <Badge variant="secondary" className="mb-4">
-              AI-Powered Interview Preparation
-            </Badge>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
+          <motion.div
+            className="text-center lg:text-left"
+            variants={staggerContainer}
+            initial="hidden"
+            animate="visible"
+          >
+            <motion.div variants={cardFadeInUp}>
+              <Badge variant="secondary" className="mb-4">
+                AI-Powered Interview Preparation
+              </Badge>
+            </motion.div>
+            <motion.h1
+              variants={cardFadeInUp}
+              className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight"
+            >
               Ace Your Interviews with{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
                 AI-Powered Practice
               </span>
-            </h1>
-            <p className="text-xl text-gray-600 mb-8 max-w-2xl lg:max-w-none">
+            </motion.h1>
+            <motion.p
+              variants={cardFadeInUp}
+              className="text-xl text-gray-600 mb-8 max-w-2xl lg:max-w-none"
+            >
               Get personalized mock interview questions generated from your
               resume or job descriptions. Practice with confidence and land your
               dream job.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-              <Button
-                size="lg"
-                className="text-lg px-8 cursor-pointer"
-                onClick={() => {
-                  if (user) {
-                    navigate("/dashboard");
-                  } else {
-                    setAuthMode("signup");
-                    setIsAuthModalOpen(true);
-                  }
-                }}
-              >
-                {user ? "Go to Dashboard" : "Get Started"}{" "}
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-              <Button
-                variant="secondary"
-                size="lg"
-                className="text-lg px-8 bg-white hover:bg-gray-100 cursor-pointer"
-                onClick={() => {
-                  if (user) {
-                    navigate("/dashboard");
-                  } else {
-                    setAuthMode("signup");
-                    setIsAuthModalOpen(true);
-                  }
-                }}
-              >
-                Try a Mock Test
-              </Button>
-            </div>
-
-            {/* Trust Indicators */}
-            {/* <div className="mt-8 pt-8 border-t border-gray-200">
-              <p className="text-sm text-gray-500 mb-4">Trusted by professionals at</p>
-              <div className="flex items-center justify-center lg:justify-start space-x-6 opacity-60">
-                <div className="text-2xl font-bold text-gray-400">Google</div>
-                <div className="text-2xl font-bold text-gray-400">Meta</div>
-                <div className="text-2xl font-bold text-gray-400">Amazon</div>
-                <div className="text-2xl font-bold text-gray-400">Microsoft</div>
-              </div>
-            </div> */}
-          </div>
+            </motion.p>
+            <motion.div
+              variants={cardFadeInUp}
+              className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
+            >
+              <motion.div>
+                <Button
+                  size="lg"
+                  className="text-lg px-8 cursor-pointer"
+                  onClick={() => {
+                    if (user) {
+                      navigate("/dashboard");
+                    } else {
+                      setAuthMode("signup");
+                      setIsAuthModalOpen(true);
+                    }
+                  }}
+                >
+                  {user ? "Go to Dashboard" : "Get Started"}{" "}
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </motion.div>
+              <motion.div>
+                <Button
+                  variant="secondary"
+                  size="lg"
+                  className="text-lg px-8 bg-white hover:bg-gray-100 cursor-pointer"
+                  onClick={() => {
+                    if (user) {
+                      navigate("/dashboard");
+                    } else {
+                      setAuthMode("signup");
+                      setIsAuthModalOpen(true);
+                    }
+                  }}
+                >
+                  Try a Mock Test
+                </Button>
+              </motion.div>
+            </motion.div>
+          </motion.div>
 
           {/* Right Half - Interactive Demo */}
-          <div className="relative">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
+            className="relative"
+          >
             <MockrDemo />
-          </div>
+          </motion.div>
         </div>
       </section>
 
       {/* Features Section */}
       <section className="container mx-auto px-4 py-16">
-        <div className="text-center mb-12">
+        <motion.div
+          className="text-center mb-12"
+          variants={sectionFadeIn}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.5 }}
+        >
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
             Why Choose Mockr?
           </h2>
@@ -205,145 +280,208 @@ export default function LandingPage({
             Our AI-powered platform adapts to your specific needs and helps you
             prepare effectively
           </p>
-        </div>
+        </motion.div>
 
-        <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        <motion.div
+          className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto"
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.3 }}
+        >
           {features.map((feature, index) => (
-            <Card
+            <motion.div
               key={index}
-              className="border-0 shadow-lg hover:shadow-xl transition-shadow"
+              variants={cardFadeInUp}
+              whileHover={{ y: -8, transition: { duration: 0.2 } }}
             >
-              <CardContent className="p-8 text-center">
-                <div
-                  className={`w-16 h-16 ${feature.bgColor} rounded-full flex items-center justify-center mx-auto mb-4`}
-                >
-                  {feature.icon}
-                </div>
-                <h3 className="text-xl font-semibold mb-3">{feature.title}</h3>
-                <p className="text-gray-600">{feature.description}</p>
-              </CardContent>
-            </Card>
+              <Card className="border-0 shadow-lg h-full">
+                <CardContent className="p-8 text-center">
+                  <div
+                    className={`w-16 h-16 ${feature.bgColor} rounded-full flex items-center justify-center mx-auto mb-4`}
+                  >
+                    {feature.icon}
+                  </div>
+                  <h3 className="text-xl font-semibold mb-3">
+                    {feature.title}
+                  </h3>
+                  <p className="text-gray-600">{feature.description}</p>
+                </CardContent>
+              </Card>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </section>
 
       {/* How It Works */}
-      <section className=" py-16">
+      <section className="py-16">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
+          <motion.div
+            className="text-center mb-12"
+            variants={sectionFadeIn}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.5 }}
+          >
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
               How It Works
             </h2>
             <p className="text-xl text-gray-600">
               Get started in just three simple steps
             </p>
-          </div>
-          <div className="flex flex-col lg:flex-row items-center justify-center gap-8 max-w-6xl mx-auto">
+          </motion.div>
+          <motion.div
+            className="flex flex-col lg:flex-row items-center justify-center gap-8 max-w-6xl mx-auto"
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.3 }}
+          >
             {/* Step 1 */}
-            <Card className="text-center p-8 flex-1 border-0 shadow-md">
-              <CardContent className="pt-6">
-                <div className="bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-6">
-                  <span className="text-2xl font-bold text-blue-600">1</span>
-                </div>
-                <h3 className="text-xl font-semibold mb-4">Upload & Input</h3>
-                <p className="text-gray-600">
-                  Upload your resume or paste the job description you're
-                  targeting
-                </p>
-              </CardContent>
-            </Card>
+            <motion.div variants={cardFadeInUp} className="flex-1 w-full">
+              <Card className="text-center p-8 border-0 shadow-md h-full">
+                <CardContent className="pt-6">
+                  <div className="bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-6">
+                    <span className="text-2xl font-bold text-blue-600">1</span>
+                  </div>
+                  <h3 className="text-xl font-semibold mb-4">Upload & Input</h3>
+                  <p className="text-gray-600">
+                    Upload your resume or paste the job description you're
+                    targeting
+                  </p>
+                </CardContent>
+              </Card>
+            </motion.div>
 
-            {/* Arrow 1 */}
-            <div className="hidden lg:block">
-              <ArrowRight className="h-8 w-8 text-gray-400" />
-            </div>
-            <div className="lg:hidden">
-              <div className="w-px h-8 bg-gray-300"></div>
-            </div>
+            {/* Arrow/Line Separators */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3 }}
+              viewport={{ once: true }}
+            >
+              <ArrowRight className="h-8 w-8 text-gray-400 hidden lg:block" />
+              <div className="w-px h-8 bg-gray-300 lg:hidden"></div>
+            </motion.div>
 
             {/* Step 2 */}
-            <Card className="text-center p-8 flex-1 border-0 shadow-md">
-              <CardContent className="pt-6">
-                <div className="bg-green-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-6">
-                  <span className="text-2xl font-bold text-green-600">2</span>
-                </div>
-                <h3 className="text-xl font-semibold mb-4">Practice</h3>
-                <p className="text-gray-600">
-                  Answer AI-generated questions tailored to your profile and
-                  target role
-                </p>
-              </CardContent>
-            </Card>
-
-            {/* Arrow 2 */}
-            <div className="hidden lg:block">
-              <ArrowRight className="h-8 w-8 text-gray-400" />
-            </div>
-            <div className="lg:hidden">
-              <div className="w-px h-8 bg-gray-300"></div>
-            </div>
+            <motion.div variants={cardFadeInUp} className="flex-1 w-full">
+              <Card className="text-center p-8 border-0 shadow-md h-full">
+                <CardContent className="pt-6">
+                  <div className="bg-green-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-6">
+                    <span className="text-2xl font-bold text-green-600">2</span>
+                  </div>
+                  <h3 className="text-xl font-semibold mb-4">Practice</h3>
+                  <p className="text-gray-600">
+                    Answer AI-generated questions tailored to your profile and
+                    target role
+                  </p>
+                </CardContent>
+              </Card>
+            </motion.div>
+            
+            {/* Arrow/Line Separators */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.6 }}
+              viewport={{ once: true }}
+            >
+              <ArrowRight className="h-8 w-8 text-gray-400 hidden lg:block" />
+              <div className="w-px h-8 bg-gray-300 lg:hidden"></div>
+            </motion.div>
 
             {/* Step 3 */}
-            <Card className="text-center p-8 flex-1 border-0 shadow-md">
-              <CardContent className="pt-6">
-                <div className="bg-purple-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-6">
-                  <span className="text-2xl font-bold text-purple-600">3</span>
-                </div>
-                <h3 className="text-xl font-semibold mb-4">Improve</h3>
-                <p className="text-gray-600">
-                  Get instant feedback and scoring to improve your interview
-                  performance
-                </p>
-              </CardContent>
-            </Card>
-          </div>
+            <motion.div variants={cardFadeInUp} className="flex-1 w-full">
+              <Card className="text-center p-8 border-0 shadow-md h-full">
+                <CardContent className="pt-6">
+                  <div className="bg-purple-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-6">
+                    <span className="text-2xl font-bold text-purple-600">3</span>
+                  </div>
+                  <h3 className="text-xl font-semibold mb-4">Improve</h3>
+                  <p className="text-gray-600">
+                    Get instant feedback and scoring to improve your interview
+                    performance
+                  </p>
+                </CardContent>
+              </Card>
+            </motion.div>
+          </motion.div>
         </div>
       </section>
 
       {/* Testimonials Section */}
       <section className="container mx-auto px-4 py-16">
-        <div className="text-center mb-12">
+        <motion.div
+          className="text-center mb-12"
+          variants={sectionFadeIn}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.5 }}
+        >
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
             Success Stories
           </h2>
           <p className="text-xl text-gray-600">
             See how Mockr helped professionals land their dream jobs
           </p>
-        </div>
+        </motion.div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        <motion.div
+          className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto"
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+        >
           {testimonials.map((testimonial, index) => (
-            <Card key={index} className="border-0 shadow-md">
-              <CardContent className="p-6">
-                <div className="flex items-center mb-4">
-                  {[...Array(testimonial.rating)].map((_, i) => (
-                    <Star
-                      key={i}
-                      className="h-4 w-4 fill-yellow-400 text-yellow-400"
-                    />
-                  ))}
-                </div>
-                <p className="text-gray-600 mb-4">"{testimonial.content}"</p>
-                <div className="flex items-center">
-                  <div
-                    className={`w-10 h-10 ${testimonial.bgColor} rounded-full flex items-center justify-center text-white font-semibold`}
-                  >
-                    {testimonial.avatar}
+            <motion.div
+              key={index}
+              variants={cardFadeInUp}
+              whileHover={{ y: -8, transition: { duration: 0.2 } }}
+            >
+              <Card className="border-0 shadow-md h-full">
+                <CardContent className="p-6">
+                  <div className="flex items-center mb-4">
+                    {[...Array(testimonial.rating)].map((_, i) => (
+                      <Star
+                        key={i}
+                        className="h-4 w-4 fill-yellow-400 text-yellow-400"
+                      />
+                    ))}
                   </div>
-                  <div className="ml-3">
-                    <p className="font-semibold">{testimonial.name}</p>
-                    <p className="text-sm text-gray-500">{testimonial.role}</p>
+                  <p className="text-gray-600 mb-4 italic">
+                    "{testimonial.content}"
+                  </p>
+                  <div className="flex items-center">
+                    <div
+                      className={`w-10 h-10 ${testimonial.bgColor} rounded-full flex items-center justify-center text-white font-semibold`}
+                    >
+                      {testimonial.avatar}
+                    </div>
+                    <div className="ml-3">
+                      <p className="font-semibold">{testimonial.name}</p>
+                      <p className="text-sm text-gray-500">
+                        {testimonial.role}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </section>
 
       {/* CTA Section */}
       <section className="container mx-auto px-4 py-16">
-        <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 md:p-12 text-center text-white">
+        <motion.div
+          className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 md:p-12 text-center text-white"
+          initial={{ opacity: 0, scale: 0.95 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
+          viewport={{ once: true, amount: 0.5 }}
+        >
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
             Ready to Ace Your Next Interview?
           </h2>
@@ -351,7 +489,9 @@ export default function LandingPage({
             Join thousands of professionals who've successfully prepared with
             Mockr's AI-powered platform
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <motion.div
+            className="flex justify-center"
+          >
             <Button
               size="lg"
               className="text-lg px-8 bg-white text-gray-900 hover:bg-gray-100 cursor-pointer"
@@ -366,17 +506,27 @@ export default function LandingPage({
             >
               Start Practicing Now <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white py-12">
+      <motion.footer
+        className="bg-gray-900 text-white py-12"
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        transition={{ duration: 1 }}
+        viewport={{ once: true, amount: 0.3 }}
+      >
         <div className="container mx-auto px-4">
           <div className="text-center">
             <div className="flex items-center justify-center space-x-2 mb-4">
               <Brain className="h-6 w-6" />
               <span className="text-2xl font-bold">Mockr</span>
+              <span className="text-lg text-gray-500 hidden sm:inline">
+                | because <span className="font-bold italic">Interviews</span>{" "}
+                shouldn't be a surprise.
+              </span>
             </div>
             <p className="text-gray-400 mb-4">
               AI-powered interview preparation for your success
@@ -386,7 +536,6 @@ export default function LandingPage({
               © 2025 Mockr. All rights reserved.
             </p>
 
-            {/* GitHub Link Section */}
             <div className="flex items-center justify-center space-x-2 mt-4">
               <span className="text-gray-400">Made with ❤️ by</span>
               <a
@@ -402,7 +551,7 @@ export default function LandingPage({
             </div>
           </div>
         </div>
-      </footer>
+      </motion.footer>
     </div>
   );
 }

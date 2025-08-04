@@ -1,10 +1,12 @@
 import Confetti from "react-confetti";
 import { useEffect, useState } from "react";
-import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import { Trophy, ArrowRight, Zap } from "lucide-react";
 import { motion } from "framer-motion";
 import { Button } from "./ui/button";
+
+import { useAuth } from "@/context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 export function ResultsView({
   score,
@@ -13,8 +15,25 @@ export function ResultsView({
   score: number;
   handleRestart: () => void;
 }) {
+  const { user } = useAuth(); // ← get user from context
+  const navigate = useNavigate();
+
   const [showConfetti, setShowConfetti] = useState(false);
   const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
+
+  const handleRealPrep = () => {
+    if (user) {
+      navigate("/upload");
+    } else {
+      navigate("/");
+      setTimeout(() => {
+        const authModalEvent = new CustomEvent("open-auth-modal", {
+          detail: { mode: "signup" }, // or "login"
+        });
+        window.dispatchEvent(authModalEvent);
+      }, 100); // slight delay after navigation
+    }
+  };
 
   // Show confetti if score >= 80
   useEffect(() => {
@@ -115,17 +134,15 @@ export function ResultsView({
         animate={{ opacity: 1 }}
         transition={{ delay: 0.7 }}
       >
-        <Button asChild className="w-full sm:w-auto" size="lg">
-          <a href="/upload">
-            Start Your Real Interview Prep
-            <ArrowRight className="ml-2 h-4 w-4" />
-          </a>
+        <Button onClick={handleRealPrep} className="w-full sm:w-auto cursor-pointer" size="lg">
+          Start Your Real Interview Prep
+          <ArrowRight className="ml-2 h-4 w-4" />
         </Button>
 
         <Button
           variant={"outline"}
           onClick={handleRestart}
-          className="w-full border sm:w-auto border-gray-300 text-gray-700 hover:bg-gray-100 text-sm font-medium py-2 px-4 rounded-md cursor-pointer"
+          className="w-full sm:w-auto border border-gray-300 text-gray-700 hover:bg-gray-100 text-sm font-medium py-2 px-4 rounded-md cursor-pointer"
           size="lg"
         >
           Try Demo Again

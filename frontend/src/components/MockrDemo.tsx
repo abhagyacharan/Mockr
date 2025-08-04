@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { Brain, Clock, Play, Pause, File, BookOpen, FileText } from "lucide-react";
+import { Brain, Clock, Play, Pause, BookOpen, FileText } from "lucide-react";
 import { ResultsView } from "./MockrDemo_ResultsView";
 
 const demoQuestions = [

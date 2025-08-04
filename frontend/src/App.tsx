@@ -6,7 +6,7 @@ import LandingPage from "./pages/LandingPage";
 import UploadInterface from "./pages/UploadInterface";
 import QuestionDisplay from "./pages/QuestionDisplay";
 import ResultsPage from "./pages/ResultsPage";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AuthModal from "./components/AuthModal";
 import SessionResults from "./pages/SessionResult";
 import DashboardLayout from "./pages/DashboardLayout";
@@ -46,6 +46,25 @@ function App() {
   const [error, setError] = useState<string | null>(null);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authMode, setAuthMode] = useState<"login" | "signup">("signup");
+
+  useEffect(() => {
+    const handleOpenModal = (e: CustomEvent) => {
+      setAuthMode(e.detail.mode); // "login" or "signup" // This is for MockrDemo_ResultsView
+      setIsAuthModalOpen(true);
+    };
+
+    window.addEventListener(
+      "open-auth-modal",
+      handleOpenModal as EventListener
+    );
+
+    return () => {
+      window.removeEventListener(
+        "open-auth-modal",
+        handleOpenModal as EventListener
+      );
+    };
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50">

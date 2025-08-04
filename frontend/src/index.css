@@ -5,6 +5,23 @@ html {
   overflow-y: scroll;
 }
 
+/* Tailwind-compatible custom class */
+.glow-cursor {
+  pointer-events: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 200px;
+  height: 200px;
+  border-radius: 9999px;
+  background: radial-gradient(circle, rgba(99,102,241,0.25), transparent 60%);
+  transform: translate(-50%, -50%);
+  z-index: 0;
+  transition: opacity 0.3s ease;
+  mix-blend-mode: screen;
+}
+
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {

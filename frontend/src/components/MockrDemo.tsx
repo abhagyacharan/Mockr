@@ -53,7 +53,6 @@ export function MockrDemo() {
   const [score, setScore] = useState(0);
 
   const currentQ = demoQuestions[currentQuestion];
-  const isCorrect = selectedAnswer === currentQ.correctAnswer;
 
   useEffect(() => {
     let interval: NodeJS.Timeout;

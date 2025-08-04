@@ -3,9 +3,17 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Brain, Target, ArrowRight, Star, FileText, Github } from "lucide-react";
+import {
+  Brain,
+  Target,
+  ArrowRight,
+  Star,
+  FileText,
+  Github,
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
+import {MockrDemo} from "@/components/MockrDemo";
 
 interface LandingPageProps {
   setIsAuthModalOpen: (open: boolean) => void;
@@ -116,54 +124,73 @@ export default function LandingPage({
         </nav>
       </header>
 
-      {/* Hero Section */}
+      {/* Hero Section Split */}
       <section className="container mx-auto px-4 pt-20 pb-16">
-        <div className="text-center max-w-4xl mx-auto">
-          <Badge variant="secondary" className="mb-4 px-2">
-            AI-Powered Interview Preparation
-          </Badge>
-          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight">
-            Ace Your Interviews with{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
-              AI-Powered Practice
-            </span>
-          </h1>
-          <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-            Get personalized mock interview questions generated from your resume
-            or job descriptions. Practice with confidence and land your dream
-            job.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button
-              size="lg"
-              className="text-lg px-8 cursor-pointer"
-              onClick={() => {
-                if (user) {
-                  navigate("/dashboard");
-                } else {
-                  setAuthMode("signup");
-                  setIsAuthModalOpen(true);
-                }
-              }}
-            >
-              {user ? "Go to Dashboard" : "Get Started"}{" "}
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-            <Button
-              variant="secondary"
-              size="lg"
-              className="text-lg px-8 bg-white hover:bg-gray-100 cursor-pointer"
-              onClick={() => {
-                if (user) {
-                  navigate("/dashboard");
-                } else {
-                  setAuthMode("signup");
-                  setIsAuthModalOpen(true);
-                }
-              }}
-            >
-              Try a Mock Test
-            </Button>
+        <div className="grid lg:grid-cols-2 gap-12 items-center">
+          {/* Left Half - Text Content */}
+          <div className="text-center lg:text-left">
+            <Badge variant="secondary" className="mb-4">
+              AI-Powered Interview Preparation
+            </Badge>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
+              Ace Your Interviews with{" "}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
+                AI-Powered Practice
+              </span>
+            </h1>
+            <p className="text-xl text-gray-600 mb-8 max-w-2xl lg:max-w-none">
+              Get personalized mock interview questions generated from your
+              resume or job descriptions. Practice with confidence and land your
+              dream job.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+              <Button
+                size="lg"
+                className="text-lg px-8 cursor-pointer"
+                onClick={() => {
+                  if (user) {
+                    navigate("/dashboard");
+                  } else {
+                    setAuthMode("signup");
+                    setIsAuthModalOpen(true);
+                  }
+                }}
+              >
+                {user ? "Go to Dashboard" : "Get Started"}{" "}
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+              <Button
+                variant="secondary"
+                size="lg"
+                className="text-lg px-8 bg-white hover:bg-gray-100 cursor-pointer"
+                onClick={() => {
+                  if (user) {
+                    navigate("/dashboard");
+                  } else {
+                    setAuthMode("signup");
+                    setIsAuthModalOpen(true);
+                  }
+                }}
+              >
+                Try a Mock Test
+              </Button>
+            </div>
+
+            {/* Trust Indicators */}
+            {/* <div className="mt-8 pt-8 border-t border-gray-200">
+              <p className="text-sm text-gray-500 mb-4">Trusted by professionals at</p>
+              <div className="flex items-center justify-center lg:justify-start space-x-6 opacity-60">
+                <div className="text-2xl font-bold text-gray-400">Google</div>
+                <div className="text-2xl font-bold text-gray-400">Meta</div>
+                <div className="text-2xl font-bold text-gray-400">Amazon</div>
+                <div className="text-2xl font-bold text-gray-400">Microsoft</div>
+              </div>
+            </div> */}
+          </div>
+
+          {/* Right Half - Interactive Demo */}
+          <div className="relative">
+            <MockrDemo />
           </div>
         </div>
       </section>
@@ -373,8 +400,6 @@ export default function LandingPage({
                 <span>A Bhagya Charan</span>
               </a>
             </div>
-
-            
           </div>
         </div>
       </footer>

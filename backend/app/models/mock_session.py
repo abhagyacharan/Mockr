@@ -1,5 +1,5 @@
 # app/models/mock_session.py
-from sqlalchemy import Column, String, DateTime, Integer, ForeignKey
+from sqlalchemy import ARRAY, Column, String, DateTime, Integer, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy.orm import relationship
 from app.database import Base
@@ -20,6 +20,7 @@ class MockSession(Base):
     answered_questions = Column(Integer, default=0)
     status = Column(String(50), default='active')  # active, completed, abandoned
     difficulty_level = Column(String(20), default='medium')
+    focus_areas = Column(ARRAY(String), nullable=True, default=[])
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     completed_at = Column(DateTime, nullable=True)
     

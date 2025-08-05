@@ -138,7 +138,7 @@ export default function AuthModal({
         <div className="relative p-6">
           <button
             onClick={onClose}
-            className="absolute right-4 top-4 p-1 rounded-full hover:bg-gray-100 transition-colors"
+            className="absolute right-4 top-4 p-1 rounded-full hover:bg-gray-100 transition-colors cursor-pointer"
           >
             <X className="h-5 w-5" />
           </button>
@@ -149,7 +149,7 @@ export default function AuthModal({
 
           <div className="flex space-x-1 bg-gray-200 p-1 rounded-lg mb-2">
             <button
-              className={`flex-1 py-2 px-4 rounded-sm text-sm font-medium transition-colors ${
+              className={`flex-1 py-2 px-4 rounded-sm text-sm font-medium transition-colors cursor-pointer ${
                 mode === "login"
                   ? "bg-white text-blue-600 shadow-sm"
                   : "text-gray-600 hover:text-gray-900"
@@ -159,7 +159,7 @@ export default function AuthModal({
               Login
             </button>
             <button
-              className={`flex-1 py-2 px-4 rounded-sm text-sm font-medium transition-colors ${
+              className={`flex-1 py-2 px-4 rounded-sm text-sm font-medium transition-colors cursor-pointer ${
                 mode === "signup"
                   ? "bg-white text-blue-600 shadow-sm"
                   : "text-gray-600 hover:text-gray-900"
@@ -226,7 +226,7 @@ export default function AuthModal({
                 />
                 <button
                   type="button"
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2"
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer"
                   onClick={() => setShowPassword(!showPassword)}
                 >
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -255,7 +255,7 @@ export default function AuthModal({
                   />
                   <button
                     type="button"
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2"
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   >
                     {showConfirmPassword ? (
@@ -280,7 +280,7 @@ export default function AuthModal({
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full inline-flex items-center justify-center rounded-sm text-sm font-medium bg-blue-600 text-white h-10 px-4 py-2 hover:bg-blue-700 transition-colors"
+              className="w-full inline-flex items-center justify-center cursor-pointer rounded-sm text-sm font-medium bg-blue-600 text-white h-10 px-4 py-2 hover:bg-blue-700 transition-colors"
             >
               {isLoading ? (
                 <>
@@ -300,7 +300,7 @@ export default function AuthModal({
               <p>
                 Don't have an account?{" "}
                 <button
-                  className="text-blue-600 hover:text-blue-500 font-medium"
+                  className="text-blue-600 hover:text-blue-500 font-medium cursor-pointer"
                   onClick={() => setMode("signup")}
                 >
                   Sign up
@@ -310,7 +310,7 @@ export default function AuthModal({
               <p>
                 Already have an account?{" "}
                 <button
-                  className="text-blue-600 hover:text-blue-500 font-medium"
+                  className="text-blue-600 hover:text-blue-500 font-medium cursor-pointer"
                   onClick={() => setMode("login")}
                 >
                   Sign in

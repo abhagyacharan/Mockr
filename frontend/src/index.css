@@ -5,6 +5,10 @@ html {
   overflow-y: scroll;
 }
 
+body {
+  overflow-y: scroll;
+}
+
 /* Tailwind-compatible custom class */
 .glow-cursor {
   pointer-events: none;

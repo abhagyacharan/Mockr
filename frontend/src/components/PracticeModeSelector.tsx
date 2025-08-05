@@ -8,10 +8,10 @@ interface Props {
 const PracticeModeSelector = ({ practiceMode, setPracticeMode }: Props) => {
   return (
     <div className="rounded-lg border border-gray-200 bg-gradient-to-br from-white to-blue-50 p-4 mt-4">
-      <h2 className="text-sm font-medium text-gray-900 mb-1">
+      <h2 className="text-md font-medium text-gray-900 mb-1">
         Choose Practice Mode
       </h2>
-      <p className="text-sm text-gray-500 mb-3">
+      <p className="text-sm text-gray-500 mb-4">
         Select how you'd like to practice your interview
       </p>
       <div className="flex space-x-4">
@@ -32,10 +32,10 @@ const PracticeModeSelector = ({ practiceMode, setPracticeMode }: Props) => {
               onChange={() => setPracticeMode(mode as PracticeMode)}
               className="sr-only"
             />
-            <div className="font-medium text-sm mb-1">
+            <div className="font-medium text-md mb-1">
               {mode === "mcq" ? "MCQ Mode" : "Q&A Mode"}
             </div>
-            <div className="text-xs text-gray-500">
+            <div className="text-sm text-gray-500">
               {mode === "mcq"
                 ? "Multiple choice questions for quick practice"
                 : "Open-ended questions with text responses"}

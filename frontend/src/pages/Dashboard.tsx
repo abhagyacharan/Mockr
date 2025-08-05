@@ -104,7 +104,7 @@ export default function Dashboard() {
 
             {/* Navigation Tabs */}
             <div className="flex items-center justify-center">
-              <div className="inline-flex h-10 items-center justify-center rounded-md bg-gray-200 p-1 text-gray-600">
+              <div className="inline-flex h-10 items-center justify-center rounded-sm bg-gray-200 p-1 text-gray-600">
                 <button
                   className={`inline-flex cursor-pointer items-center justify-center whitespace-nowrap rounded-sm px-4 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 ${
                     activeTab === "dashboard"
@@ -156,7 +156,7 @@ export default function Dashboard() {
               </div>
               <button
                 onClick={handleLogout}
-                className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 px-3 text-gray-900"
+                className="inline-flex items-center justify-center rounded-md cursor-pointer text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 px-3 text-gray-900"
               >
                 <LogOut className="h-4 w-4 mr-2" />
                 Logout

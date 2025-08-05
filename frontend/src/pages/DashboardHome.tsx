@@ -12,6 +12,7 @@ import { useNavigate } from "react-router-dom";
 import RecentSessionsCard from "@/components/RecentSessions";
 import { StatsCard } from "@/components/StatsCard";
 import { useAuth } from "@/context/AuthContext";
+import { Button } from "@/components/ui/button";
 
 export default function DashboardHome() {
   const [userMetrics, setUserMetrics] = useState<any>({});
@@ -56,19 +57,19 @@ export default function DashboardHome() {
         <div className="p-6 flex justify-between items-center">
           <div>
             <h2 className="text-2xl font-bold text-gray-900 mb-2">
-              Welcome back, {user?.name}!
+              Welcome, {user?.name}!
             </h2>
             <p className="text-gray-600 mb-4">
-              Ready to practice for your next interview? Your average score has
-              improved by{" "}
+              Ready to practice for your next interview? Your average score can
+              be improved by{" "}
               <span className="font-semibold text-green-600">
-                +{userMetrics?.improvement_rate ?? 15}%
+                +{userMetrics?.improvement_rate ?? 45}%
               </span>{" "}
-              this month.
+              by practicing.
             </p>
             <button
               onClick={() => navigate("/uploadinterface")}
-              className="inline-flex items-center justify-center bg-blue-600 text-white hover:bg-blue-700 rounded-sm cursor-pointer px-4 py-2 text-sm"
+              className="inline-flex items-center justify-center bg-blue-500 text-white hover:bg-blue-600 rounded-sm cursor-pointer px-4 py-2 text-sm"
             >
               <Plus className="h-4 w-4 mr-2" />
               Start New Mock Interview
@@ -136,13 +137,15 @@ export default function DashboardHome() {
             <p className="text-gray-500 mb-4">
               You haven't started any mock interviews yet. Begin your first session!
             </p>
-            <button
+            <Button
+              variant={"default"}
+              size={"lg"}
               onClick={() => navigate("/upload")}
-              className="inline-flex items-center justify-center bg-blue-600 text-white hover:bg-blue-700 rounded-md px-4 py-2 text-sm"
+              className="bg-blue-500 text-white hover:bg-blue-600 cursor-pointer rounded-sm"
             >
               <Plus className="h-4 w-4 mr-2" />
               Start First Mock Interview
-            </button>
+            </Button>
           </div>
         </div>
       )}

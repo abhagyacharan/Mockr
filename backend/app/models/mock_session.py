@@ -18,6 +18,7 @@ class MockSession(Base):
     questions = Column(JSONB, nullable=False)
     total_questions = Column(Integer, nullable=False)
     answered_questions = Column(Integer, default=0)
+    current_question_index = Column(Integer, default=0)
     status = Column(String(50), default='active')  # active, completed, abandoned
     difficulty_level = Column(String(20), default='medium')
     focus_areas = Column(ARRAY(String), nullable=True, default=[])

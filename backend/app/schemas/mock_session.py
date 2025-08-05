@@ -28,6 +28,7 @@ class MockSessionResponse(BaseModel):
     questions: List[Dict[str, Any]]
     total_questions: int
     answered_questions: int
+    current_question_index: int
     status: str
     difficulty_level: str
     focus_areas: Optional[List[str]] = []

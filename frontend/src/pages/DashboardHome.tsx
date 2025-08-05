@@ -68,7 +68,7 @@ export default function DashboardHome() {
               by practicing.
             </p>
             <button
-              onClick={() => navigate("/uploadinterface")}
+              onClick={() => navigate("/upload")}
               className="inline-flex items-center justify-center bg-blue-500 text-white hover:bg-blue-600 rounded-sm cursor-pointer px-4 py-2 text-sm"
             >
               <Plus className="h-4 w-4 mr-2" />

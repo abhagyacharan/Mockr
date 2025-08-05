@@ -2,7 +2,7 @@
 import docx
 import PyPDF2
 from io import BytesIO
-from typing import Dict, Any, Optional
+from typing import Dict, Any, List, Optional
 from groq import Groq
 import json
 import re
@@ -256,7 +256,11 @@ class FileProcessor:
 
     @staticmethod
     async def generate_questions(
-        content: str, difficulty: str, practice_mode: str, num_questions: str
+        content: str,
+        difficulty: str,
+        practice_mode: str,
+        num_questions: str,
+        focus_areas: Optional[List[str]] = None,
     ) -> Dict[str, Any]:
         """
         Generate a refined prompt to instruct the LLM to create interview-style questions
@@ -269,8 +273,17 @@ class FileProcessor:
         - num_questions: Total number of questions to generate
         """
         num_questions = int(num_questions)
-        prompt = (
-            f"""
+
+        focus_instruction = ""
+
+        if focus_areas:
+            joined_focus_areas = ", ".join(focus_areas)
+            focus_instruction = f"""
+            • Focus Areas (Very Important): Prioritize topics related to **{joined_focus_areas}**.
+            These should guide the direction of questions. If an area is not relevant to the parsed content, skip it.
+            """
+
+        prompt = f"""
             You are an AI designed to generate mock interview questions to help users prepare for real job interviews.
 
             Your task is to generate questions based ONLY on relevant professional details provided below.
@@ -302,6 +315,7 @@ class FileProcessor:
 
             • Number of questions: **{num_questions}**
 
+            **{focus_instruction}**
             ---
 
             ### Output Format:
@@ -333,7 +347,7 @@ class FileProcessor:
             {content}
 
             Now generate the questions:
-            """)
+            """
 
         return FileProcessor._llm_extract(prompt)
 

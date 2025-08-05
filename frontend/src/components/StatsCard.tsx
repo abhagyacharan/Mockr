@@ -19,7 +19,7 @@ export function StatsCard({ label, value, icon, color = "gray", isLoading }: Sta
   };
 
   return (
-    <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-5">
+    <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-5">
       <div className="flex items-center justify-between">
         <div>
           <p className="text-sm text-gray-500 font-medium">{label}</p>

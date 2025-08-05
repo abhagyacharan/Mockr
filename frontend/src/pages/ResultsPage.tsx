@@ -12,6 +12,7 @@ import {
 import { useNavigate } from "react-router-dom";
 
 import { useMockSession } from "@/context/MockSessionContext";
+import { Button } from "@/components/ui/button";
 
 export default function ResultsPage() {
   const navigate = useNavigate();
@@ -118,10 +119,11 @@ export default function ResultsPage() {
                   scorePercentage
                 )}`}
               >
-                {Math.round(mockSession.score / totalPossiblePoints * 100)}%
+                {Math.round((mockSession.score / totalPossiblePoints) * 100)}%
               </div>
               <div className="text-xl text-gray-600 mb-4">
-                {mockSession.score} out of {mockSession.totalQuestions * 100} points
+                {mockSession.score} out of {mockSession.totalQuestions * 100}{" "}
+                points
               </div>
               <span
                 className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 ${getScoreBadgeVariant(
@@ -293,20 +295,24 @@ export default function ResultsPage() {
 
         {/* Actions */}
         <div className="flex justify-center space-x-4">
-          <button
+          <Button
+            variant={"outline"}
+            size={"lg"}
             onClick={() => navigate("/dashboard")}
-            className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border  hover:text-accent-foreground h-10 px-4 py-2 border-gray-300 bg-white hover:bg-gray-50 text-gray-900"
-          >
+            className="cursor-pointer rounded-md"
+            >
             <Home className="mr-2 h-4 w-4" />
             Back to Dashboard
-          </button>
-          <button
+          </Button>
+          <Button
+            variant={"default"}
+            size={"lg"}
             onClick={() => navigate("/upload")}
-            className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-10 px-4 py-2 bg-blue-600 text-white hover:bg-blue-700"
+            className="cursor-pointer rounded-md bg-blue-500 text-white hover:bg-blue-600"
           >
-            <RotateCcw className="mr-2 h-4 w-4" />
+            <RotateCcw className=" h-4 w-4" />
             Take Another Mock Interview
-          </button>
+          </Button>
         </div>
       </div>
     </div>

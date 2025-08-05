@@ -144,7 +144,7 @@ export default function LandingPage({
           <div className="flex items-center space-x-3">
             {user ? (
               <motion.div>
-                <Button onClick={() => navigate("/dashboard")}>Dashboard</Button>
+                <Button className="cursor-pointer" onClick={() => navigate("/dashboard")}>Dashboard</Button>
               </motion.div>
             ) : (
               <>

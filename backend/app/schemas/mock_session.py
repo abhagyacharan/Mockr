@@ -9,6 +9,7 @@ class MockSessionCreate(BaseModel):
     source_id: uuid.UUID
     session_name: Optional[str] = None
     difficulty_level: str = 'medium'
+    focus_areas: Optional[List[str]] = []
 
 class Question(BaseModel):
     id: int
@@ -29,6 +30,7 @@ class MockSessionResponse(BaseModel):
     answered_questions: int
     status: str
     difficulty_level: str
+    focus_areas: Optional[List[str]] = []
     created_at: datetime
     completed_at: Optional[datetime]
     

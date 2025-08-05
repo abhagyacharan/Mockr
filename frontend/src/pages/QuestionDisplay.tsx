@@ -5,6 +5,7 @@ import { Clock, CheckCircle, ArrowRight, ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useMockSession } from "@/context/MockSessionContext";
 import { API_BASE_URL } from "@/lib/api";
+import { Button } from "@/components/ui/button";
 
 export default function QuestionDisplay() {
   const [currentAnswer, setCurrentAnswer] = useState("");
@@ -291,27 +292,33 @@ export default function QuestionDisplay() {
 
         {/* Navigation Buttons */}
         <div className="flex justify-between">
-          <button
+          <Button
+            variant={"outline"}
+            size={"lg"}
             onClick={handlePreviousQuestion}
             disabled={mockSession.currentQuestionIndex === 0}
-            className="h-10 px-4 py-2 text-sm border rounded-md bg-white hover:bg-gray-100"
+            className="h-10 px-4 py-2 text-sm border rounded-md bg-white hover:bg-gray-100 cursor-pointer"
           >
             <ArrowLeft className="inline w-4 h-4 mr-2" />
             Previous
-          </button>
+          </Button>
 
           {!isAnswered ? (
-            <button
+            <Button
+              size="lg"
+              variant={"default"}
               onClick={handleSubmitAnswer}
               disabled={!currentAnswer.trim()}
-              className="h-10 px-4 py-2 text-sm text-white bg-blue-600 rounded-md hover:bg-blue-700"
+              className="h-10 px-4 py-2 text-sm text-white bg-blue-500 rounded-sm hover:bg-blue-600 cursor-pointer"
             >
               Submit Answer
-            </button>
+            </Button>
           ) : (
-            <button
+            <Button
+              size="lg"
+              variant={"default"}
               onClick={handleNextQuestion}
-              className="h-10 px-4 py-2 text-sm text-white bg-blue-600 rounded-md hover:bg-blue-700"
+              className="h-10 px-4 py-2 text-sm text-white bg-blue-500 rounded-sm hover:bg-blue-600 cursor-pointer"
             >
               {mockSession.currentQuestionIndex <
               mockSession.totalQuestions - 1 ? (
@@ -321,7 +328,7 @@ export default function QuestionDisplay() {
               ) : (
                 "View Results"
               )}
-            </button>
+            </Button>
           )}
         </div>
       </div>

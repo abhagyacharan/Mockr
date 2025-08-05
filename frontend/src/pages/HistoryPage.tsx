@@ -13,7 +13,7 @@ import {
   Search,
   BookOpen,
   CheckCircle,
-  ChevronDown
+  ChevronDown,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { StatsCard } from "@/components/StatsCard";
@@ -71,7 +71,7 @@ const Select = ({
     <div className="relative">
       <button
         type="button"
-        className="relative w-full cursor-default rounded-md border border-gray-300 bg-white py-2 pl-3 pr-10 text-left shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+        className="relative w-full cursor-pointer rounded-md border border-gray-300 bg-white py-2 pl-3 pr-10 text-left shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
         onClick={() => setIsOpen(!isOpen)}
       >
         <span className="block truncate text-sm">
@@ -110,7 +110,6 @@ type SelectItemProps = {
 const SelectItem = ({ value, children }: SelectItemProps) => {
   return <option value={value}>{children}</option>;
 };
-
 
 export default function HistoryPage() {
   const { user } = useAuth();
@@ -426,13 +425,14 @@ export default function HistoryPage() {
                       <td className="px-4 py-6 whitespace-nowrap text-right">
                         <div className="flex justify-end space-x-3">
                           {session.status === "ongoing" ? (
-                            <Button size="lg">
+                            <Button className="cursor-pointer" size="lg">
                               <Play className="w-4 h-4 mr-2" />
                               Continue
                             </Button>
                           ) : (
                             <>
                               <Button
+                                className="cursor-pointer"
                                 variant="outline"
                                 size="lg"
                                 onClick={() =>
@@ -442,7 +442,7 @@ export default function HistoryPage() {
                                 <Eye className="w-4 h-4 mr-2" />
                                 View
                               </Button>
-                              <Button variant="outline" size="lg">
+                              <Button className="cursor-pointer" variant="outline" size="lg">
                                 <Download className="w-4 h-4 mr-2" />
                                 Export
                               </Button>
@@ -451,7 +451,7 @@ export default function HistoryPage() {
                           <Button
                             variant="outline"
                             size="lg"
-                            className="text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200"
+                            className="text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200 cursor-pointer"
                             onClick={() => deleteMockSession(session.id)}
                           >
                             <Trash2 className="w-4 h-4" />

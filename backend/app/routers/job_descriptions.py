@@ -25,6 +25,7 @@ async def upload_job_description(
     num_questions: str = Form(...),
     difficulty: str = Form(...),
     practice_mode: str = Form(...),
+    focus_areas: List[str] = Form(default=[]),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
@@ -58,7 +59,8 @@ async def upload_job_description(
         json.dumps(parsed_data),
         difficulty=difficulty,
         practice_mode=practice_mode,
-        num_questions=num_questions
+        num_questions=num_questions,
+        focus_areas=focus_areas
     )
     if not questions:
         raise HTTPException(
@@ -79,6 +81,7 @@ async def upload_job_description(
         answered_questions=0,
         status="ongoing",
         difficulty_level=difficulty,
+        focus_areas=focus_areas,
         created_at=datetime.now(timezone.utc),
     )
 

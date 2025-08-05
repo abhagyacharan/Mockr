@@ -68,7 +68,7 @@ export default function DashboardHome() {
             </p>
             <button
               onClick={() => navigate("/uploadinterface")}
-              className="inline-flex items-center justify-center bg-blue-600 text-white hover:bg-blue-700 rounded-md px-4 py-2 text-sm"
+              className="inline-flex items-center justify-center bg-blue-600 text-white hover:bg-blue-700 rounded-sm cursor-pointer px-4 py-2 text-sm"
             >
               <Plus className="h-4 w-4 mr-2" />
               Start New Mock Interview

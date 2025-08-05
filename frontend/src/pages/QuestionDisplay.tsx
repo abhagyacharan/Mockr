@@ -10,25 +10,21 @@ import { Button } from "@/components/ui/button";
 export default function QuestionDisplay() {
   const [currentAnswer, setCurrentAnswer] = useState("");
   const [timeLeft, setTimeLeft] = useState<number>(0);
-  const [isAnswered, setIsAnswered] = useState(false);
   const [sessionDuration, setSessionDuration] = useState<number>(0);
 
   const navigate = useNavigate();
   const { mockSession, setMockSession } = useMockSession();
 
-  // 1. Setup total time dynamically once session loads
-  // Single useEffect to handle timer for each question
   useEffect(() => {
     if (!mockSession) {
       navigate("/");
       return;
     }
 
-    // Reset answer state when question changes
-    setCurrentAnswer("");
-    setIsAnswered(false);
+    const currentQuestion =
+      mockSession.questions[mockSession.currentQuestionIndex];
 
-    // Set 5 minutes per question
+    setCurrentAnswer(currentQuestion.userAnswer || "");
     const timePerQuestion = 5 * 60;
     setTimeLeft(timePerQuestion);
     setSessionDuration(timePerQuestion);
@@ -37,10 +33,8 @@ export default function QuestionDisplay() {
       setTimeLeft((prev) => {
         if (prev <= 1) {
           clearInterval(timer);
-          // When time runs out, auto-submit and move to next question or end session
           if (
-            mockSession.currentQuestionIndex <
-            mockSession.totalQuestions - 1
+            mockSession.currentQuestionIndex < mockSession.totalQuestions - 1
           ) {
             handleSubmitAnswer();
           } else {
@@ -57,13 +51,15 @@ export default function QuestionDisplay() {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [mockSession?.currentQuestionIndex]); // Runs when question changes
+  }, [mockSession?.currentQuestionIndex]);
 
   if (!mockSession) return null;
 
   const currentQuestion =
     mockSession.questions[mockSession.currentQuestionIndex];
   const questionType = mockSession.practice_mode;
+
+  const isAnswered = !!currentQuestion.userAnswer;
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -79,6 +75,8 @@ export default function QuestionDisplay() {
   };
 
   const handleSubmitAnswer = async () => {
+    if (currentQuestion.userAnswer) return; // Prevent re-submitting
+
     const sessionId = mockSession.id;
     const token = localStorage.getItem("access_token");
 
@@ -127,8 +125,6 @@ export default function QuestionDisplay() {
         questions: updatedQuestions,
         score: mockSession.score + (responseData.score || 0),
       });
-
-      setIsAnswered(true);
     } catch (err) {
       console.error("Error submitting answer:", err);
     }
@@ -252,18 +248,13 @@ export default function QuestionDisplay() {
               </div>
             )}
 
-            {/* Feedback after answer submission */}
             {isAnswered && (
               <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg space-y-2">
                 <p className="text-sm text-blue-800">
                   <strong>Feedback:</strong> {currentQuestion.feedback}
                 </p>
                 {currentQuestion.detailed_feedback && (
-                  <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg space-y-2">
-                    {/* <p className="text-sm text-blue-800">
-                      <strong>Feedback:</strong> {currentQuestion.feedback}
-                    </p> */}
-
+                  <>
                     {Array.isArray(
                       currentQuestion.detailed_feedback.strengths
                     ) && (
@@ -272,7 +263,6 @@ export default function QuestionDisplay() {
                         {currentQuestion.detailed_feedback.strengths.join(", ")}
                       </p>
                     )}
-
                     {Array.isArray(
                       currentQuestion.detailed_feedback.improvements
                     ) && (
@@ -283,7 +273,7 @@ export default function QuestionDisplay() {
                         )}
                       </p>
                     )}
-                  </div>
+                  </>
                 )}
               </div>
             )}

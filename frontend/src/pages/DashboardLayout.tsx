@@ -39,14 +39,14 @@ export default function DashboardLayout() {
       <header className="bg-white border-b border-gray-200">
         <div className="w-75/100 mx-auto px-4 py-4 flex items-center justify-between">
           <div
-            onClick={() => navigate("/dashboard")}
+            onClick={() => navigate("/")}
             className="flex items-center space-x-2 cursor-pointer hover:opacity-80"
           >
             <Brain className="h-8 w-8 text-blue-600" />
             <span className="text-2xl font-bold text-gray-900">Mockr</span>
           </div>
 
-          <div className="inline-flex h-10 items-center rounded-sm bg-gray-200 p-1">
+          <div className="inline-flex h-10 items-center rounded-sm bg-gray-200 px-1">
             <button
               className={getTabClass("dashboard")}
               onClick={() => navigate("/dashboard")}
@@ -70,7 +70,7 @@ export default function DashboardLayout() {
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-2">
               <User className="h-5 w-5 text-gray-600" />
-              <span className="text-gray-700">{user?.email}</span>
+              <span className="text-gray-700">{user?.name}</span>
             </div>
             <button
               onClick={handleLogout}

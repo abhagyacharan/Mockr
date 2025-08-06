@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft, CheckCircle, XCircle, Clock } from "lucide-react";
 import { API_BASE_URL } from "@/lib/api";
+import { useMockSession } from "@/context/MockSessionContext";
 
 type UserResponse = {
   id: string;
@@ -24,6 +25,7 @@ export default function SessionResults() {
   const [responses, setResponses] = useState<UserResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const { mockSession } = useMockSession();
 
   const token = localStorage.getItem("access_token");
 
@@ -62,7 +64,7 @@ export default function SessionResults() {
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <button
-        className="text-blue-600 mb-4 flex items-center"
+        className="text-blue-600 mb-4 flex items-center cursor-pointer"
         onClick={() => navigate(-1)}
       >
         <ArrowLeft className="w-4 h-4 mr-2" /> Back to History
@@ -85,9 +87,7 @@ export default function SessionResults() {
             </span>
           </div>
 
-          <p className="text-gray-900 font-medium mb-2">
-            {resp.question_text}
-          </p>
+          <p className="text-gray-900 font-medium mb-2">{resp.question_text}</p>
 
           <div className="text-sm text-gray-800 mb-2">
             <strong>Your Answer:</strong> {resp.user_answer}
@@ -121,12 +121,48 @@ export default function SessionResults() {
           )}
 
           {resp.detailed_feedback && (
-            <div className="mt-2 text-sm text-gray-600">
-              <strong>Detailed Feedback:</strong>
-              <pre className="bg-gray-100 p-2 rounded mt-1 text-xs overflow-x-auto">
-                {JSON.stringify(resp.detailed_feedback, null, 2)}
-              </pre>
-            </div>
+            <>
+              {mockSession?.questions?.[resp.question_index]?.correctAnswer && (
+                <div className="mt-4 text-sm text-gray-700">
+                  <strong className="text-green-700">Correct Answer:</strong>
+                  <div className="bg-green-50 text-green-800 mt-1 p-2 rounded">
+                    {mockSession.questions[resp.question_index].correctAnswer}
+                  </div>
+                </div>
+              )}
+
+              <div className="mt-4 space-y-2 text-sm text-gray-700">
+                {Array.isArray(resp.detailed_feedback.strengths) &&
+                  resp.detailed_feedback.strengths.length > 0 && (
+                    <div>
+                      <strong className="text-blue-700">Strengths:</strong>
+                      <ul className="list-disc list-inside ml-4 mt-1 text-gray-700">
+                        {resp.detailed_feedback.strengths.map(
+                          (item: string, i: number) => (
+                            <li key={i}>{item}</li>
+                          )
+                        )}
+                      </ul>
+                    </div>
+                  )}
+
+                {Array.isArray(resp.detailed_feedback.improvements) &&
+                  resp.detailed_feedback.improvements.length > 0 && (
+                    <div>
+                      <strong className="text-yellow-700">
+                        Areas for Improvement:
+                      </strong>
+                      <ul className="list-disc list-inside ml-4 mt-1 text-gray-700">
+                        {resp.detailed_feedback.improvements.map(
+                          (item: string, i: number) => (
+                            <li key={i}>{item}</li>
+                          )
+                        )}
+                      </ul>
+                    </div>
+                  )}
+              </div>
+            </>
           )}
         </div>
       ))}

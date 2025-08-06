@@ -258,11 +258,23 @@ export default function ResultsPage() {
                     )}
 
                     {mockSession.practice_mode === "qa" && (
-                      <div className="text-sm">
-                        <div className="text-gray-600 mb-1">Your answer:</div>
-                        <div className="bg-gray-50 p-2 rounded text-gray-700 max-h-20 overflow-y-auto">
-                          {question.userAnswer || "No answer provided"}
+                      <div className="text-sm space-y-2">
+                        <div>
+                          <div className="text-gray-600 mb-1">Your answer:</div>
+                          <div className="bg-gray-50 p-2 rounded text-gray-700 max-h-28 overflow-y-auto">
+                            {question.userAnswer || "No answer provided"}
+                          </div>
                         </div>
+                        {question.correctAnswer && (
+                          <div>
+                            <div className="text-gray-600 mb-1">
+                              Correct answer:
+                            </div>
+                            <div className="bg-green-50 p-2 rounded text-green-700 max-h-28 overflow-y-auto">
+                              {question.correctAnswer}
+                            </div>
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>
@@ -300,7 +312,7 @@ export default function ResultsPage() {
             size={"lg"}
             onClick={() => navigate("/dashboard")}
             className="cursor-pointer rounded-md"
-            >
+          >
             <Home className="mr-2 h-4 w-4" />
             Back to Dashboard
           </Button>

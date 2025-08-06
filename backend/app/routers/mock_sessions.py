@@ -228,10 +228,10 @@ async def submit_answer(
             if user_ans == correct_ans:
                 is_correct = "correct"
                 score = 100
-                feedback = "Good job!"
+                feedback = "Correct Answer!"
             else:
                 is_correct = "incorrect"
-                feedback = f"The correct answer was: {correct_answer}"
+                feedback = question.get("explanation", "")
     
     elif question_type == "qa" or question_type == "open":
         try:

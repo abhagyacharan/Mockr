@@ -5,7 +5,8 @@ from datetime import datetime
 import uuid
 
 class UserCreate(BaseModel):
-    name: str
+    first_name: str
+    last_name: str
     email: EmailStr
     password: str
 
@@ -15,7 +16,8 @@ class UserLogin(BaseModel):
 
 class UserResponse(BaseModel):
     id: uuid.UUID
-    name: str
+    first_name: str
+    last_name: str
     email: str
     is_active: bool
     created_at: datetime

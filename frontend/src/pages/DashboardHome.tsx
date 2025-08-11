@@ -57,7 +57,7 @@ export default function DashboardHome() {
         <div className="p-6 flex justify-between items-center">
           <div>
             <h2 className="text-2xl font-bold text-gray-900 mb-2">
-              Welcome, {user?.name}!
+              Welcome, {user?.first_name}!
             </h2>
             <p className="text-gray-600 mb-4">
               Ready to practice for your next interview? Your average score can

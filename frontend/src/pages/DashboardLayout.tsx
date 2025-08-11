@@ -1,7 +1,25 @@
-import { Outlet, useNavigate, useLocation } from "react-router-dom";
-import { Brain, User, LogOut } from "lucide-react";
+import { Outlet, useNavigate, useLocation, Link } from "react-router-dom";
+import {
+  Brain,
+  LayoutDashboard,
+  Upload,
+  History,
+  User,
+  FileCheck,
+} from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { useEffect } from "react";
+import { Suspense } from "react";
+
+// You can replace these with your shadcn/ui components if available
+import { Button } from "@/components/ui/button";
+
+const navigationItems = [
+  { href: "/dashboard", icon: LayoutDashboard, label: "Overview" },
+  { href: "/upload", icon: Upload, label: "New Mock" },
+  { href: "/atschecker", icon: FileCheck, label: "ATS Checker" },
+  { href: "/history", icon: History, label: "History" },
+];
 
 export default function DashboardLayout() {
   const navigate = useNavigate();
@@ -10,23 +28,14 @@ export default function DashboardLayout() {
   const currentPath = location.pathname;
 
   useEffect(() => {
-    // Redirect to login if not authenticated
     if (!token || !user) {
       navigate("/", { replace: true });
     }
   }, [token, user, navigate]);
 
-  // Don't render dashboard if not authenticated
   if (!token || !user) {
     return <div>Loading...</div>;
   }
-
-  const getTabClass = (path: string) =>
-    `inline-flex cursor-pointer items-center justify-center px-4 py-1.5 text-sm font-medium rounded-sm ${
-      currentPath.includes(path)
-        ? "bg-white text-gray-900 shadow-sm"
-        : "text-gray-600"
-    }`;
 
   const handleLogout = () => {
     logout();
@@ -35,58 +44,67 @@ export default function DashboardLayout() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200">
-        <div className="w-75/100 mx-auto px-4 py-4 flex items-center justify-between">
-          <div
-            onClick={() => navigate("/")}
-            className="flex items-center space-x-2 cursor-pointer hover:opacity-80"
-          >
-            <Brain className="h-8 w-8 text-blue-600" />
-            <span className="text-2xl font-bold text-gray-900">Mockr</span>
-          </div>
+      {/* Top Navigation Header */}
+      <header className="bg-white shadow-sm border-b sticky top-0 z-50">
+        <div className="px-4 sm:px-6">
+          {/* Top Bar */}
+          <div className="flex items-center justify-between h-16 border-b">
+            <Link to="/" className="flex items-center space-x-2">
+              <Brain className="h-8 w-8 text-blue-600" />
+              <span className="text-xl font-bold text-gray-900">Mockr</span>
+            </Link>
 
-          <div className="inline-flex h-10 items-center rounded-sm bg-gray-200 px-1">
-            <button
-              className={getTabClass("dashboard")}
-              onClick={() => navigate("/dashboard")}
-            >
-              Dashboard
-            </button>
-            <button
-              className={getTabClass("upload")}
-              onClick={() => navigate("/upload")}
-            >
-              New Mock
-            </button>
-            <button
-              className={getTabClass("history")}
-              onClick={() => navigate("/history")}
-            >
-              History
-            </button>
-          </div>
-
-          <div className="flex items-center space-x-4">
-            <div className="flex items-center space-x-2">
-              <User className="h-5 w-5 text-gray-600" />
-              <span className="text-gray-700">{user?.name}</span>
+            <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-2">
+                <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
+                  <User className="h-4 w-4 text-white" />
+                </div>
+                <div className="hidden sm:block">
+                  <p className="text-sm font-medium text-gray-900">
+                    {user?.first_name}
+                  </p>
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleLogout}
+                  className="ml-2"
+                >
+                  Logout
+                </Button>
+              </div>
             </div>
-            <button
-              onClick={handleLogout}
-              className="inline-flex items-center justify-center h-9 px-3 rounded-sm text-sm font-medium border border-gray-300 bg-white hover:bg-gray-100 cursor-pointer"
-            >
-              <LogOut className="h-4 w-4 mr-2" />
-              Logout
-            </button>
+          </div>
+
+          {/* Navigation Tabs */}
+          <div className="flex space-x-8 overflow-x-auto">
+            {navigationItems.map((item) => {
+              const isActive = currentPath === item.href;
+              return (
+                <Link
+                  key={item.href}
+                  to={item.href}
+                  className={`flex items-center space-x-2 px-1 py-4 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
+                    isActive
+                      ? "border-blue-600 text-blue-600"
+                      : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                  }`}
+                >
+                  <item.icon className="h-4 w-4" />
+                  <span>{item.label}</span>
+                </Link>
+              );
+            })}
           </div>
         </div>
       </header>
 
-      {/* Dynamic page content */}
-      <div className="w-75/100 mx-auto px-4 py-8">
-        <Outlet />
-      </div>
+      {/* Main content */}
+      <main className="p-4 sm:p-6">
+        <Suspense fallback={<div>Loading...</div>}>
+          <Outlet />
+        </Suspense>
+      </main>
     </div>
   );
 }

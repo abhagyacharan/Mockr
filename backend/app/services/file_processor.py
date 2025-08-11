@@ -182,10 +182,10 @@ class FileProcessor:
         client = Groq(api_key=settings.chatgroq_api_key)
 
         response = client.chat.completions.create(
-            model="llama-3.3-70b-versatile",
+            model="openai/gpt-oss-20b",
             messages=[{"role": "user", "content": prompt}],
-            temperature=0.4,
-            max_tokens=2000,
+            temperature=0.2,
+            max_tokens=8000,
         )
 
         try:
@@ -284,69 +284,74 @@ class FileProcessor:
             """
 
         prompt = f"""
-            You are an AI designed to generate mock interview questions to help users prepare for real job interviews.
+            You are an AI emulating a senior technical interviewer and hiring manager at a top-tier tech company. Your goal is to generate insightful mock interview questions to rigorously evaluate a candidate's depth of knowledge, problem-solving abilities, and real-world competence.
 
-            Your task is to generate questions based ONLY on relevant professional details provided below.
+            Your task is to generate questions based ONLY on the professional details provided in the 'content' section below. Use only the following sections: 'skills', 'projects', 'experience', 'education', and 'certifications'.
 
-            Use the following sections only: 'skills', 'projects', 'education', 'certifications', and 'experience'.
-            Ignore irrelevant parts such as summaries, personal info, or raw text.
+            ### Core Principles for Question Generation:
 
-            The questions should reflect what interviewers actually ask — meaning they must test conceptual knowledge, reasoning, application, and real-world experience related to the keywords.
-
-            Do NOT generate basic recall questions like:
-            - "What language did you use?"
-
-            Instead, ask interview-style questions such as:
-            - "What is the difference between synchronous and asynchronous calls in JavaScript?"
-            - "How would you handle state management in a React app?"
+            1.  **Probe for the "Why":** Don't just ask "what" technology was used. Ask *why* it was chosen over alternatives. Focus on trade-offs, design patterns, and architectural reasoning.
+            2.  **Create Scenarios:** Frame questions as small, hypothetical problems or ask the candidate to walk through a complex challenge they faced in one of their listed projects.
+            3.  **Test for Depth:** Generate questions that explore edge cases, performance implications, scalability, and debugging strategies related to the skills and projects mentioned.
+            4.  **Synthesize Information:** Combine a skill from the 'skills' list with a context from a 'project' or 'experience' entry. For example, if a user lists "React" and a project "E-commerce Dashboard," ask: "In your E-commerce Dashboard project, how did you manage global state? What were the drawbacks of your approach, and what would you consider using now?"
+            5.  **Avoid Trivial Recall:** Do not ask simple definitional questions that can be answered with a single sentence. Questions should require explanation and justification.
 
             ---
 
             ### Guidelines:
 
-            • Difficulty level: **{difficulty}**
-                - easy: Foundational or warm-up questions
-                - medium: Balanced, job-interview style questions
-                - hard: Deep, expert-level or edge-case questions
+            •   **Difficulty Level: `{difficulty}`**
+                -   `easy`: Foundational concepts and "explain how you used X" questions. Good for warm-ups.
+                -   `medium`: Compare/contrast technologies, discuss specific architectural choices from a project, or solve a contained problem.
+                -   `hard`: Complex hypothetical scenarios, system design questions, or deep dives into performance, scalability, and debugging specific to the candidate's experience.
 
-            • Practice mode: **{practice_mode}**
-                - mcq: Return multiple-choice questions with 4 options, correct answer, and a brief explanation
-                - qa: Return open-ended questions with answers and explanations
+            •   **Practice Mode: `{practice_mode}`**
+                -   `mcq`: Return multiple-choice questions.
+                -   `qa`: Return open-ended questions.
 
-            • Number of questions: **{num_questions}**
+            •   **Number of Questions: `{num_questions}`**
 
-            **{focus_instruction}**
+            •   **Focus Area (if any): `{focus_instruction}`**
+
+            ---
+
+            ### Strict Output Rules:
+
+            1.  **Format Adherence:** Output ONLY a valid JSON list of objects as specified below. Do not include any introductory text, markdown formatting, or explanations outside the JSON structure.
+            2.  **MCQ Quality Control:** If `practice_mode` is "mcq":
+                -   You are strictly forbidden from using "All of the above" or "None of the above" as options.
+                -   All distractors (incorrect options) must be plausible and relevant to the question's context. They should represent common misconceptions or alternative approaches.
+
             ---
 
             ### Output Format:
 
-            If practice_mode is "mcq", output as a list of: json
-            
+            If `practice_mode` is "mcq", output a list of JSON objects:
             [
             {{
                 "question": "...",
                 "options": ["...", "...", "...", "..."],
                 "answer": "...",
                 "explanation": "..."
-            }},
-            ...
+            }}
             ]
 
-            If practice_mode is "qa", output as:
+            If `practice_mode` is "qa", output a list of JSON objects:
             [
             {{
                 "question": "...",
                 "answer": "...",
                 "explanation": "..."
-            }},
-            ...
+            }}
             ]
-            Do not include any extra commentary, markdown, or text — ONLY the valid JSON list as described above.
 
-            Content:
+            ---
+
+            Content to analyze:
             {content}
 
-            Now generate the questions:
+            Now, adopt the persona of a senior technical interviewer and generate the questions.
+
             """
 
         return FileProcessor._llm_extract(prompt)

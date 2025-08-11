@@ -127,17 +127,15 @@ export default function LandingPage({
       >
         <nav className="flex items-center justify-between">
           <motion.div
-            whileHover={{ scale: 1.02 }}
             onClick={() => navigate("/")}
-            className="flex items-center space-x-3 cursor-pointer"
+            className="flex items-center space-x-3"
           >
             <Brain className="h-8 w-8 text-blue-600" />
             <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-2">
               <span className="text-2xl font-bold text-gray-900">Mockr</span>
-              <span className="text-lg text-gray-500 hidden sm:inline">
-                | because <span className="font-bold italic">Interviews</span>{" "}
-                shouldn't be a surprise.
-              </span>
+              <span className="text-xl text-gray-500 hidden sm:inline">|</span>
+              <span className="text-lg mt-1 text-gray-500 hidden sm:inline">because <span className="font-bold italic">Interviews</span>{" "}
+                shouldn't be a surprise.</span>
             </div>
           </motion.div>
 

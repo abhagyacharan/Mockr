@@ -152,7 +152,7 @@ export default function Dashboard() {
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-2">
                 <User className="h-5 w-5 text-gray-600" />
-                <span className="text-gray-700">{user.name}</span>
+                <span className="text-gray-700">{user.first_name}</span>
               </div>
               <button
                 onClick={handleLogout}
@@ -177,7 +177,7 @@ export default function Dashboard() {
                   <div className="flex items-center justify-between">
                     <div>
                       <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                        Welcome back, {user.name}!
+                        Welcome back, {user.first_name}!
                       </h2>
                       <p className="text-gray-600 mb-4">
                         Ready to practice for your next interview? Your average

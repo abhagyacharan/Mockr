@@ -182,7 +182,7 @@ class FileProcessor:
         client = Groq(api_key=settings.chatgroq_api_key)
 
         response = client.chat.completions.create(
-            model="openai/gpt-oss-20b",
+            model="llama-3.3-70b-versatile",
             messages=[{"role": "user", "content": prompt}],
             temperature=0.2,
             max_tokens=8000,
@@ -284,75 +284,78 @@ class FileProcessor:
             """
 
         prompt = f"""
-            You are an AI emulating a senior technical interviewer and hiring manager at a top-tier tech company. Your goal is to generate insightful mock interview questions to rigorously evaluate a candidate's depth of knowledge, problem-solving abilities, and real-world competence.
+                You are a senior technical interviewer at a FAANG company with 10+ years of experience evaluating top-tier engineers. Your reputation depends on asking questions that separate exceptional candidates from average ones.
 
-            Your task is to generate questions based ONLY on the professional details provided in the 'content' section below. Use only the following sections: 'skills', 'projects', 'experience', 'education', and 'certifications'.
+                ### CRITICAL REQUIREMENTS:
+                1. **MCQ Answer Randomization**: For MCQ questions, you MUST randomize the position of the correct answer. The correct answer should appear in position A, B, C, or D with equal probability. Never default to the first option.
+                2. **Anti-Pattern Detection**: Avoid predictable patterns. If generating multiple questions, ensure correct answers are distributed across all positions randomly.
+                3. **Depth Over Breadth**: Every question must require multi-layered thinking, not just recall.
 
-            ### Core Principles for Question Generation:
+                ### Question Generation Rules:
+                **Base Content Analysis ONLY on:** skills, projects, experience, education, certifications from the provided content.
 
-            1.  **Probe for the "Why":** Don't just ask "what" technology was used. Ask *why* it was chosen over alternatives. Focus on trade-offs, design patterns, and architectural reasoning.
-            2.  **Create Scenarios:** Frame questions as small, hypothetical problems or ask the candidate to walk through a complex challenge they faced in one of their listed projects.
-            3.  **Test for Depth:** Generate questions that explore edge cases, performance implications, scalability, and debugging strategies related to the skills and projects mentioned.
-            4.  **Synthesize Information:** Combine a skill from the 'skills' list with a context from a 'project' or 'experience' entry. For example, if a user lists "React" and a project "E-commerce Dashboard," ask: "In your E-commerce Dashboard project, how did you manage global state? What were the drawbacks of your approach, and what would you consider using now?"
-            5.  **Avoid Trivial Recall:** Do not ask simple definitional questions that can be answered with a single sentence. Questions should require explanation and justification.
+                **Difficulty Level: `{difficulty}`**
+                - `easy`: Requires understanding of fundamentals + practical application. Should still need 2-3 sentences to answer properly.
+                - `medium`: Demands comparison of approaches, architectural reasoning, or solving a realistic scenario with trade-offs.
+                - `hard`: Complex system design, performance optimization, debugging edge cases, or advanced architectural decisions under constraints.
 
-            ---
+                **Question Categories to Prioritize:**
+                1. **Architectural Decisions**: "Why did you choose X over Y in your [project]? What would make you reconsider?"
+                2. **Problem-Solving Scenarios**: "If [specific realistic problem] occurred in your [project], how would you debug it?"
+                3. **Trade-off Analysis**: "What are the hidden costs of the approach you used in [project]?"
+                4. **Scale & Performance**: "How would your [project] behave with 100x the load? What would break first?"
+                5. **Real-world Constraints**: "Given a 2-week deadline, how would you modify your approach in [project]?"
 
-            ### Guidelines:
+                ### MCQ Quality Standards:
+                - **Distractors must be plausible**: Each wrong answer should represent a reasonable but flawed approach
+                - **Avoid obvious incorrectness**: Wrong answers should be mistakes experienced engineers might make
+                - **Context-specific**: Distractors should relate directly to the candidate's experience/projects
+                - **No generic options**: Replace "All/None of the above" with specific technical alternatives
 
-            •   **Difficulty Level: `{difficulty}`**
-                -   `easy`: Foundational concepts and "explain how you used X" questions. Good for warm-ups.
-                -   `medium`: Compare/contrast technologies, discuss specific architectural choices from a project, or solve a contained problem.
-                -   `hard`: Complex hypothetical scenarios, system design questions, or deep dives into performance, scalability, and debugging specific to the candidate's experience.
+                ### Enhanced Output Requirements:
+                **MCQ Format:**
+                [
+                {{
+                    "question": "[Detailed scenario-based question referencing specific skills/projects]",
+                    "options": ["Option A", "Option B", "Option C", "Option D"],
+                    "correct_index": [0-3, randomly distributed],
+                    "answer": "[The correct option text]",
+                    "explanation": "[Why this answer is correct AND why other options are wrong]"
+                }}
+                ]
 
-            •   **Practice Mode: `{practice_mode}`**
-                -   `mcq`: Return multiple-choice questions.
-                -   `qa`: Return open-ended questions.
+                **QA Format:**
+                [
+                {{
+                    "question": "[Complex, multi-part question requiring detailed explanation]",
+                    "answer": "[Comprehensive answer covering multiple aspects]",
+                    "explanation": "[Additional context, alternative approaches, or edge cases to consider]"
+                }}
+                ]
 
-            •   **Number of Questions: `{num_questions}`**
+                ### Question Enhancement Strategies:
+                1. **Combine Technologies**: If candidate lists React + AWS, ask about deploying React apps with specific AWS services
+                2. **Timeline Pressure**: "In your [project], if you had only 3 days instead of 3 weeks, what would you cut and why?"
+                3. **Resource Constraints**: "How would you modify [project approach] with half the memory/budget?"
+                4. **Integration Challenges**: "When connecting [skill A] with [skill B] in [project], what unexpected issues arise?"
+                5. **Maintenance Perspective**: "6 months after deploying [project], what would be your biggest technical debt?"
 
-            •   **Focus Area (if any): `{focus_instruction}`**
+                ### Forbidden Patterns:
+                - Questions answerable with single words or definitions
+                - Generic questions not tied to candidate's specific experience
+                - MCQs where position A is always correct
+                - Options that are obviously wrong to anyone with basic knowledge
+                - Questions that don't require justification or reasoning
 
-            ---
+                ### Content Analysis:
+                {content}
 
-            ### Strict Output Rules:
+                **Practice Mode**: {practice_mode}
+                **Number of Questions**: {num_questions}
+                **Focus Area**: {focus_instruction}
 
-            1.  **Format Adherence:** Output ONLY a valid JSON list of objects as specified below. Do not include any introductory text, markdown formatting, or explanations outside the JSON structure.
-            2.  **MCQ Quality Control:** If `practice_mode` is "mcq":
-                -   You are strictly forbidden from using "All of the above" or "None of the above" as options.
-                -   All distractors (incorrect options) must be plausible and relevant to the question's context. They should represent common misconceptions or alternative approaches.
-
-            ---
-
-            ### Output Format:
-
-            If `practice_mode` is "mcq", output a list of JSON objects:
-            [
-            {{
-                "question": "...",
-                "options": ["...", "...", "...", "..."],
-                "answer": "...",
-                "explanation": "..."
-            }}
-            ]
-
-            If `practice_mode` is "qa", output a list of JSON objects:
-            [
-            {{
-                "question": "...",
-                "answer": "...",
-                "explanation": "..."
-            }}
-            ]
-
-            ---
-
-            Content to analyze:
-            {content}
-
-            Now, adopt the persona of a senior technical interviewer and generate the questions.
-
-            """
+                Generate questions that would make even senior engineers pause and think. Remember: randomize MCQ answer positions and create genuinely challenging distractors.
+                """
 
         return FileProcessor._llm_extract(prompt)
 

@@ -72,17 +72,17 @@ export default function LandingPage({
       bgColor: "bg-blue-100",
     },
     {
+      icon: <FileText className="h-8 w-8 text-purple-600" />,
+      title: "Resume & JD Analysis",
+      description:
+        "Upload your resume or paste job descriptions for targeted interview preparation",
+      bgColor: "bg-purple-100",
+    },
+    {
       icon: <Target className="h-8 w-8 text-green-600" />,
       title: "Multiple Question Types",
       description: "Practice with both MCQ and open-ended technical questions",
       bgColor: "bg-green-100",
-    },
-    {
-      icon: <Star className="h-8 w-8 text-orange-600" />,
-      title: "ATS Checker",
-      description:
-        "Boost your shortlist chances with ATS-powered resume scans.",
-      bgColor: "bg-orange-100",
     },
   ];
 
@@ -117,7 +117,7 @@ export default function LandingPage({
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-100 to-purple-100 overflow-x-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-blue-200 to-purple-200 overflow-x-hidden">
       {/* Header */}
       <motion.header
         initial={{ y: -100, opacity: 0 }}
@@ -131,26 +131,18 @@ export default function LandingPage({
             className="flex items-center space-x-3"
           >
             <Brain className="h-8 w-8 text-blue-600" />
-            <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-2 cursor-default">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-2">
               <span className="text-2xl font-bold text-gray-900">Mockr</span>
               <span className="text-xl text-gray-500 hidden sm:inline">|</span>
-              <span className="text-lg mt-1 text-gray-500 hidden sm:inline">
-                because <span className="font-bold italic">Interviews</span>{" "}
-                shouldn't be a surprise.
-              </span>
+              <span className="text-lg mt-1 text-gray-500 hidden sm:inline">because <span className="font-bold italic">Interviews</span>{" "}
+                shouldn't be a surprise.</span>
             </div>
           </motion.div>
 
           <div className="flex items-center space-x-3">
             {user ? (
               <motion.div>
-                <Button
-                  size={"lg"}
-                  className="cursor-pointer"
-                  onClick={() => navigate("/dashboard")}
-                >
-                  Dashboard
-                </Button>
+                <Button className="cursor-pointer" onClick={() => navigate("/dashboard")}>Dashboard</Button>
               </motion.div>
             ) : (
               <>
@@ -385,7 +377,7 @@ export default function LandingPage({
                 </CardContent>
               </Card>
             </motion.div>
-
+            
             {/* Arrow/Line Separators */}
             <motion.div
               initial={{ opacity: 0 }}
@@ -402,9 +394,7 @@ export default function LandingPage({
               <Card className="text-center p-8 border-0 shadow-md h-full">
                 <CardContent className="pt-6">
                   <div className="bg-purple-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-6">
-                    <span className="text-2xl font-bold text-purple-600">
-                      3
-                    </span>
+                    <span className="text-2xl font-bold text-purple-600">3</span>
                   </div>
                   <h3 className="text-xl font-semibold mb-4">Improve</h3>
                   <p className="text-gray-600">
@@ -416,6 +406,69 @@ export default function LandingPage({
             </motion.div>
           </motion.div>
         </div>
+      </section>
+
+      {/* Testimonials Section */}
+      <section className="container mx-auto px-4 py-16">
+        <motion.div
+          className="text-center mb-12"
+          variants={sectionFadeIn}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.5 }}
+        >
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            Success Stories
+          </h2>
+          <p className="text-xl text-gray-600">
+            See how Mockr helped professionals land their dream jobs
+          </p>
+        </motion.div>
+
+        <motion.div
+          className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto"
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+        >
+          {testimonials.map((testimonial, index) => (
+            <motion.div
+              key={index}
+              variants={cardFadeInUp}
+              whileHover={{ y: -8, transition: { duration: 0.2 } }}
+            >
+              <Card className="border-0 shadow-md h-full">
+                <CardContent className="p-6">
+                  <div className="flex items-center mb-4">
+                    {[...Array(testimonial.rating)].map((_, i) => (
+                      <Star
+                        key={i}
+                        className="h-4 w-4 fill-yellow-400 text-yellow-400"
+                      />
+                    ))}
+                  </div>
+                  <p className="text-gray-600 mb-4 italic">
+                    "{testimonial.content}"
+                  </p>
+                  <div className="flex items-center">
+                    <div
+                      className={`w-10 h-10 ${testimonial.bgColor} rounded-full flex items-center justify-center text-white font-semibold`}
+                    >
+                      {testimonial.avatar}
+                    </div>
+                    <div className="ml-3">
+                      <p className="font-semibold">{testimonial.name}</p>
+                      <p className="text-sm text-gray-500">
+                        {testimonial.role}
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          ))}
+        </motion.div>
       </section>
 
       {/* CTA Section */}
@@ -431,11 +484,12 @@ export default function LandingPage({
             Ready to Ace Your Next Interview?
           </h2>
           <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
-            Get interview ready with Mockr’s AI-powered platform — now introducing{" "}
-            <span className="font-semibold">ATS Checker</span> to optimize your
-            resume for recruiter shortlists.
+            Join thousands of professionals who've successfully prepared with
+            Mockr's AI-powered platform
           </p>
-          <motion.div className="flex justify-center">
+          <motion.div
+            className="flex justify-center"
+          >
             <Button
               size="lg"
               className="text-lg px-8 bg-white text-gray-900 hover:bg-gray-100 cursor-pointer"
@@ -457,6 +511,7 @@ export default function LandingPage({
       {/* Footer */}
       <motion.footer
         className="bg-gray-900 text-white py-12"
+        initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         transition={{ duration: 1 }}
         viewport={{ once: true, amount: 0.3 }}
@@ -466,9 +521,8 @@ export default function LandingPage({
             <div className="flex items-center justify-center space-x-2 mb-4">
               <Brain className="h-6 w-6" />
               <span className="text-2xl font-bold">Mockr</span>
-              <span className="text-lg text-gray-500 hidden sm:inline">|</span>
-              <span className="text-lg mt-1 text-gray-500 hidden sm:inline">
-                because <span className="font-bold italic">Interviews</span>{" "}
+              <span className="text-lg text-gray-500 hidden sm:inline">
+                | because <span className="font-bold italic">Interviews</span>{" "}
                 shouldn't be a surprise.
               </span>
             </div>

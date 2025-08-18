@@ -90,9 +90,9 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200">
-        <div className="w-75/100 mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
+      <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
+        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div className="flex flex-wrap items-center justify-between gap-4">
             {/* Logo */}
             <div
               onClick={() => navigate("/")}
@@ -103,8 +103,8 @@ export default function Dashboard() {
             </div>
 
             {/* Navigation Tabs */}
-            <div className="flex items-center justify-center">
-              <div className="inline-flex h-10 items-center justify-center rounded-sm bg-gray-200 p-1 text-gray-600">
+            <div className="flex justify-center w-full md:w-auto">
+              <div className="inline-flex h-10 items-center justify-center rounded-sm bg-gray-200 p-1 text-gray-600 overflow-x-auto">
                 <button
                   className={`inline-flex cursor-pointer items-center justify-center whitespace-nowrap rounded-sm px-4 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 ${
                     activeTab === "dashboard"
@@ -166,15 +166,15 @@ export default function Dashboard() {
         </div>
       </header>
 
-      <div className="w-75/100 mx-auto px-4 py-8">
+      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="space-y-6">
           {/* Dashboard Tab */}
           {activeTab === "dashboard" && (
             <div className="space-y-6">
               {/* Welcome Section */}
-              <div className="rounded-lg border bg-card text-card-foreground shadow-sm bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
+              <div className="rounded-lg border bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200 shadow-sm">
                 <div className="p-6">
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                     <div>
                       <h2 className="text-2xl font-bold text-gray-900 mb-2">
                         Welcome back, {user.first_name}!
@@ -203,8 +203,8 @@ export default function Dashboard() {
               </div>
 
               {/* Quick Stats */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div className="bg-white rounded-md border border-gray-200 p-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="bg-white rounded-md border p-6">
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-md text-gray-600 mb-1">
@@ -221,7 +221,7 @@ export default function Dashboard() {
                   </div>
                 </div>
 
-                <div className="bg-white rounded-md border border-gray-200 p-6">
+                <div className="bg-white rounded-md border p-6">
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-md text-gray-600 mb-1">
@@ -239,7 +239,7 @@ export default function Dashboard() {
                   </div>
                 </div>
 
-                <div className="bg-white rounded-md border border-gray-200 p-6">
+                <div className="bg-white rounded-md border p-6">
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-md text-gray-600 mb-1">Resume - JD</p>
@@ -254,7 +254,7 @@ export default function Dashboard() {
                   </div>
                 </div>
 
-                <div className="bg-white rounded-md border border-gray-200 p-6">
+                <div className="bg-white rounded-md border p-6">
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-md text-gray-600 mb-1">

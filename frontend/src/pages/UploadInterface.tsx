@@ -214,197 +214,211 @@ export default function UploadInterface({
   );
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 relative">
-      <LoadingScreen isVisible={loadingVisible} progress={progress} />
+  <div className="min-h-screen bg-gray-50 py-4 sm:py-8 relative">
+    <LoadingScreen isVisible={loadingVisible} progress={progress} />
 
-      <div className="container mx-auto px-4 max-w-5xl">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Upload Your Information
-          </h1>
-          <p className="text-gray-600">
-            Upload your resume or a job description to generate personalized
-            mock interview questions
-          </p>
-        </div>
+    <div className="container mx-auto px-4 max-w-5xl">
+      <div className="text-center mb-6 sm:mb-8">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
+          Upload Your Information
+        </h1>
+        <p className="text-sm sm:text-base text-gray-600 px-2">
+          Upload your resume or a job description to generate personalized
+          mock interview questions
+        </p>
+      </div>
 
-        <div className="rounded-lg border bg-white shadow-sm border-gray-200 mb-6">
-          <div className="p-6">
-            <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg">
-              {["resume", "jd"].map((tab) => (
-                <button
-                  key={tab}
-                  onClick={() => setActiveTab(tab as "resume" | "jd")}
-                  className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors cursor-pointer ${
-                    activeTab === tab
-                      ? "bg-white text-blue-600 shadow-sm"
-                      : "text-gray-600 hover:text-gray-900"
-                  }`}
-                >
-                  {tab === "resume" ? "Resume" : "Job Description"}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="p-6 pt-0 space-y-6">
-            <div className="flex gap-4 items-end">
-              <div className="w-[50%]">
-                <Label className="mb-1" htmlFor="mock-name">
-                  Mock Name
-                </Label>
-                <input
-                  type="text"
-                  id="mock-name"
-                  value={mockName}
-                  onChange={(e) => setMockName(e.target.value)}
-                  placeholder="e.g. Frontend Engineer"
-                  className="w-full rounded-md border px-3 py-2 text-sm"
-                />
-              </div>
-
-              <div className="w-[25%]">
-                <Label className="mb-1">Difficulty</Label>
-                <Select
-                  value={selectedDifficulty}
-                  onValueChange={(value) =>
-                    setSelectedDifficulty(value as Difficulty)
-                  }
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select difficulty" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="easy">Easy</SelectItem>
-                    <SelectItem value="medium">Medium</SelectItem>
-                    <SelectItem value="hard">Hard</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="w-[25%]">
-                <Label className="mb-1" htmlFor="num-questions">
-                  # Questions
-                </Label>
-                <input
-                  type="number"
-                  id="num-questions"
-                  min={1}
-                  max={50}
-                  placeholder="e.g. 10"
-                  className="w-full rounded-md border px-3 py-2 text-sm"
-                  value={numQuestions}
-                  onChange={(e) => setNumQuestions(Number(e.target.value))}
-                />
-              </div>
-            </div>
-
-            {activeTab === "resume" ? (
-              <>
-                <div
-                  className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
-                    dragActive
-                      ? "border-blue-400 bg-blue-50"
-                      : "border-gray-300 hover:border-gray-400"
-                  }`}
-                  onDragEnter={handleDrag}
-                  onDragLeave={handleDrag}
-                  onDragOver={handleDrag}
-                  onDrop={handleDrop}
-                >
-                  <Upload className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-                  <p className="text-lg font-medium text-gray-900">
-                    {resumeFile ? resumeFile.name : "Drop your resume here"}
-                  </p>
-                  <p className="text-gray-600">
-                    or{" "}
-                    <button
-                      className="text-blue-600 hover:text-blue-500 font-medium"
-                      onClick={() => fileInputRef.current?.click()}
-                    >
-                      browse files
-                    </button>
-                  </p>
-                  <p className="text-sm text-gray-500">
-                    Supports PDF and DOCX files
-                  </p>
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    className="hidden"
-                    accept=".pdf,.docx"
-                    onChange={handleFileChange}
-                  />
-                </div>
-                {resumeFile && (
-                  <div className="flex items-center space-x-2 text-sm text-green-600">
-                    <FileText className="h-4 w-4" />
-                    <span>Resume uploaded successfully</span>
-                  </div>
-                )}
-              </>
-            ) : (
-              <>
-                <div className="flex justify-between">
-                  <Label htmlFor="job-description">Job Description</Label>
-                  <p className="text-sm text-gray-500">
-                    {jobDescription.length}/50 characters minimum
-                  </p>
-                </div>
-                <textarea
-                  id="job-description"
-                  value={jobDescription}
-                  onChange={(e) => setJobDescription(e.target.value)}
-                  placeholder="Paste the job description here..."
-                  className="w-full min-h-[119px] rounded-md border px-3 py-2 text-sm"
-                />
-              </>
-            )}
-
-            <PracticeModeSelector
-              practiceMode={practiceMode}
-              setPracticeMode={setPracticeMode}
-            />
-
-            {renderFocusAreas()}
+      <div className="rounded-lg border bg-white shadow-sm border-gray-200 mb-6">
+        <div className="p-4 sm:p-6">
+          <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg">
+            {["resume", "jd"].map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab as "resume" | "jd")}
+                className={`flex-1 py-2 px-2 sm:px-4 rounded-md text-xs sm:text-sm font-medium transition-colors cursor-pointer ${
+                  activeTab === tab
+                    ? "bg-white text-blue-600 shadow-sm"
+                    : "text-gray-600 hover:text-gray-900"
+                }`}
+              >
+                {tab === "resume" ? "Resume" : "Job Description"}
+              </button>
+            ))}
           </div>
         </div>
 
-        {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-center space-x-2">
-            <AlertCircle className="h-5 w-5 text-red-600" />
-            <span className="text-red-700">{error}</span>
-          </div>
-        )}
+        <div className="p-4 sm:p-6 pt-0 space-y-4 sm:space-y-6">
+          {/* Form inputs - responsive layout */}
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 sm:items-end">
+            <div className="w-full sm:w-[50%]">
+              <Label className="mb-1 text-sm" htmlFor="mock-name">
+                Mock Name
+              </Label>
+              <input
+                type="text"
+                id="mock-name"
+                value={mockName}
+                onChange={(e) => setMockName(e.target.value)}
+                placeholder="e.g. Frontend Engineer"
+                className="w-full rounded-md border px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
 
-        <div className="flex justify-center space-x-4">
-          <Button
-            onClick={() => navigate("/dashboard")}
-            variant={"outline"}
-            size={"lg"}
-            disabled={isLoading}
-            className="border bg-white text-gray-900 h-10 px-4 py-2 rounded-md text-md cursor-pointer"
-          >
-            Back
-          </Button>
-          <Button
-            onClick={generateMockQuestions}
-            variant={"default"}
-            size={"lg"}
-            disabled={!canSubmit() || isLoading}
-            className="bg-black text-white h-10 px-4 py-2 rounded-md text-md min-w-[200px] cursor-pointer"
-          >
-            {isLoading ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Generating...
-              </>
-            ) : (
-              "Generate Mock Questions"
-            )}
-          </Button>
+            <div className="w-full sm:w-[25%]">
+              <Label className="mb-1 text-sm">Difficulty</Label>
+              <Select
+                value={selectedDifficulty}
+                onValueChange={(value) =>
+                  setSelectedDifficulty(value as Difficulty)
+                }
+              >
+                <SelectTrigger className="w-full h-10">
+                  <SelectValue placeholder="Select difficulty" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="easy">Easy</SelectItem>
+                  <SelectItem value="medium">Medium</SelectItem>
+                  <SelectItem value="hard">Hard</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="w-full sm:w-[25%]">
+              <Label className="mb-1 text-sm" htmlFor="num-questions">
+                # Questions
+              </Label>
+              <input
+                type="number"
+                id="num-questions"
+                min={1}
+                max={50}
+                placeholder="e.g. 10"
+                className="w-full rounded-md border px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                value={numQuestions}
+                onChange={(e) => setNumQuestions(Number(e.target.value))}
+              />
+            </div>
+          </div>
+
+          {/* Content based on active tab */}
+          {activeTab === "resume" ? (
+            <>
+              <div
+                className={`border-2 border-dashed rounded-lg p-6 sm:p-8 text-center transition-colors ${
+                  dragActive
+                    ? "border-blue-400 bg-blue-50"
+                    : "border-gray-300 hover:border-gray-400"
+                }`}
+                onDragEnter={handleDrag}
+                onDragLeave={handleDrag}
+                onDragOver={handleDrag}
+                onDrop={handleDrop}
+              >
+                <Upload className="mx-auto h-10 w-10 sm:h-12 sm:w-12 text-gray-400 mb-3 sm:mb-4" />
+                <p className="text-base sm:text-lg font-medium text-gray-900 mb-1">
+                  {resumeFile ? resumeFile.name : "Drop your resume here"}
+                </p>
+                <p className="text-sm sm:text-base text-gray-600 mb-2">
+                  or{" "}
+                  <button
+                    className="text-blue-600 hover:text-blue-500 font-medium"
+                    onClick={() => fileInputRef.current?.click()}
+                  >
+                    browse files
+                  </button>
+                </p>
+                <p className="text-xs sm:text-sm text-gray-500">
+                  Supports PDF and DOCX files
+                </p>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  className="hidden"
+                  accept=".pdf,.docx"
+                  onChange={handleFileChange}
+                />
+              </div>
+              {resumeFile && (
+                <div className="flex items-center space-x-2 text-sm text-green-600 p-3 bg-green-50 rounded-lg">
+                  <FileText className="h-4 w-4 flex-shrink-0" />
+                  <span className="break-all">Resume uploaded successfully</span>
+                </div>
+              )}
+            </>
+          ) : (
+            <>
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1">
+                <Label htmlFor="job-description" className="text-sm">
+                  Job Description
+                </Label>
+                <p className="text-xs sm:text-sm text-gray-500">
+                  {jobDescription.length}/50 characters minimum
+                </p>
+              </div>
+              <textarea
+                id="job-description"
+                value={jobDescription}
+                onChange={(e) => setJobDescription(e.target.value)}
+                placeholder="Paste the job description here..."
+                className="w-full min-h-[120px] sm:min-h-[119px] rounded-md border px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-y"
+              />
+            </>
+          )}
+
+          <PracticeModeSelector
+            practiceMode={practiceMode}
+            setPracticeMode={setPracticeMode}
+          />
+
+          {renderFocusAreas()}
         </div>
       </div>
+
+      {/* Error message */}
+      {error && (
+        <div className="mb-6 p-3 sm:p-4 bg-red-50 border border-red-200 rounded-lg">
+          <div className="flex items-start space-x-2">
+            <AlertCircle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
+            <span className="text-sm sm:text-base text-red-700 break-words">
+              {error}
+            </span>
+          </div>
+        </div>
+      )}
+
+      {/* Action buttons */}
+      <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4 px-4 sm:px-0">
+        <Button
+          onClick={() => navigate("/dashboard")}
+          variant={"outline"}
+          size={"lg"}
+          disabled={isLoading}
+          className="w-full sm:w-auto border bg-white text-gray-900 h-10 sm:h-11 px-4 py-2 rounded-md text-sm sm:text-base cursor-pointer order-2 sm:order-1"
+        >
+          Back
+        </Button>
+        <Button
+          onClick={generateMockQuestions}
+          variant={"default"}
+          size={"lg"}
+          disabled={!canSubmit() || isLoading}
+          className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white h-10 sm:h-11 px-4 py-2 text-sm sm:text-base min-w-[200px] cursor-pointer order-1 sm:order-2"
+        >
+          {isLoading ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              <span className="hidden sm:inline">Generating...</span>
+              <span className="sm:hidden">Generating...</span>
+            </>
+          ) : (
+            <>
+              <span className="hidden sm:inline">Generate Mock Questions</span>
+              <span className="sm:hidden">Generate Questions</span>
+            </>
+          )}
+        </Button>
+      </div>
     </div>
-  );
+  </div>
+);
 }

@@ -3,14 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import {
-  Brain,
-  Target,
-  ArrowRight,
-  Star,
-  FileText,
-  Github,
-} from "lucide-react";
+import { Brain, Target, ArrowRight, Star, Github } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { MockrDemo } from "@/components/MockrDemo";
@@ -79,40 +72,10 @@ export default function LandingPage({
     },
     {
       icon: <Star className="h-8 w-8 text-orange-600" />,
-      title: "ATS Checker",
+      title: "ATS Resume Checker",
       description:
         "Boost your shortlist chances with ATS-powered resume scans.",
       bgColor: "bg-orange-100",
-    },
-  ];
-
-  const testimonials = [
-    {
-      rating: 5,
-      content:
-        "Mockr's AI questions were spot-on for my software engineering interview. I felt so prepared and confident!",
-      name: "Sarah Chen",
-      role: "Software Engineer at Google",
-      avatar: "S",
-      bgColor: "bg-blue-500",
-    },
-    {
-      rating: 5,
-      content:
-        "The resume-based questions helped me identify gaps in my experience. Landed my PM role at a unicorn startup!",
-      name: "Michael Rodriguez",
-      role: "Product Manager at Stripe",
-      avatar: "M",
-      bgColor: "bg-purple-500",
-    },
-    {
-      rating: 5,
-      content:
-        "Perfect for behavioral questions! The feedback helped me improve my storytelling and got me into consulting.",
-      name: "Aisha Patel",
-      role: "Consultant at McKinsey",
-      avatar: "A",
-      bgColor: "bg-green-500",
     },
   ];
 
@@ -186,9 +149,9 @@ export default function LandingPage({
       </motion.header>
 
       {/* Hero Section Split */}
-      <section className="container mx-auto px-4 pt-20 pb-16">
+      <section className="container mx-auto px-4 pt-16 sm:pt-20 pb-12 sm:pb-16">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
-          {/* Left Half - Text Content */}
+          {/* Left Half */}
           <motion.div
             className="text-center lg:text-left"
             variants={staggerContainer}
@@ -202,7 +165,7 @@ export default function LandingPage({
             </motion.div>
             <motion.h1
               variants={cardFadeInUp}
-              className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight"
+              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight"
             >
               Ace Your Interviews with{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
@@ -211,7 +174,7 @@ export default function LandingPage({
             </motion.h1>
             <motion.p
               variants={cardFadeInUp}
-              className="text-xl text-gray-600 mb-8 max-w-2xl lg:max-w-none"
+              className="text-base sm:text-lg md:text-xl text-gray-600 mb-8 max-w-2xl lg:max-w-none"
             >
               Get personalized mock interview questions generated from your
               resume or job descriptions. Practice with confidence and land your
@@ -219,7 +182,7 @@ export default function LandingPage({
             </motion.p>
             <motion.div
               variants={cardFadeInUp}
-              className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
+              className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start"
             >
               <motion.div>
                 <Button
@@ -289,7 +252,7 @@ export default function LandingPage({
         </motion.div>
 
         <motion.div
-          className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto"
+          className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8 max-w-6xl mx-auto"
           variants={staggerContainer}
           initial="hidden"
           whileInView="visible"
@@ -427,14 +390,16 @@ export default function LandingPage({
           transition={{ duration: 0.5, ease: "easeOut" }}
           viewport={{ once: true, amount: 0.5 }}
         >
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">
             Ready to Ace Your Next Interview?
           </h2>
-          <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
-            Get interview ready with Mockr’s AI-powered platform — now introducing{" "}
-            <span className="font-semibold">ATS Checker</span> to optimize your
-            resume for recruiter shortlists.
+          <p className="text-base sm:text-lg md:text-xl mb-8 opacity-90 max-w-2xl mx-auto">
+            Get interview ready with Mockr’s AI-powered platform — now
+            introducing{" "}
+            <span className="font-semibold">ATS Resume Checker</span> to
+            optimize your resume for recruiter shortlists.
           </p>
+
           <motion.div className="flex justify-center">
             <Button
               size="lg"

@@ -2,7 +2,6 @@
 
 import { motion } from "framer-motion";
 import { FileSearch, Clock } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
 export default function ATSChecker() {
   return (

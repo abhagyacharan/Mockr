@@ -14,6 +14,7 @@ import DashboardHome from "./pages/DashboardHome";
 import HistoryPage from "./pages/HistoryPage";
 import { MockSessionProvider } from "./context/MockSessionContext";
 import { AuthProvider } from "./context/AuthContext";
+import ATSChecker from "./pages/ATSChecker";
 
 export interface Question {
   id: string;
@@ -95,6 +96,7 @@ function App() {
                     />
                   }
                 />
+                <Route path="atschecker" element={<ATSChecker />} />
                 <Route path="history" element={<HistoryPage />} />
               </Route>
 

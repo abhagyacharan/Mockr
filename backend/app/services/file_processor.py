@@ -182,9 +182,9 @@ class FileProcessor:
         client = Groq(api_key=settings.chatgroq_api_key)
 
         response = client.chat.completions.create(
-            model="llama-3.3-70b-versatile",
+            model="openai/gpt-oss-120b",
             messages=[{"role": "user", "content": prompt}],
-            temperature=0.2,
+            temperature=0.3,
             max_tokens=8000,
         )
 
@@ -284,7 +284,7 @@ class FileProcessor:
             """
 
         prompt = f"""
-                You are a senior technical interviewer at a FAANG company with 10+ years of experience evaluating top-tier engineers. Your reputation depends on asking questions that separate exceptional candidates from average ones.
+            You are a senior technical interviewer at a FAANG company with 10+ years of experience evaluating top-tier engineers. Your reputation depends on asking questions that separate exceptional candidates from average ones.
 
                 ### CRITICAL REQUIREMENTS:
                 1. **MCQ Answer Randomization**: For MCQ questions, you MUST randomize the position of the correct answer. The correct answer should appear in position A, B, C, or D with equal probability. Never default to the first option.
@@ -312,6 +312,20 @@ class FileProcessor:
                 - **Context-specific**: Distractors should relate directly to the candidate's experience/projects
                 - **No generic options**: Replace "All/None of the above" with specific technical alternatives
 
+                ### Question Enhancement Strategies:
+                1. **Combine Technologies**: If candidate lists React + AWS, ask about deploying React apps with specific AWS services
+                2. **Timeline Pressure**: "In your [project], if you had only 3 days instead of 3 weeks, what would you cut and why?"
+                3. **Resource Constraints**: "How would you modify [project approach] with half the memory/budget?"
+                4. **Integration Challenges**: "When connecting [skill A] with [skill B] in [project], what unexpected issues arise?"
+                5. **Maintenance Perspective**: "6 months after deploying [project], what would be your biggest technical debt?"
+
+                ### Forbidden Patterns:
+                - Questions answerable with single words or definitions
+                - Generic questions not tied to candidate's specific experience
+                - MCQs where position A is always correct
+                - Options that are obviously wrong to anyone with basic knowledge
+                - Questions that don't require justification or reasoning
+
                 ### Enhanced Output Requirements:
                 **MCQ Format:**
                 [
@@ -333,20 +347,6 @@ class FileProcessor:
                 }}
                 ]
 
-                ### Question Enhancement Strategies:
-                1. **Combine Technologies**: If candidate lists React + AWS, ask about deploying React apps with specific AWS services
-                2. **Timeline Pressure**: "In your [project], if you had only 3 days instead of 3 weeks, what would you cut and why?"
-                3. **Resource Constraints**: "How would you modify [project approach] with half the memory/budget?"
-                4. **Integration Challenges**: "When connecting [skill A] with [skill B] in [project], what unexpected issues arise?"
-                5. **Maintenance Perspective**: "6 months after deploying [project], what would be your biggest technical debt?"
-
-                ### Forbidden Patterns:
-                - Questions answerable with single words or definitions
-                - Generic questions not tied to candidate's specific experience
-                - MCQs where position A is always correct
-                - Options that are obviously wrong to anyone with basic knowledge
-                - Questions that don't require justification or reasoning
-
                 ### Content Analysis:
                 {content}
 
@@ -355,6 +355,7 @@ class FileProcessor:
                 **Focus Area**: {focus_instruction}
 
                 Generate questions that would make even senior engineers pause and think. Remember: randomize MCQ answer positions and create genuinely challenging distractors.
+                Return only the JSON output.
                 """
 
         return FileProcessor._llm_extract(prompt)

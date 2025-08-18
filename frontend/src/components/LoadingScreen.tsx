@@ -146,14 +146,6 @@ export default function LoadingScreen({ isVisible, progress }: LoadingScreenProp
             )
           })}
         </div>
-
-        {/* Fun Fact */}
-        <div className="mt-6 sm:mt-10 p-4 sm:p-5 bg-white/70 rounded-lg sm:rounded-xl border border-white/50 backdrop-blur-md">
-          <p className="text-sm sm:text-base text-gray-700 italic text-center">
-            💡 Did you know? Our AI analyzes over 50 different aspects of your resume to craft
-            highly personalized questions!
-          </p>
-        </div>
       </div>
     </div>
   )

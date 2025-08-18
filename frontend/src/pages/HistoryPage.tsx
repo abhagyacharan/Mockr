@@ -211,332 +211,178 @@ export default function HistoryPage() {
   }, [user, token]);
 
   return (
-  <div className="min-h-screen bg-gray-50 p-3 sm:p-6">
-    <div className="space-y-6 sm:space-y-8">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
-            Interview History
-          </h1>
-          <p className="text-sm sm:text-base text-gray-600">
-            Track your progress and review past interviews
-          </p>
-        </div>
-      </div>
-
-      {/* Stats Cards - Responsive Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
-        <StatsCard
-          label="Total Sessions"
-          value={sessionHistory.length}
-          icon={<FileText className="w-4 h-4 sm:w-6 sm:h-6" />}
-          color="blue"
-        />
-        <StatsCard
-          label="In Progress"
-          value={sessionHistory.filter((s) => s.status === "ongoing").length}
-          icon={<Clock className="w-4 h-4 sm:w-6 sm:h-6" />}
-          color="orange"
-        />
-        <StatsCard
-          label="Completed"
-          value={
-            sessionHistory.filter((s) => s.status === "completed").length
-          }
-          icon={<CheckCircle className="w-4 h-4 sm:w-6 sm:h-6" />}
-          color="green"
-        />
-        <StatsCard
-          label="Average Score"
-          value={
-            userMetrics.average_score
-              ? `${Math.round(userMetrics.average_score)}%`
-              : "0%"
-          }
-          icon={<TrendingUp className="w-4 h-4 sm:w-6 sm:h-6" />}
-          color="purple"
-        />
-      </div>
-
-      {/* Filter Card */}
-      <Card>
-        <div className="p-4 sm:p-6 border-b border-gray-200">
-          <h2 className="text-base sm:text-lg font-semibold text-gray-900 flex items-center">
-            <Filter className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
-            Filter & Search
-          </h2>
-        </div>
-        <div className="p-4 sm:p-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search interviews..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
-              />
-            </div>
-
-            <Select
-              value={statusFilter}
-              onValueChange={setStatusFilter}
-              placeholder="Filter by status"
-            >
-              <SelectItem value="all">All Status</SelectItem>
-              <SelectItem value="completed">Completed</SelectItem>
-              <SelectItem value="ongoing">In Progress</SelectItem>
-            </Select>
-
-            <Select
-              value={typeFilter}
-              onValueChange={setTypeFilter}
-              placeholder="Filter by type"
-            >
-              <SelectItem value="all">All Types</SelectItem>
-              <SelectItem value="resume">Resume</SelectItem>
-              <SelectItem value="job_description">Job Description</SelectItem>
-            </Select>
-
-            <Select
-              value={sortBy}
-              onValueChange={setSortBy}
-              placeholder="Sort by"
-            >
-              <SelectItem value="date">Date</SelectItem>
-              <SelectItem value="score">Score</SelectItem>
-              <SelectItem value="name">Name</SelectItem>
-              <SelectItem value="questions">Questions</SelectItem>
-            </Select>
+    <div className="min-h-screen bg-gray-50 p-3 sm:p-6">
+      <div className="space-y-6 sm:space-y-8">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
+              Interview History
+            </h1>
+            <p className="text-sm sm:text-base text-gray-600">
+              Track your progress and review past interviews
+            </p>
           </div>
         </div>
-      </Card>
 
-      {/* Sessions Table */}
-      <Card>
-        <div className="p-4 sm:p-6 border-b border-gray-200">
-          <h2 className="text-base sm:text-lg font-semibold text-gray-900">
-            Interview Sessions ({sessionHistory.length})
-          </h2>
+        {/* Stats Cards - Responsive Grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
+          <StatsCard
+            label="Total Sessions"
+            value={sessionHistory.length}
+            icon={
+              <FileText className="hidden sm:block w-5 h-5 md:w-6 md:h-6" />
+            }
+            color="blue"
+          />
+          <StatsCard
+            label="In Progress"
+            value={sessionHistory.filter((s) => s.status === "ongoing").length}
+            icon={<Clock className="hidden sm:block w-5 h-5 md:w-6 md:h-6" />}
+            color="orange"
+          />
+          <StatsCard
+            label="Completed"
+            value={
+              sessionHistory.filter((s) => s.status === "completed").length
+            }
+            icon={
+              <CheckCircle className="hidden sm:block w-5 h-5 md:w-6 md:h-6" />
+            }
+            color="green"
+          />
+          <StatsCard
+            label="Average Score"
+            value={
+              userMetrics.average_score
+                ? `${Math.round(userMetrics.average_score)}%`
+                : "0%"
+            }
+            icon={
+              <TrendingUp className="hidden sm:block w-5 h-5 md:w-6 md:h-6" />
+            }
+            color="purple"
+          />
         </div>
 
-        {/* Desktop Table View */}
-        <div className="hidden lg:block w-full overflow-x-auto">
-          <table className="min-w-full w-full">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Session Name
-                </th>
-                <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Type
-                </th>
-                <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Score
-                </th>
-                <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Questions
-                </th>
-                <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Date
-                </th>
-                <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Status
-                </th>
-                <th className="px-4 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {filteredSessions.length > 0 ? (
-                filteredSessions.map((session) => (
-                  <tr key={session.id} className="hover:bg-gray-50">
-                    <td className="px-4 py-6 whitespace-nowrap">
-                      <div className="text-base font-semibold text-gray-900">
-                        {session.session_name}
-                      </div>
-                    </td>
-                    <td className="px-4 py-6 whitespace-nowrap">
-                      <Badge
-                        variant="outline"
-                        className="flex items-center w-fit text-sm px-3 py-1"
-                      >
-                        {session.type === "resume" ? (
-                          <FileText className="w-4 h-4 mr-2" />
-                        ) : (
-                          <Briefcase className="w-4 h-4 mr-2" />
-                        )}
-                        {session.type === "resume"
-                          ? "Resume"
-                          : "Job Description"}
-                      </Badge>
-                    </td>
-                    <td className="px-4 py-6 whitespace-nowrap">
-                      {session.score && session.score !== "N/A" ? (
-                        <span
-                          className={`text-lg font-bold ${
-                            session.score >= 80
-                              ? "text-green-600"
-                              : session.score >= 60
-                              ? "text-yellow-600"
-                              : "text-red-600"
-                          }`}
-                        >
-                          {session.score}%
-                        </span>
-                      ) : (
-                        <span className="text-gray-400 text-lg">-</span>
-                      )}
-                    </td>
-                    <td className="px-4 py-6 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">
-                        {session.totalQuestions} questions
-                      </div>
-                    </td>
-                    <td className="px-4 py-6 whitespace-nowrap text-gray-600">
-                      <div className="flex items-center text-sm">
-                        <Calendar className="w-4 h-4 mr-2" />
-                        {new Date(session.date).toLocaleDateString()}
-                      </div>
-                    </td>
-                    <td className="px-4 py-6 whitespace-nowrap">
-                      <Badge
-                        variant={
-                          session.status === "completed"
-                            ? "default"
-                            : "secondary"
-                        }
-                        className={`text-sm px-3 py-1 ${
-                          session.status === "completed"
-                            ? "bg-green-100 text-green-800"
-                            : "bg-gray-100 text-gray-800"
-                        }`}
-                      >
-                        {session.status === "completed"
-                          ? "Completed"
-                          : "In Progress"}
-                      </Badge>
-                    </td>
-                    <td className="px-4 py-6 whitespace-nowrap text-right">
-                      <div className="flex justify-end space-x-3">
-                        {session.status === "ongoing" ? (
-                          <Button className="cursor-pointer" size="sm">
-                            <Play className="w-4 h-4 mr-2" />
-                            Continue
-                          </Button>
-                        ) : (
-                          <>
-                            <Button
-                              className="cursor-pointer"
-                              variant="outline"
-                              size="sm"
-                              onClick={() =>
-                                navigate(`/results/${session.id}`)
-                              }
-                            >
-                              <Eye className="w-4 h-4 mr-2" />
-                              View
-                            </Button>
-                            <Button className="cursor-pointer" variant="outline" size="sm">
-                              <Download className="w-4 h-4 mr-2" />
-                              Export
-                            </Button>
-                          </>
-                        )}
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200 cursor-pointer"
-                          onClick={() => deleteMockSession(session.id)}
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
-              ) : (
+        {/* Filter Card */}
+        <Card>
+          <div className="p-4 sm:p-6 border-b border-gray-200">
+            <h2 className="text-base sm:text-lg font-semibold text-gray-900 flex items-center">
+              <Filter className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
+              Filter & Search
+            </h2>
+          </div>
+          <div className="p-4 sm:p-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Search interviews..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full pl-10 pr-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+
+              <Select
+                value={statusFilter}
+                onValueChange={setStatusFilter}
+                placeholder="Filter by status"
+              >
+                <SelectItem value="all">All Status</SelectItem>
+                <SelectItem value="completed">Completed</SelectItem>
+                <SelectItem value="ongoing">In Progress</SelectItem>
+              </Select>
+
+              <Select
+                value={typeFilter}
+                onValueChange={setTypeFilter}
+                placeholder="Filter by type"
+              >
+                <SelectItem value="all">All Types</SelectItem>
+                <SelectItem value="resume">Resume</SelectItem>
+                <SelectItem value="job_description">Job Description</SelectItem>
+              </Select>
+
+              <Select
+                value={sortBy}
+                onValueChange={setSortBy}
+                placeholder="Sort by"
+              >
+                <SelectItem value="date">Date</SelectItem>
+                <SelectItem value="score">Score</SelectItem>
+                <SelectItem value="name">Name</SelectItem>
+                <SelectItem value="questions">Questions</SelectItem>
+              </Select>
+            </div>
+          </div>
+        </Card>
+
+        {/* Sessions Table */}
+        <Card>
+          <div className="p-4 sm:p-6 border-b border-gray-200">
+            <h2 className="text-base sm:text-lg font-semibold text-gray-900">
+              Interview Sessions ({sessionHistory.length})
+            </h2>
+          </div>
+
+          {/* Desktop Table View */}
+          <div className="hidden lg:block w-full overflow-x-auto">
+            <table className="min-w-full w-full">
+              <thead className="bg-gray-50">
                 <tr>
-                  <td
-                    colSpan={7}
-                    className="text-center py-6 text-gray-500 text-sm"
-                  >
-                    No sessions match your filters.
-                  </td>
+                  <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Session Name
+                  </th>
+                  <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Type
+                  </th>
+                  <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Score
+                  </th>
+                  <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Questions
+                  </th>
+                  <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Date
+                  </th>
+                  <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Status
+                  </th>
+                  <th className="px-4 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Actions
+                  </th>
                 </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-
-        {/* Mobile Card View */}
-        <div className="lg:hidden">
-          {filteredSessions.length > 0 ? (
-            <div className="divide-y divide-gray-200">
-              {filteredSessions.map((session) => (
-                <div key={session.id} className="p-4 sm:p-6 space-y-3">
-                  {/* Header */}
-                  <div className="flex justify-between items-start">
-                    <div className="flex-1 min-w-0">
-                      <h3 className="text-sm sm:text-base font-semibold text-gray-900 truncate">
-                        {session.session_name}
-                      </h3>
-                      <div className="flex items-center mt-1 text-xs sm:text-sm text-gray-600">
-                        <Calendar className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
-                        {new Date(session.date).toLocaleDateString()}
-                      </div>
-                    </div>
-                    <Badge
-                      variant={
-                        session.status === "completed"
-                          ? "default"
-                          : "secondary"
-                      }
-                      className={`text-xs px-2 py-1 ml-2 ${
-                        session.status === "completed"
-                          ? "bg-green-100 text-green-800"
-                          : "bg-gray-100 text-gray-800"
-                      }`}
-                    >
-                      {session.status === "completed"
-                        ? "Completed"
-                        : "In Progress"}
-                    </Badge>
-                  </div>
-
-                  {/* Info Grid */}
-                  <div className="grid grid-cols-2 gap-3 text-xs sm:text-sm">
-                    <div>
-                      <span className="text-gray-500">Type:</span>
-                      <div className="flex items-center mt-1">
-                        {session.type === "resume" ? (
-                          <FileText className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
-                        ) : (
-                          <Briefcase className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
-                        )}
-                        <span className="text-gray-900">
-                          {session.type === "resume" ? "Resume" : "Job Desc"}
-                        </span>
-                      </div>
-                    </div>
-                    <div>
-                      <span className="text-gray-500">Questions:</span>
-                      <div className="text-gray-900 mt-1">
-                        {session.totalQuestions}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Score */}
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <span className="text-xs sm:text-sm text-gray-500">Score:</span>
-                      <div className="mt-1">
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {filteredSessions.length > 0 ? (
+                  filteredSessions.map((session) => (
+                    <tr key={session.id} className="hover:bg-gray-50">
+                      <td className="px-4 py-6 whitespace-nowrap">
+                        <div className="text-base font-semibold text-gray-900">
+                          {session.session_name}
+                        </div>
+                      </td>
+                      <td className="px-4 py-6 whitespace-nowrap">
+                        <Badge
+                          variant="outline"
+                          className="flex items-center w-fit text-sm px-3 py-1"
+                        >
+                          {session.type === "resume" ? (
+                            <FileText className="w-4 h-4 mr-2" />
+                          ) : (
+                            <Briefcase className="w-4 h-4 mr-2" />
+                          )}
+                          {session.type === "resume"
+                            ? "Resume"
+                            : "Job Description"}
+                        </Badge>
+                      </td>
+                      <td className="px-4 py-6 whitespace-nowrap">
                         {session.score && session.score !== "N/A" ? (
                           <span
-                            className={`text-base sm:text-lg font-bold ${
+                            className={`text-lg font-bold ${
                               session.score >= 80
                                 ? "text-green-600"
                                 : session.score >= 60
@@ -547,52 +393,218 @@ export default function HistoryPage() {
                             {session.score}%
                           </span>
                         ) : (
-                          <span className="text-gray-400 text-base sm:text-lg">-</span>
+                          <span className="text-gray-400 text-lg">-</span>
                         )}
+                      </td>
+                      <td className="px-4 py-6 whitespace-nowrap">
+                        <div className="text-sm text-gray-900">
+                          {session.totalQuestions} questions
+                        </div>
+                      </td>
+                      <td className="px-4 py-6 whitespace-nowrap text-gray-600">
+                        <div className="flex items-center text-sm">
+                          <Calendar className="w-4 h-4 mr-2" />
+                          {new Date(session.date).toLocaleDateString()}
+                        </div>
+                      </td>
+                      <td className="px-4 py-6 whitespace-nowrap">
+                        <Badge
+                          variant={
+                            session.status === "completed"
+                              ? "default"
+                              : "secondary"
+                          }
+                          className={`text-sm px-3 py-1 ${
+                            session.status === "completed"
+                              ? "bg-green-100 text-green-800"
+                              : "bg-gray-100 text-gray-800"
+                          }`}
+                        >
+                          {session.status === "completed"
+                            ? "Completed"
+                            : "In Progress"}
+                        </Badge>
+                      </td>
+                      <td className="px-4 py-6 whitespace-nowrap text-right">
+                        <div className="flex justify-end space-x-3">
+                          {session.status === "ongoing" ? (
+                            <Button className="cursor-pointer" size="sm">
+                              <Play className="w-4 h-4 mr-2" />
+                              Continue
+                            </Button>
+                          ) : (
+                            <>
+                              <Button
+                                className="cursor-pointer"
+                                variant="outline"
+                                size="sm"
+                                onClick={() =>
+                                  navigate(`/results/${session.id}`)
+                                }
+                              >
+                                <Eye className="w-4 h-4 mr-2" />
+                                View
+                              </Button>
+                              <Button
+                                className="cursor-pointer"
+                                variant="outline"
+                                size="sm"
+                              >
+                                <Download className="w-4 h-4 mr-2" />
+                                Export
+                              </Button>
+                            </>
+                          )}
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200 cursor-pointer"
+                            onClick={() => deleteMockSession(session.id)}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td
+                      colSpan={7}
+                      className="text-center py-6 text-gray-500 text-sm"
+                    >
+                      No sessions match your filters.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Mobile Card View */}
+          <div className="lg:hidden">
+            {filteredSessions.length > 0 ? (
+              <div className="divide-y divide-gray-200">
+                {filteredSessions.map((session) => (
+                  <div key={session.id} className="p-4 sm:p-6 space-y-3">
+                    {/* Header */}
+                    <div className="flex justify-between items-start">
+                      <div className="flex-1 min-w-0">
+                        <h3 className="text-sm sm:text-base font-semibold text-gray-900 truncate">
+                          {session.session_name}
+                        </h3>
+                        <div className="flex items-center mt-1 text-xs sm:text-sm text-gray-600">
+                          <Calendar className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
+                          {new Date(session.date).toLocaleDateString()}
+                        </div>
+                      </div>
+                      <Badge
+                        variant={
+                          session.status === "completed"
+                            ? "default"
+                            : "secondary"
+                        }
+                        className={`text-xs px-2 py-1 ml-2 ${
+                          session.status === "completed"
+                            ? "bg-green-100 text-green-800"
+                            : "bg-gray-100 text-gray-800"
+                        }`}
+                      >
+                        {session.status === "completed"
+                          ? "Completed"
+                          : "In Progress"}
+                      </Badge>
+                    </div>
+
+                    {/* Info Grid */}
+                    <div className="grid grid-cols-2 gap-3 text-xs sm:text-sm">
+                      <div>
+                        <span className="text-gray-500">Type:</span>
+                        <div className="flex items-center mt-1">
+                          {session.type === "resume" ? (
+                            <FileText className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
+                          ) : (
+                            <Briefcase className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
+                          )}
+                          <span className="text-gray-900">
+                            {session.type === "resume" ? "Resume" : "Job Desc"}
+                          </span>
+                        </div>
+                      </div>
+                      <div>
+                        <span className="text-gray-500">Questions:</span>
+                        <div className="text-gray-900 mt-1">
+                          {session.totalQuestions}
+                        </div>
                       </div>
                     </div>
 
-                    {/* Mobile Actions */}
-                    <div className="flex space-x-2">
-                      {session.status === "ongoing" ? (
-                        <Button className="cursor-pointer" size="sm">
-                          <Play className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
-                          <span className="text-xs">Continue</span>
-                        </Button>
-                      ) : (
+                    {/* Score */}
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <span className="text-xs sm:text-sm text-gray-500">
+                          Score:
+                        </span>
+                        <div className="mt-1">
+                          {session.score && session.score !== "N/A" ? (
+                            <span
+                              className={`text-base sm:text-lg font-bold ${
+                                session.score >= 80
+                                  ? "text-green-600"
+                                  : session.score >= 60
+                                  ? "text-yellow-600"
+                                  : "text-red-600"
+                              }`}
+                            >
+                              {session.score}%
+                            </span>
+                          ) : (
+                            <span className="text-gray-400 text-base sm:text-lg">
+                              -
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Mobile Actions */}
+                      <div className="flex space-x-2">
+                        {session.status === "ongoing" ? (
+                          <Button className="cursor-pointer" size="sm">
+                            <Play className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
+                            <span className="text-xs">Continue</span>
+                          </Button>
+                        ) : (
+                          <Button
+                            className="cursor-pointer"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => navigate(`/results/${session.id}`)}
+                          >
+                            <Eye className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
+                            <span className="text-xs">View</span>
+                          </Button>
+                        )}
                         <Button
-                          className="cursor-pointer"
                           variant="outline"
                           size="sm"
-                          onClick={() =>
-                            navigate(`/results/${session.id}`)
-                          }
+                          className="text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200 cursor-pointer"
+                          onClick={() => deleteMockSession(session.id)}
                         >
-                          <Eye className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
-                          <span className="text-xs">View</span>
+                          <Trash2 className="w-3 h-3 sm:w-4 sm:h-4" />
                         </Button>
-                      )}
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200 cursor-pointer"
-                        onClick={() => deleteMockSession(session.id)}
-                      >
-                        <Trash2 className="w-3 h-3 sm:w-4 sm:h-4" />
-                      </Button>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-8 text-gray-500 text-sm">
-              No sessions match your filters.
-            </div>
-          )}
-        </div>
-      </Card>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-8 text-gray-500 text-sm">
+                No sessions match your filters.
+              </div>
+            )}
+          </div>
+        </Card>
+      </div>
     </div>
-  </div>
-);
+  );
 }

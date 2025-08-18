@@ -110,24 +110,35 @@ export default function AuthModal({
         throw new Error(data.detail || "Authentication failed");
       }
 
-      if (mode === "signup" && !data.access_token) {
-        setMode("login");
-        setErrors({ general: "Account created. Please log in." });
-        setIsLoading(false);
-        return;
+      // Handle both login and signup responses
+      let token: string;
+      let user: any;
+
+      if (mode === "signup") {
+        // New structure: { access_token, token_type, user }
+        token = data.access_token;
+        user = data.user || {
+          id: data.user?.id || "user-" + Date.now(),
+          name: `${data.user?.first_name || formData.firstName} ${
+            data.user?.last_name || formData.lastName
+          }`.trim(),
+          email: data.user?.email || formData.email,
+        };
+      } else {
+        // Login response: { access_token, token_type }
+        token = data.access_token;
+        user = data.user || {
+          id: "user-" + Date.now(),
+          name: formData.email.split("@")[0],
+          email: formData.email,
+        };
       }
 
-      const token = data.access_token;
-      const user = data.user || {
-        id: "user-" + Date.now(),
-        name:
-          `${formData.firstName} ${formData.lastName}`.trim() ||
-          formData.email.split("@")[0],
-        email: formData.email,
-      };
-
+      // Log the user in
       login(token, user);
       onClose();
+
+      // Navigate to dashboard
       setTimeout(() => {
         navigate("/dashboard", { replace: true });
       }, 50);
@@ -190,7 +201,7 @@ export default function AuthModal({
                 <button
                   className={`flex-1 py-2 px-4 rounded-sm text-sm font-medium transition-colors cursor-pointer ${
                     mode === "login"
-                      ? "bg-white text-blue-600 shadow-sm"
+                      ? "bg-white text-black shadow-sm"
                       : "text-gray-600 hover:text-gray-900"
                   }`}
                   onClick={() => setMode("login")}
@@ -200,7 +211,7 @@ export default function AuthModal({
                 <button
                   className={`flex-1 py-2 px-4 rounded-sm text-sm font-medium transition-colors cursor-pointer ${
                     mode === "signup"
-                      ? "bg-white text-blue-600 shadow-sm"
+                      ? "bg-white text-black shadow-sm"
                       : "text-gray-600 hover:text-gray-900"
                   }`}
                   onClick={() => setMode("signup")}
@@ -398,7 +409,7 @@ export default function AuthModal({
                   type="submit"
                   disabled={isLoading}
                   whileTap={{ scale: 0.97 }}
-                  className="w-full inline-flex items-center justify-center cursor-pointer rounded-sm text-sm font-medium bg-blue-600 text-white h-10 px-4 py-2 hover:bg-blue-700 transition-colors"
+                  className="w-full inline-flex items-center justify-center cursor-pointer rounded-sm text-sm font-medium bg-black text-white h-10 px-4 py-2 hover:bg-black/90 transition-colors"
                 >
                   {isLoading ? (
                     <>

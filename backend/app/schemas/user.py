@@ -31,3 +31,8 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     email: Optional[str] = None
+
+class UserWithTokenResponse(BaseModel):
+    access_token: str
+    token_type: str
+    user: UserResponse

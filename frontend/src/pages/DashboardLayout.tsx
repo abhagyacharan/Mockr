@@ -66,9 +66,9 @@ export default function DashboardLayout() {
                 </div>
                 <Button
                   variant="outline"
-                  size="sm"
+                  size="lg"
                   onClick={handleLogout}
-                  className="ml-2"
+                  className="ml-2 cursor-pointer"
                 >
                   Logout
                 </Button>
